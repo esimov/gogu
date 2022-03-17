@@ -3,12 +3,12 @@ package main
 import "fmt"
 
 func main() {
-	ints := sumMap[string, int64](map[string]int64{
+	ints := sumMap(map[string]int64{
 		"one": 1,
 		"two": 2,
 	})
 
-	floats := sumMap[string, float64](map[string]float64{
+	floats := sumMap(map[string]float64{
 		"one": 1.1,
 		"two": 2.2,
 	})
