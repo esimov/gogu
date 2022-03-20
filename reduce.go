@@ -13,10 +13,16 @@ func main() {
 		fmt.Println(v)
 	})
 
-	res := Find(ints, func(v int) bool {
+	res1 := Find(ints, func(v int) bool {
 		return v == 12
 	})
-	fmt.Println("Find:", res)
+
+	res2 := FindLast(ints, func(v int) bool {
+		return v == 12
+	})
+
+	fmt.Println("Find first:", res1)
+	fmt.Println("Find last:", res2)
 }
 
 func Reduce[T1, T2 any](s []T1, fn func(T1, T2) T2, initVal T2) T2 {
@@ -35,13 +41,28 @@ func ForEach[T1, T2 any](s []T1, fn func(T1)) {
 	}
 }
 
-func Find[T any](s []T, fn func(T) bool) map[int]any {
-	m := make(map[int]any, 1)
+func Find[T any](s []T, fn func(T) bool) map[int]T {
+	m := make(map[int]T, 1)
+
 	for k, v := range s {
 		if fn(v) {
 			m[k] = v
 			return m
 		}
 	}
+
+	return nil
+}
+
+func FindLast[T any](s []T, fn func(T) bool) map[int]T {
+	m := make(map[int]T, 1)
+
+	for i := len(s) - 1; i > 0; i-- {
+		if fn(s[i]) {
+			m[i] = s[i]
+			return m
+		}
+	}
+
 	return nil
 }
