@@ -6,13 +6,21 @@ import (
 )
 
 func main() {
+	mapVals := map[int]int64{1: 1, 2: 2, 3: 3}
+
 	fmt.Println("==================MapValues")
-	sampleMap := map[int]int64{1: 1, 2: 2, 3: 3}
-	res1 := MapValues[int, int64, string](sampleMap, func(v int64) string {
+	newVals := MapValues[int, int64, string](mapVals, func(v int64) string {
 		v = v * 10
 		return strconv.FormatInt(v, 10)
 	})
-	fmt.Println(res1)
+	fmt.Println(newVals)
+
+	fmt.Println("==================MapKeys")
+	mapKeys := map[string]int{"a": 1, "b": 2, "c": 3}
+	newKeys := MapKeys[string, int, string](mapKeys, func(k string, v int) string {
+		return k + strconv.Itoa(v)
+	})
+	fmt.Println(newKeys)
 
 	fmt.Println("==================FilterMap")
 	mp := []map[string]int{{"user": 1}}
@@ -45,11 +53,21 @@ func main() {
 	fmt.Println(res3)
 }
 
-func MapValues[T1 comparable, T2, T3 any](s map[T1]T2, fn func(T2) T3) map[T1]T3 {
-	newMap := map[T1]T3{}
+func MapValues[K comparable, V, R any](s map[K]V, fn func(V) R) map[K]R {
+	newMap := map[K]R{}
 
 	for idx, v := range s {
 		newMap[idx] = fn(v)
+	}
+
+	return newMap
+}
+
+func MapKeys[K comparable, V any, R comparable](s map[K]V, fn func(K, V) R) map[R]V {
+	newMap := map[R]V{}
+
+	for k, v := range s {
+		newMap[fn(k, v)] = v
 	}
 
 	return newMap
