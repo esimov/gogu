@@ -5,6 +5,12 @@ import "fmt"
 func main() {
 	ints := []int{12, 23, 1, 643, 99, 2}
 
+	fmt.Println("==================Map")
+	maps := Map(ints, func(a int) int {
+		return a * 2
+	})
+	fmt.Println(maps)
+
 	fmt.Println("==================ForEach")
 	ForEach(ints, func(v int) {
 		fmt.Println(v)
@@ -23,12 +29,16 @@ func main() {
 
 	fmt.Println("==================Reverse")
 	fmt.Println(Reverse(ints))
+}
 
-	fmt.Println("==================IndexOf")
-	fmt.Println(IndexOf(ints, 12))
+func Map[T1, T2 any](s []T1, fn func(T1) T2) []T2 {
+	newSlice := make([]T2, len(s))
 
-	fmt.Println("==================LastIndexOf")
-	fmt.Println(LastIndexOf(ints, 99))
+	for idx, v := range s {
+		newSlice[idx] = fn(v)
+	}
+
+	return newSlice
 }
 
 func ForEach[T any](s []T, fn func(T)) {
@@ -61,23 +71,4 @@ func Reverse[T any](s []T) []T {
 	}
 
 	return rs
-}
-
-func IndexOf[T comparable](s []T, val T) int {
-	for k, v := range s {
-		if v == val {
-			return k
-		}
-	}
-
-	return -1
-}
-
-func LastIndexOf[T comparable](s []T, val T) int {
-	for i, j := len(s)-1, 0; i >= 0; i, j = i-1, j+1 {
-		if s[i] == val {
-			return j
-		}
-	}
-	return -1
 }
