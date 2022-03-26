@@ -3,7 +3,7 @@ package main
 import "fmt"
 
 func main() {
-	ints := []int{12, 23, 1, 643, 99, 2}
+	ints := []int{12, 23, 1, 643, 99, 12, 2, 1}
 
 	fmt.Println("==================Map")
 	maps := Map(ints, func(a int) int {
@@ -29,6 +29,9 @@ func main() {
 
 	fmt.Println("==================Reverse")
 	fmt.Println(Reverse(ints))
+
+	fmt.Println("==================Unique")
+	fmt.Println(Unique[int, int](ints))
 }
 
 func Map[T1, T2 any](s []T1, fn func(T1) T2) []T2 {
@@ -64,11 +67,24 @@ func Reduce[T1, T2 any](s []T1, fn func(T1, T2) T2, initVal T2) T2 {
 }
 
 func Reverse[T any](s []T) []T {
-	var rs = make([]T, len(s))
+	rev := make([]T, len(s))
 
 	for i, j := 0, len(s)-1; i < j; i, j = i+1, j-1 {
-		rs[i], rs[j] = s[j], s[i]
+		rev[i], rev[j] = s[j], s[i]
 	}
 
-	return rs
+	return rev
+}
+
+// Unique returns slice's unique values.
+func Unique[T1 comparable, T2 any](s []T1) []T1 {
+	keys := make(map[T1]bool)
+	uni := []T1{}
+	for _, v := range s {
+		if _, ok := keys[v]; !ok {
+			keys[v] = true
+			uni = append(uni, v)
+		}
+	}
+	return uni
 }
