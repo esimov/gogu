@@ -80,6 +80,10 @@ func main() {
 		return v["age"] > 20 && v["ranking"] < 5
 	})
 	fmt.Println(res4)
+
+	fmt.Println("==================Invert")
+	inverted := Invert(mp)
+	fmt.Println(inverted)
 }
 
 func Keys[K comparable, V any](m map[K]V) []K {
@@ -176,4 +180,17 @@ func Filter2DMapSlice[K comparable, V any](mapSlice []map[K]map[K]V, fn func(map
 	}
 
 	return filtered
+}
+
+// Returns a copy of the map where the keys have become the values and the values the keys.
+// For this to work, all of your map's values should be unique.
+func Invert[K, V comparable](m map[K]V) map[V]K {
+	inverted := map[V]K{}
+	keys := Keys(m)
+
+	for i := 0; i < len(keys); i++ {
+		inverted[m[keys[i]]] = keys[i]
+	}
+
+	return inverted
 }
