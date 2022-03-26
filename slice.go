@@ -32,6 +32,9 @@ func main() {
 
 	fmt.Println("==================Unique")
 	fmt.Println(Unique[int, int](ints))
+
+	fmt.Println("==================Without")
+	fmt.Println(Without[int, int](ints, 2, 1, 12))
 }
 
 func Map[T1, T2 any](s []T1, fn func(T1) T2) []T2 {
@@ -81,6 +84,25 @@ func Unique[T1 comparable, T2 any](s []T1) []T1 {
 	keys := make(map[T1]bool)
 	uni := []T1{}
 	for _, v := range s {
+		if _, ok := keys[v]; !ok {
+			keys[v] = true
+			uni = append(uni, v)
+		}
+	}
+	return uni
+}
+
+// Without returns a copy of the slice with all the values defined in the variadic parameter removed.
+func Without[T1 comparable, T2 any](s []T1, values ...T1) []T1 {
+	keys := make(map[T1]bool)
+	uni := []T1{}
+loop:
+	for _, v := range s {
+		for _, val := range values {
+			if v == val {
+				continue loop
+			}
+		}
 		if _, ok := keys[v]; !ok {
 			keys[v] = true
 			uni = append(uni, v)
