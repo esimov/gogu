@@ -1,9 +1,12 @@
 package main
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 func main() {
-	ints := []int{12, 23, 1, 643, 99, 12, 2, 1}
+	ints := []int{2, 1, 4, 12, 8, 10, 22, 50}
 
 	fmt.Println("==================Map")
 	maps := Map(ints, func(a int) int {
@@ -35,6 +38,17 @@ func main() {
 
 	fmt.Println("==================Without")
 	fmt.Println(Without[int, int](ints, 2, 1, 12))
+
+	fmt.Println("==================Difference")
+	fmt.Println(Difference[int, int](ints, []int{2, 10, 4}))
+
+	fmt.Println("==================Merge")
+	fmt.Println(Merge(ints, []int{2, 10, 4}, []int{2, 23, 2}))
+
+	fmt.Println("==================Flatten")
+	sampleFlSlice := []any{[]any{1, 2, []any{3, []int{4, 5, 6}}}, 7}
+	fl, _ := Flatten(sampleFlSlice)
+	fmt.Println(fl)
 }
 
 func Map[T1, T2 any](s []T1, fn func(T1) T2) []T2 {
@@ -92,6 +106,45 @@ func Unique[T1 comparable, T2 any](s []T1) []T1 {
 	return uni
 }
 
+// Merge merges the first slice with the other slices defined as variadic parameter.
+func Merge[T any](s []T, slices ...[]T) []T {
+	merged := []T{}
+
+	for i := 0; i < len(slices); i++ {
+		for _, v := range slices[i] {
+			merged = append(merged, v)
+		}
+	}
+	merged = append(s, merged...)
+
+	return merged
+}
+
+func Flatten[T int](sl any) ([]T, error) {
+	return baseFlatten([]T{}, sl)
+}
+
+func baseFlatten[T any](acc []T, s any) ([]T, error) {
+	var err error
+	switch v := (any)(s).(type) {
+	case T:
+		acc = append(acc, v)
+	case []T:
+		acc = append(acc, v...)
+	case []any:
+		for _, sv := range v {
+			acc, err = baseFlatten(acc, sv)
+			if err != nil {
+				return nil, errors.New("flattening error")
+			}
+		}
+	default:
+		return nil, errors.New("flattening error")
+	}
+
+	return acc, nil
+}
+
 // Without returns a copy of the slice with all the values defined in the variadic parameter removed.
 func Without[T1 comparable, T2 any](s []T1, values ...T1) []T1 {
 	keys := make(map[T1]bool)
@@ -99,6 +152,26 @@ func Without[T1 comparable, T2 any](s []T1, values ...T1) []T1 {
 loop:
 	for _, v := range s {
 		for _, val := range values {
+			if v == val {
+				continue loop
+			}
+		}
+		if _, ok := keys[v]; !ok {
+			keys[v] = true
+			uni = append(uni, v)
+		}
+	}
+	return uni
+}
+
+// Difference is similar to Without, but returns the values from
+// the first slice that are not present in the second slice.
+func Difference[T1 comparable, T2 any](s1, s2 []T1) []T1 {
+	keys := make(map[T1]bool)
+	uni := []T1{}
+loop:
+	for _, v := range s1 {
+		for _, val := range s2 {
 			if v == val {
 				continue loop
 			}
