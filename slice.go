@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	ints := []int{2, 1, 4, 12, 8, 10, 22, 50}
+	ints := []int{2, 1, 4, 12, 8, 10, 22, 2, 10}
 
 	fmt.Println("==================Map")
 	maps := Map(ints, func(a int) int {
@@ -34,7 +34,7 @@ func main() {
 	fmt.Println(Reverse(ints))
 
 	fmt.Println("==================Unique")
-	fmt.Println(Unique[int, int](ints))
+	fmt.Println(Unique[int](ints))
 
 	fmt.Println("==================Without")
 	fmt.Println(Without[int, int](ints, 2, 1, 12))
@@ -46,9 +46,14 @@ func main() {
 	fmt.Println(Merge(ints, []int{2, 10, 4}, []int{2, 23, 2}))
 
 	fmt.Println("==================Flatten")
-	sampleFlSlice := []any{[]any{1, 2, []any{3, []int{4, 5, 6}}}, 7}
-	fl, _ := Flatten(sampleFlSlice)
-	fmt.Println(fl)
+	sl1 := []any{[]any{1.0, 2.0, []any{3.0, []float64{4, 5, 6}}}, 7.0}
+	fl1, _ := Flatten[float64](sl1)
+	fmt.Println(fl1)
+
+	fmt.Println("==================Union")
+	sl2 := []any{[]any{1, 2, []any{3, []int{4, 5, 6}}}, 7, []int{1, 2}}
+	fl2, _ := Union[int](sl2)
+	fmt.Println(fl2)
 }
 
 func Map[T1, T2 any](s []T1, fn func(T1) T2) []T2 {
@@ -94,9 +99,9 @@ func Reverse[T any](s []T) []T {
 }
 
 // Unique returns slice's unique values.
-func Unique[T1 comparable, T2 any](s []T1) []T1 {
-	keys := make(map[T1]bool)
-	uni := []T1{}
+func Unique[T comparable](s []T) []T {
+	keys := make(map[T]bool)
+	uni := []T{}
 	for _, v := range s {
 		if _, ok := keys[v]; !ok {
 			keys[v] = true
@@ -120,8 +125,19 @@ func Merge[T any](s []T, slices ...[]T) []T {
 	return merged
 }
 
-func Flatten[T int](sl any) ([]T, error) {
-	return baseFlatten([]T{}, sl)
+// Union computes the union of the passed-in slice and returns in order the list
+// of unique items that are present in one or more of the slices.
+func Union[T comparable](s any) ([]T, error) {
+	var err error
+	if flatten, err := baseFlatten([]T{}, s); err == nil {
+		return Unique(flatten), nil
+	}
+	return nil, err
+}
+
+// Flatten flattens the slice all the way to the deepest nesting level.
+func Flatten[T any](s any) ([]T, error) {
+	return baseFlatten([]T{}, s)
 }
 
 func baseFlatten[T any](acc []T, s any) ([]T, error) {
