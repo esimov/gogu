@@ -1,2 +1,3 @@
 # go-generics
-Go generics playground
+
+Go generics playground. 
