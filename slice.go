@@ -55,24 +55,25 @@ func main() {
 	sl1 := []any{[]any{1.0, 2.0, []any{3.0, []float64{4, 5, 6}}}, 7.0}
 
 	fmt.Println("==================Flatten")
-	fl1, _ := Flatten[float64](sl1)
-	fmt.Println(fl1)
+	fl, _ := Flatten[float64](sl1)
+	fmt.Println(fl)
 
 	sl2 := []any{[]any{1, 2, []any{3, []int{4, 5, 6}}}, 7, []int{1, 2}, 3, []int{4, 7}, 10, 10}
 
 	fmt.Println("==================Union")
-	fl2, _ := Union[int](sl2)
-	fmt.Println(fl2)
+	un, _ := Union[int](sl2)
+	fmt.Println(un)
 
 	str2 := []any{[]any{"One", "Two", []any{"Foo", []string{"Bar", "Baz", "Qux"}}}, "Foo", []string{"Foo", "Two"}, "Baz", "bar"}
 
 	fmt.Println("==================Union Strings")
-	fls2, _ := Union[string](str2)
-	fmt.Println(fls2)
+	sl3, _ := Union[string](str2)
+	fmt.Println(sl3)
 
-	// fmt.Println("==================Intersection")
-	// fl3, _ := Intersection[int](sl2)
-	// fmt.Println(fl3)
+	fmt.Println("==================Intersection")
+	sl4 := []any{[]int{1, 2, 3}, []int{101, 2, 1, 10}, []int{2, 1}}
+	in, _ := Intersection[int](sl4)
+	fmt.Println(in)
 
 	// fmt.Println("==================IntersectionBy")
 	// fl4, _ := IntersectionBy[float64](func(v float64) float64 {
