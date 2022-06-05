@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"math"
 )
 
 func main() {
@@ -16,13 +17,15 @@ func main() {
 
 	fmt.Println("==================ForEach")
 	ForEach(ints, func(v int) {
-		fmt.Println(v)
+		fmt.Printf("%v ", v)
 	})
+	fmt.Println()
 
 	fmt.Println("==================ForEachRight")
 	ForEachRight(ints, func(v int) {
-		fmt.Println(v)
+		fmt.Printf("%v ", v)
 	})
+	fmt.Println()
 
 	fmt.Println("==================Reduce")
 	reduce := Reduce(ints, func(a, b int) int {
@@ -75,12 +78,14 @@ func main() {
 	in, _ := Intersection[int](sl4)
 	fmt.Println(in)
 
-	// fmt.Println("==================IntersectionBy")
-	// fl4, _ := IntersectionBy[float64](func(v float64) float64 {
-	// 	//fmt.Println(math.Floor(v))
-	// 	return math.Floor(v)
-	// }, []float64{2.1, 1.2, 4.2}, []float64{2.3, 2.2, 3.04})
-	// fmt.Println(fl4)
+	fmt.Println("==================IntersectionBy")
+	fl4, _ := IntersectionBy[float64](func(v float64) float64 {
+		return math.Floor(v)
+	}, []float64{2.1, 1.2, 5.09}, []float64{2.3, 2.2, 3.04, 3.1, 4.8, 4.1})
+	fmt.Println(fl4)
+
+	fmt.Println("==================Duplicate With Index")
+	fmt.Println(DuplicateWithIndex[int](ints))
 }
 
 // Map produces a new slice of values by mapping each value in list through a transformation function.
@@ -148,22 +153,52 @@ func Unique[T comparable](s []T) []T {
 
 // Duplicate returns the duplicated values of a collection.
 func Duplicate[T comparable](s []T) []T {
-	keys := make(map[T]int)
+	keyCount := make(map[T]int)
 	result := []T{}
 
-	// Count how many times is showing up a value in the provided collection.
+	// Count how many times a value is showing up in the provided collection.
 	for _, v := range s {
-		if _, ok := keys[v]; !ok {
-			keys[v] = 0
+		if _, ok := keyCount[v]; !ok {
+			keyCount[v] = 1
 		} else {
-			keys[v]++
+			keyCount[v]++
 		}
 	}
 
-	// Include the values which count frequency is greater than 0 into the resulting slice.
-	for k, v := range keys {
-		if v > 0 {
+	// Include only the values which count frequency is greater than 1 into the resulting slice.
+	for k, v := range keyCount {
+		if v > 1 {
 			result = append(result, k)
+		}
+	}
+	return result
+}
+
+// DuplicateWithIndex returns the duplicated values of a collection and their corresponding position as map.
+func DuplicateWithIndex[T comparable](s []T) map[T]int {
+	var count int
+	kv := make(map[T][]int)
+	result := make(map[T]int)
+
+	// Count how many times a value is showing up in the provided collection.
+	for idx, v := range s {
+		if _, ok := kv[v]; !ok {
+			// Create a slice with a dimension of 2, which first element contains the position (the index)
+			// of the first found duplicate value and the second indicates the number of appearance.
+			kv[v] = make([]int, 2)
+			count = 1
+			kv[v][0] = idx
+			kv[v][1] = count
+		} else {
+			count++
+			kv[v][1] = count
+		}
+	}
+
+	// Include only the values which count frequency is greater than 1 into the resulting slice.
+	for k, v := range kv {
+		if v[1] > 1 {
+			result[k] = v[0]
 		}
 	}
 	return result
@@ -181,6 +216,33 @@ func Merge[T any](s []T, slices ...[]T) []T {
 	merged = append(s, merged...)
 
 	return merged
+}
+
+// Flatten flattens the slice all the way to the deepest nesting level.
+func Flatten[T any](s any) ([]T, error) {
+	return baseFlatten([]T{}, s)
+}
+
+func baseFlatten[T any](acc []T, s any) ([]T, error) {
+	var err error
+
+	switch v := (any)(s).(type) {
+	case T:
+		acc = append(acc, v)
+	case []T:
+		acc = append(acc, v...)
+	case []any:
+		for _, sv := range v {
+			acc, err = baseFlatten(acc, sv)
+			if err != nil {
+				return nil, errors.New("flattening error")
+			}
+		}
+	default:
+		return nil, errors.New("flattening error")
+	}
+
+	return acc, nil
 }
 
 // Union computes the union of the passed-in slice and returns in order the list
@@ -212,10 +274,9 @@ func IntersectionBy[T comparable](fn func(T) T, slices ...[]T) ([]T, error) {
 		merged = append(merged, s...)
 	}
 
-	dup := Duplicate(Map(merged, fn))
-	fmt.Println(dup)
-	for k, _ := range dup {
-		result = append(result, merged[k])
+	dups := DuplicateWithIndex(Map(merged, fn))
+	for _, v := range dups {
+		result = append(result, merged[v])
 	}
 
 	return result, nil
@@ -235,33 +296,6 @@ func IntersectionBy[T comparable](fn func(T) T, slices ...[]T) ([]T, error) {
 // 	}
 // 	return res, nil
 // }
-
-// Flatten flattens the slice all the way to the deepest nesting level.
-func Flatten[T any](s any) ([]T, error) {
-	return baseFlatten([]T{}, s)
-}
-
-func baseFlatten[T any](acc []T, s any) ([]T, error) {
-	var err error
-
-	switch v := (any)(s).(type) {
-	case T:
-		acc = append(acc, v)
-	case []T:
-		acc = append(acc, v...)
-	case []any:
-		for _, sv := range v {
-			acc, err = baseFlatten(acc, sv)
-			if err != nil {
-				return nil, errors.New("flattening error")
-			}
-		}
-	default:
-		return nil, errors.New("flattening error")
-	}
-
-	return acc, nil
-}
 
 // Without returns a copy of the slice with all the values defined in the variadic parameter removed.
 func Without[T1 comparable, T2 any](s []T1, values ...T1) []T1 {
