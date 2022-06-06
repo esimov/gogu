@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"math"
+
+	"golang.org/x/exp/constraints"
 )
 
 func main() {
@@ -41,6 +43,9 @@ func main() {
 
 	fmt.Println("==================Duplicate")
 	fmt.Println(Duplicate[int](ints))
+
+	fmt.Println("==================Duplicate With Index")
+	fmt.Println(DuplicateWithIndex[int](ints))
 
 	fmt.Println("==================Duplicate Strings")
 	strs := []string{"One", "Two", "Foo", "Bar", "Baz", "Foo", "Foo", "One"}
@@ -84,8 +89,66 @@ func main() {
 	}, []float64{2.1, 1.2, 5.09}, []float64{2.3, 2.2, 3.04, 3.1, 4.8, 4.1})
 	fmt.Println(fl4)
 
-	fmt.Println("==================Duplicate With Index")
-	fmt.Println(DuplicateWithIndex[int](ints))
+	fmt.Println("==================Range")
+	rn, err := Range[int](-10, -2, -320)
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println(rn)
+	}
+}
+
+// Range creates a slice of numbers (integers) progressing from start (if omitted defaults to 0) until the end.
+// This method can accept 1, 2 or 3 parameters. Depending on the number of provided parameters, `start`, `step` and `end` are having the following meanings:
+// [start=0]: The start of the range.
+// [step=1]: The value to increment or decrement by.
+// end: The end of the range.
+
+// In case you'd like negative values, use a negative step.
+// TODO make a thorough test.
+func Range[T ~int](params ...T) ([]T, error) {
+	var result []T
+
+	if len(params) > 3 {
+		return nil, errors.New("the method require maximum 3 paramenters.")
+	}
+
+	var start, step, end T
+
+	switch len(params) {
+	case 1:
+		step = 1
+		end = params[len(params)-1]
+	case 2:
+		start = params[0]
+		step = 1
+		end = params[len(params)-1]
+	case 3:
+		start = params[0]
+		step = params[1]
+		end = params[len(params)-1]
+
+		if step == 0 {
+			return nil, errors.New("step value should not be zero.")
+		}
+		if step < 0 && end > start {
+			return nil, errors.New("the end value should be less than the start value in case you are using a negative increment.")
+		}
+	default:
+		return nil, errors.New("the method require at least one paramenter, which should be the range dimension in this case.")
+	}
+
+	if end > 0 {
+		for i := start; i < end; i += step {
+			result = append(result, i)
+		}
+	} else {
+		for i := start; end < i; i -= Abs(step) {
+			result = append(result, i)
+		}
+	}
+
+	return result, nil
 }
 
 // Map produces a new slice of values by mapping each value in list through a transformation function.
@@ -267,6 +330,7 @@ func Intersection[T comparable](s any) ([]T, error) {
 	return Duplicate(flatten), nil
 }
 
+// IntersectionBy is like Intersection, except that it accepts and iteratee function which is invoked on each element of the collection.
 func IntersectionBy[T comparable](fn func(T) T, slices ...[]T) ([]T, error) {
 	merged, result := []T{}, []T{}
 
@@ -281,21 +345,6 @@ func IntersectionBy[T comparable](fn func(T) T, slices ...[]T) ([]T, error) {
 
 	return result, nil
 }
-
-// func IntersectionBy[T comparable](s any, fn func(T) bool) ([]T, error) {
-// 	res := []T{}
-// 	flatten, err := baseFlatten([]T{}, s)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	for _, v := range flatten {
-// 		if fn(v) {
-// 			res = append(res, v)
-// 		}
-// 	}
-// 	return res, nil
-// }
 
 // Without returns a copy of the slice with all the values defined in the variadic parameter removed.
 func Without[T1 comparable, T2 any](s []T1, values ...T1) []T1 {
@@ -336,4 +385,36 @@ loop:
 	}
 
 	return unique
+}
+
+// Min returns the slowest value of the provided parameters.
+func Min[T constraints.Ordered](values ...T) T {
+	var acc T = values[0]
+
+	for _, v := range values {
+		if v < acc {
+			acc = v
+		}
+	}
+	return acc
+}
+
+// Max returns the biggest value of the provided parameters.
+func Max[T constraints.Ordered](values ...T) T {
+	var acc T = values[0]
+
+	for _, v := range values {
+		if v > acc {
+			acc = v
+		}
+	}
+	return acc
+}
+
+// Abs returns the absolut value of x.
+func Abs[T constraints.Signed | constraints.Float](x T) T {
+	if x < 0 {
+		return -x
+	}
+	return x
 }
