@@ -1,40 +1,4 @@
-package main
-
-import "fmt"
-
-func main() {
-	ints := []int{12, 23, 1, 643, 99, 2, 2}
-
-	fmt.Println("==================FindAll")
-	res1 := FindAll(ints, func(v int) bool {
-		return v == 2
-	})
-	fmt.Println(res1)
-
-	fmt.Println("==================FindAllFromLast")
-	res2 := FindAllFromLast(ints, func(v int) bool {
-		return v == 12
-	})
-	fmt.Println(res2)
-
-	fmt.Println("==================FindIndex")
-	res3 := FindIndex(ints, func(v int) bool {
-		return v == 23
-	})
-	fmt.Println(res3)
-
-	fmt.Println("==================FindLastIndex")
-	res4 := FindLastIndex(ints, func(v int) bool {
-		return v == 23
-	})
-	fmt.Println(res4)
-
-	fmt.Println("==================IndexOf")
-	fmt.Println(IndexOf(ints, 12))
-
-	fmt.Println("==================LastIndexOf")
-	fmt.Println(LastIndexOf(ints, 99))
-}
+package gogu
 
 func FindAll[T any](s []T, fn func(T) bool) map[int]T {
 	m := make(map[int]T, len(s))

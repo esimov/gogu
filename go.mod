@@ -1,4 +1,4 @@
-module github.com/esimov/generics
+module github.com/esimov/gogu
 
 go 1.18
 

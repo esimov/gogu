@@ -1,4 +1,4 @@
-package main
+package gogu
 
 import "golang.org/x/exp/constraints"
 
