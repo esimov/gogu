@@ -93,10 +93,21 @@ func main() {
 	inverted := gogu.Invert(mp)
 	fmt.Println(inverted)
 
-	fmt.Println("==================MapEvery")
 	input := map[string]int{"John": 2, "Doe": 1, "Fred": 3}
+
+	fmt.Println("==================MapEvery")
 	every := gogu.MapEvery[string, int](input, func(v int) bool {
 		return v > 1
 	})
 	fmt.Println(every)
+
+	fmt.Println("==================MapSome")
+	some := gogu.MapSome[string, int](input, func(v int) bool {
+		return v > 1
+	})
+	fmt.Println(some)
+
+	fmt.Println("==================MapContains")
+	contains := gogu.MapContains[string, int](input, 3)
+	fmt.Println(contains)
 }

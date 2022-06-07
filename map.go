@@ -105,6 +105,7 @@ func FindKey[K comparable, V any](m map[K]V, fn func(V) bool) K {
 	return result
 }
 
+// MapEvery returns true if all of the elements of a map satisfies the criteria of the iteratee function.
 func MapEvery[K comparable, V any](m map[K]V, fn func(V) bool) bool {
 	for _, v := range m {
 		if !fn(v) {
@@ -115,6 +116,29 @@ func MapEvery[K comparable, V any](m map[K]V, fn func(V) bool) bool {
 	return true
 }
 
+// MapSome returns true if some of the elements of a map satisfies the criteria of the iteratee function.
+func MapSome[K comparable, V any](m map[K]V, fn func(V) bool) bool {
+	for _, v := range m {
+		if fn(v) {
+			return true
+		}
+	}
+
+	return false
+}
+
+// MapContains returns true if the value is present in the list otherwise false.
+func MapContains[K, V comparable](m map[K]V, value V) bool {
+	for _, v := range m {
+		if v == value {
+			return true
+		}
+	}
+	return false
+}
+
+// FilterMap iterates over the elements of a collection and returns a new collection
+// representing all the items which satisfies the criteria formulated in the iteratee function.
 func FilterMap[K comparable, V any](m map[K]V, fn func(V) bool) map[K]V {
 	filtered := map[K]V{}
 
@@ -127,6 +151,7 @@ func FilterMap[K comparable, V any](m map[K]V, fn func(V) bool) map[K]V {
 	return filtered
 }
 
+// Filter2DMap is like FilterMap only applied on a two dimmensional map.
 func Filter2DMap[K comparable, V any](m map[K]map[K]V, fn func(V) bool) map[K]map[K]V {
 	filtered := map[K]map[K]V{}
 
