@@ -40,6 +40,19 @@ func main() {
 	fmt.Println("==================Unique")
 	fmt.Println(gogu.Unique[int](ints))
 
+	fmt.Println("==================Every")
+	fmt.Println(gogu.Every[int](ints, func(v int) bool {
+		return v == 1
+	}))
+
+	fmt.Println("==================Some")
+	fmt.Println(gogu.Some[int](ints, func(v int) bool {
+		return v >= 1
+	}))
+
+	fmt.Println("==================Contains")
+	fmt.Println(gogu.Contains[int](ints, 10))
+
 	fmt.Println("==================Duplicate")
 	fmt.Println(gogu.Duplicate[int](ints))
 

@@ -4,7 +4,7 @@ import (
 	"errors"
 )
 
-// Map produces a new slice of values by mapping each value in list through a transformation function.
+// Map produces a new slice of values by mapping each value in the list through a transformation function.
 func Map[T, R any](s []T, fn func(T) R) []R {
 	result := make([]R, len(s))
 
@@ -14,14 +14,14 @@ func Map[T, R any](s []T, fn func(T) R) []R {
 	return result
 }
 
-// ForEach iterates over the elements of a collection and invokes fn for each element.
+// ForEach iterates over the elements of a collection and invokes the callback fn function on each element.
 func ForEach[T any](s []T, fn func(T)) {
 	for _, v := range s {
 		fn(v)
 	}
 }
 
-// ForEachRight is the same as ForEach, but this starts the iteration from the last element.
+// ForEachRight is the same as ForEach, but starts the iteration from the last element.
 func ForEachRight[T any](s []T, fn func(T)) {
 	for i := len(s) - 1; i >= 0; i-- {
 		fn(s[i])
@@ -29,7 +29,7 @@ func ForEachRight[T any](s []T, fn func(T)) {
 }
 
 // Reduce reduces the collection to a value which is the accumulated result of running
-// each element in collection through the iteratee function yielding a single value.
+// each element in the collection through the callback function yielding a single value.
 func Reduce[T1, T2 any](s []T1, fn func(T1, T2) T2, initVal T2) T2 {
 	actual := initVal
 
@@ -65,6 +65,36 @@ func Unique[T comparable](s []T) []T {
 	}
 
 	return result
+}
+
+// Every returns true if all of the elements of a slice satisfies the criteria of the callback function.
+func Every[T any](s []T, fn func(T) bool) bool {
+	for _, v := range s {
+		if !fn(v) {
+			return false
+		}
+	}
+	return true
+}
+
+// Some returns true if some of the elements of a slice satisfies the criteria of the callback function.
+func Some[T any](s []T, fn func(T) bool) bool {
+	for _, v := range s {
+		if fn(v) {
+			return true
+		}
+	}
+	return false
+}
+
+// Contains returns true if the value is present in the slice.
+func Contains[T comparable](s []T, value T) bool {
+	for _, v := range s {
+		if v == value {
+			return true
+		}
+	}
+	return false
 }
 
 // Duplicate returns the duplicated values of a collection.
@@ -181,7 +211,7 @@ func Intersection[T comparable](s any) ([]T, error) {
 	return Duplicate(flatten), nil
 }
 
-// IntersectionBy is like Intersection, except that it accepts and iteratee function which is invoked on each element of the collection.
+// IntersectionBy is like Intersection, except that it accepts and callback function which is invoked on each element of the collection.
 func IntersectionBy[T comparable](fn func(T) T, slices ...[]T) ([]T, error) {
 	merged, result := []T{}, []T{}
 
@@ -219,9 +249,9 @@ loop:
 
 // Difference is similar to Without, but returns the values from
 // the first slice that are not present in the second slice.
-func Difference[T1 comparable](s1, s2 []T1) []T1 {
-	keys := make(map[T1]bool)
-	unique := []T1{}
+func Difference[T comparable](s1, s2 []T) []T {
+	keys := make(map[T]bool)
+	unique := []T{}
 loop:
 	for _, v := range s1 {
 		for _, val := range s2 {

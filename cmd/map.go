@@ -44,6 +44,46 @@ func main() {
 	})
 	fmt.Println(res1)
 
+	fmt.Println("==================Invert")
+	inverted := gogu.Invert(mp)
+	fmt.Println(inverted)
+
+	input := map[string]int{"John": 2, "Doe": 1, "Fred": 3}
+
+	fmt.Println("==================MapEvery")
+	every := gogu.MapEvery[string, int](input, func(v int) bool {
+		return v > 1
+	})
+	fmt.Println(every)
+
+	fmt.Println("==================MapSome")
+	some := gogu.MapSome[string, int](input, func(v int) bool {
+		return v > 1
+	})
+	fmt.Println(some)
+
+	fmt.Println("==================MapContains")
+	contains := gogu.MapContains[string, int](input, 3)
+	fmt.Println(contains)
+
+	fmt.Println("==================MapCollection")
+	mapcol := map[string]int{"one": 1, "two": 2, "three": 3}
+	col := gogu.MapCollection[string, int](mapcol, func(val int) int {
+		return val * 2
+	})
+	fmt.Println(col)
+
+	fmt.Println("==================Pluck")
+	in := []map[string]any{
+		{"name": "moe", "age": 40},
+		{"name": "larry", "age": 50},
+		{"name": "curly", "age": 60},
+		{"name2": "curly2", "age": 60},
+	}
+	pl := gogu.Pluck[string, any](in, "name")
+
+	fmt.Println(pl)
+
 	fmt.Println("==================FilterMap")
 	res2 := gogu.FilterMap[int, string](mp, func(v string) bool {
 		return v == "John"
@@ -89,25 +129,4 @@ func main() {
 	})
 	fmt.Println(res4)
 
-	fmt.Println("==================Invert")
-	inverted := gogu.Invert(mp)
-	fmt.Println(inverted)
-
-	input := map[string]int{"John": 2, "Doe": 1, "Fred": 3}
-
-	fmt.Println("==================MapEvery")
-	every := gogu.MapEvery[string, int](input, func(v int) bool {
-		return v > 1
-	})
-	fmt.Println(every)
-
-	fmt.Println("==================MapSome")
-	some := gogu.MapSome[string, int](input, func(v int) bool {
-		return v > 1
-	})
-	fmt.Println(some)
-
-	fmt.Println("==================MapContains")
-	contains := gogu.MapContains[string, int](input, 3)
-	fmt.Println(contains)
 }
