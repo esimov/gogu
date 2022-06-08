@@ -50,6 +50,11 @@ func main() {
 		return v >= 1
 	}))
 
+	fmt.Println("==================Partition")
+	fmt.Println(gogu.Partition[int](ints, func(v int) bool {
+		return v == 2
+	}))
+
 	fmt.Println("==================Contains")
 	fmt.Println(gogu.Contains[int](ints, 10))
 
@@ -100,4 +105,5 @@ func main() {
 		return math.Floor(v)
 	}, []float64{2.1, 1.2, 5.09}, []float64{2.3, 2.2, 3.04, 3.1, 4.8, 4.1})
 	fmt.Println(fl4)
+
 }

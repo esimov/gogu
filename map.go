@@ -177,8 +177,8 @@ func Pluck[K comparable, V any](mapSlice []map[K]V, key K) []V {
 	return result
 }
 
-// PartitionMap split the collection into two arrays, the one whose elements satisfy the condition
-// expressed in the callback function (fn) and ones whose elements does not satisfy the condition.
+// PartitionMap split the collection into two arrays, the one whose elements satisfies the condition
+// expressed in the callback function (fn) and one whose elements don't satisfies the condition.
 func PartitionMap[K comparable, V any](mapSlice []map[K]V, fn func(map[K]V) bool) [2][]map[K]V {
 	var result = [2][]map[K]V{}
 

@@ -87,6 +87,22 @@ func Some[T any](s []T, fn func(T) bool) bool {
 	return false
 }
 
+// Partition split the slice into two arrays, the one whose elements satisfies the condition
+// expressed in the callback function (fn) and one whose elements don't satisfies the condition.
+func Partition[T comparable](sl []T, fn func(val T) bool) [2][]T {
+	var result = [2][]T{}
+
+	for _, v := range sl {
+		if fn(v) {
+			result[0] = append(result[0], v)
+		} else {
+			result[1] = append(result[1], v)
+		}
+	}
+
+	return result
+}
+
 // Contains returns true if the value is present in the slice.
 func Contains[T comparable](s []T, value T) bool {
 	for _, v := range s {
