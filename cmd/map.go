@@ -75,14 +75,19 @@ func main() {
 
 	fmt.Println("==================Pluck")
 	in := []map[string]any{
-		{"name": "moe", "age": 40},
-		{"name": "larry", "age": 50},
-		{"name": "curly", "age": 60},
-		{"name2": "curly2", "age": 60},
+		{"name": "moe", "age": 40, "active": false},
+		{"name": "larry", "age": 50, "active": true},
+		{"name": "curly", "age": 60, "active": false},
+		{"name": "moly", "age": 60, "active": false},
 	}
 	pl := gogu.Pluck[string, any](in, "name")
-
 	fmt.Println(pl)
+
+	fmt.Println("==================PartitionMap")
+	pm := gogu.PartitionMap[string, any](in, func(m map[string]any) bool {
+		return m["age"] == false
+	})
+	fmt.Println(pm)
 
 	fmt.Println("==================FilterMap")
 	res2 := gogu.FilterMap[int, string](mp, func(v string) bool {

@@ -162,15 +162,36 @@ func MapCollection[K comparable, V any](m map[K]V, fn func(V) V) []V {
 }
 
 // Pluck extracts all the values of a map by the key definition.
-func Pluck[K comparable, V any](sliceMap []map[K]V, key K) []V {
+func Pluck[K comparable, V any](mapSlice []map[K]V, key K) []V {
 	var result = []V{}
 
-	for _, mp := range sliceMap {
-		mapped := FindByKey(mp, func(val K) bool {
-			return val == key
+	for _, m := range mapSlice {
+		mapped := FindByKey(m, func(k K) bool {
+			return k == key
 		})
 		if _, ok := mapped[key]; ok {
 			result = append(result, mapped[key])
+		}
+	}
+
+	return result
+}
+
+// PartitionMap split the collection into two arrays, the one whose elements satisfy the condition
+// expressed in the callback function (fn) and ones whose elements does not satisfy the condition.
+func PartitionMap[K comparable, V any](mapSlice []map[K]V, fn func(map[K]V) bool) [2][]map[K]V {
+	var result = [2][]map[K]V{}
+
+	for _, m := range mapSlice {
+		for k, v := range m {
+			m[k] = v
+			if fn(m) {
+				result[0] = append(result[0], m)
+				break
+			} else {
+				result[1] = append(result[1], m)
+				break
+			}
 		}
 	}
 
