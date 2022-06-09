@@ -75,23 +75,25 @@ func main() {
 	fmt.Println(gogu.Without[int, int](ints, 2, 1, 12))
 
 	fmt.Println("==================Difference")
-	fmt.Println(gogu.Difference[int](ints, []int{2, 10, 4}))
+	fmt.Println(gogu.Difference[int]([]int{1, 2, 3, 4, 5}, []int{5, 2, 10}))
 
-	sl1 := []any{[]any{1.0, 2.0, []any{3.0, []float64{4, 5, 6}}}, 7.0}
+	fmt.Println("==================DifferenceBy")
+	fmt.Println(gogu.DifferenceBy[float64]([]float64{2.1, 1.2}, []float64{2.3, 3.4}, func(v float64) float64 {
+		return math.Floor(v)
+	}))
 
 	fmt.Println("==================Flatten")
+	sl1 := []any{[]any{1.0, 2.0, []any{3.0, []float64{4, 5, 6}}}, 7.0}
 	fl, _ := gogu.Flatten[float64](sl1)
 	fmt.Println(fl)
 
-	sl2 := []any{[]any{1, 2, []any{3, []int{4, 5, 6}}}, 7, []int{1, 2}, 3, []int{4, 7}, 10, 10}
-
 	fmt.Println("==================Union")
+	sl2 := []any{[]any{1, 2, []any{3, []int{4, 5, 6}}}, 7, []int{1, 2}, 3, []int{4, 7}, 10, 10}
 	un, _ := gogu.Union[int](sl2)
 	fmt.Println(un)
 
-	str2 := []any{[]any{"One", "Two", []any{"Foo", []string{"Bar", "Baz", "Qux"}}}, "Foo", []string{"Foo", "Two"}, "Baz", "bar"}
-
 	fmt.Println("==================Union Strings")
+	str2 := []any{[]any{"One", "Two", []any{"Foo", []string{"Bar", "Baz", "Qux"}}}, "Foo", []string{"Foo", "Two"}, "Baz", "bar"}
 	sl3, _ := gogu.Union[string](str2)
 	fmt.Println(sl3)
 
@@ -105,5 +107,4 @@ func main() {
 		return math.Floor(v)
 	}, []float64{2.1, 1.2, 5.09}, []float64{2.3, 2.2, 3.04, 3.1, 4.8, 4.1})
 	fmt.Println(fl4)
-
 }

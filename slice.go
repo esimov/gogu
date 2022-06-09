@@ -283,3 +283,22 @@ loop:
 
 	return unique
 }
+
+func DifferenceBy[T comparable](s1, s2 []T, fn func(val T) T) []T {
+	keys := make(map[T]bool)
+	unique := []T{}
+loop:
+	for _, v := range s1 {
+		for _, val := range s2 {
+			if fn(v) == fn(val) {
+				continue loop
+			}
+		}
+		if _, ok := keys[v]; !ok {
+			keys[v] = true
+			unique = append(unique, v)
+		}
+	}
+
+	return unique
+}
