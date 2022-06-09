@@ -40,6 +40,11 @@ func main() {
 	fmt.Println("==================Unique")
 	fmt.Println(gogu.Unique[int](ints))
 
+	fmt.Println("==================UniqueBy")
+	fmt.Println(gogu.UniqueBy[float64]([]float64{2.1, 1.2, 2.3}, func(v float64) float64 {
+		return math.Floor(v)
+	}))
+
 	fmt.Println("==================Every")
 	fmt.Println(gogu.Every[int](ints, func(v int) bool {
 		return v == 1

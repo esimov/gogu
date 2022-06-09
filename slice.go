@@ -67,6 +67,22 @@ func Unique[T comparable](s []T) []T {
 	return result
 }
 
+// UniqueBy is like Unique except that it accept a callback function which is invoked on each
+// element of the slice applying the criterion by which the uniqueness is computed.
+func UniqueBy[T comparable](s []T, fn func(v T) T) []T {
+	keys := make(map[T]bool)
+	result := []T{}
+
+	for _, v := range s {
+		if _, ok := keys[fn(v)]; !ok {
+			keys[fn(v)] = true
+			result = append(result, v)
+		}
+	}
+
+	return result
+}
+
 // Every returns true if all of the elements of a slice satisfies the criteria of the callback function.
 func Every[T any](s []T, fn func(T) bool) bool {
 	for _, v := range s {
@@ -284,6 +300,8 @@ loop:
 	return unique
 }
 
+// DifferenceBy is like Difference, except that invokes a callback function on each
+// element of the slice, applying the criterion by which the difference is computed.
 func DifferenceBy[T comparable](s1, s2 []T, fn func(val T) T) []T {
 	keys := make(map[T]bool)
 	unique := []T{}
