@@ -12,6 +12,9 @@ func main() {
 	fmt.Println("==================Sum")
 	fmt.Println(gogu.Sum([]int{1, 2, 3}))
 
+	fmt.Println("==================Mean")
+	fmt.Println(gogu.Mean([]int{4, 2, 8, 6}))
+
 	ints := []int{2, 1, 4, 12, 8, 10, 22, 2, 10, 2, 13, 10, 4, 13}
 
 	fmt.Println("==================Map")

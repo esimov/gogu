@@ -23,6 +23,15 @@ func SumBy[T Number](collection []T, fn func(val T) T) T {
 	return acc
 }
 
+// Mean computes the mean of the values in slice.
+func Mean[T Number](s []T) T {
+	var result T
+	for i := 0; i < len(s); i++ {
+		result += s[i]
+	}
+	return result / T(len(s))
+}
+
 // Map produces a new slice of values by mapping each value in the list through a transformation function.
 func Map[T, R any](s []T, fn func(T) R) []R {
 	result := make([]R, len(s))
