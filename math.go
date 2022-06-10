@@ -43,12 +43,3 @@ func Clamp[T Number](number, lower, upper T) T {
 	}
 	return number
 }
-
-// SumBy sums up the values in a collection with the result returned by the callback function.
-func SumBy[T Number](collection []T, fn func(val T) T) T {
-	var acc T
-	for _, v := range collection {
-		acc += fn(v)
-	}
-	return acc
-}

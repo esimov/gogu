@@ -4,6 +4,25 @@ import (
 	"errors"
 )
 
+// Sum returns the sum of the slice items. These needs to satisfy the type constraints declared as Number.
+func Sum[T Number](s []T) T {
+	var acc T
+	for _, v := range s {
+		acc += v
+	}
+	return acc
+}
+
+// SumBy is like Sum except the it accept a callback function which is invoked
+// for each element in the slice to generate the value to be summed.
+func SumBy[T Number](collection []T, fn func(val T) T) T {
+	var acc T
+	for _, v := range collection {
+		acc += fn(v)
+	}
+	return acc
+}
+
 // Map produces a new slice of values by mapping each value in the list through a transformation function.
 func Map[T, R any](s []T, fn func(T) R) []R {
 	result := make([]R, len(s))

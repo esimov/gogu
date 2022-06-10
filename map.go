@@ -9,15 +9,6 @@ type Number interface {
 	constraints.Float | constraints.Integer
 }
 
-// Sum sums up all the values from the map and returns the resulted value.
-func Sum[K comparable, V Number](m map[K]V) V {
-	var acc V
-	for _, v := range m {
-		acc += v
-	}
-	return acc
-}
-
 // Keys retrieve all the existing keys of a map.
 func Keys[K comparable, V any](m map[K]V) []K {
 	keys := make([]K, len(m))

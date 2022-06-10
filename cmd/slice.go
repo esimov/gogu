@@ -8,6 +8,10 @@ import (
 )
 
 func main() {
+
+	fmt.Println("==================Sum")
+	fmt.Println(gogu.Sum([]int{1, 2, 3}))
+
 	ints := []int{2, 1, 4, 12, 8, 10, 22, 2, 10, 2, 13, 10, 4, 13}
 
 	fmt.Println("==================Map")
