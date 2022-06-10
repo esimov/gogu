@@ -12,7 +12,7 @@ import (
 
 // In case you'd like negative values, use a negative step.
 // TODO make a thorough test.
-func Range[T ~int](params ...T) ([]T, error) {
+func Range[T Number](params ...T) ([]T, error) {
 	var result []T
 
 	if len(params) > 3 {
@@ -58,7 +58,7 @@ func Range[T ~int](params ...T) ([]T, error) {
 }
 
 // RangeRight is like Range, only that it populates the slice in descending order.
-func RangeRight[T ~int](params ...T) ([]T, error) {
+func RangeRight[T Number](params ...T) ([]T, error) {
 	ran, err := Range(params...)
 	if err != nil {
 		return nil, err

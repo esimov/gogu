@@ -4,13 +4,13 @@ import (
 	"golang.org/x/exp/constraints"
 )
 
-// Numbers is a custom type set of constraints extending the Float and Integer type set from the experimental constraints package.
-type Numbers interface {
+// Number is a custom type set of constraints extending the Float and Integer type set from the experimental constraints package.
+type Number interface {
 	constraints.Float | constraints.Integer
 }
 
 // Sum sums up all the values from the map and returns the resulted value.
-func Sum[K comparable, V Numbers](m map[K]V) V {
+func Sum[K comparable, V Number](m map[K]V) V {
 	var acc V
 	for _, v := range m {
 		acc += v

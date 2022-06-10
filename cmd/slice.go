@@ -112,4 +112,7 @@ func main() {
 		return math.Floor(v)
 	}, []float64{2.1, 1.2, 5.09}, []float64{2.3, 2.2, 3.04, 3.1, 4.8, 4.1})
 	fmt.Println(fl4)
+
+	fmt.Println("==================Chunk")
+	fmt.Println(gogu.Chunk([]int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}, 5))
 }

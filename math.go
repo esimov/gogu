@@ -27,9 +27,28 @@ func Max[T constraints.Ordered](values ...T) T {
 }
 
 // Abs returns the absolut value of x.
-func Abs[T constraints.Signed | constraints.Float](x T) T {
+func Abs[T Number](x T) T {
 	if x < 0 {
 		return -x
 	}
 	return x
+}
+
+// Clamp restricts a number between two other numbers.
+func Clamp[T Number](number, lower, upper T) T {
+	if number <= lower {
+		return lower
+	} else if number >= upper {
+		return upper
+	}
+	return number
+}
+
+// SumBy sums up the values in a collection with the result returned by the callback function.
+func SumBy[T Number](collection []T, fn func(val T) T) T {
+	var acc T
+	for _, v := range collection {
+		acc += fn(v)
+	}
+	return acc
 }

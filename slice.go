@@ -320,3 +320,19 @@ loop:
 
 	return unique
 }
+
+// Chunk split the slice into groups of slices each having the length of size.
+// In case the source slice cannot be distributed equally, the last slice will contain fewer elements.
+func Chunk[T comparable](slice []T, size int) [][]T {
+	var result = make([][]T, 0, len(slice)/2+1)
+	for i := 0; i < len(slice); i++ {
+		if i%size == 0 {
+			if i+size < len(slice) {
+				result = append(result, slice[i:i+size])
+			} else {
+				result = append(result, slice[i:])
+			}
+		}
+	}
+	return result
+}
