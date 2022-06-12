@@ -91,6 +91,14 @@ func main() {
 		return len(key) == 1
 	}))
 
+	fmt.Println("==================Omit")
+	fmt.Println(gogu.Omit(map[string]any{"name": "moe", "age": 40, "active": false}, "name", "age"))
+
+	fmt.Println("==================OmitBy")
+	fmt.Println(gogu.OmitBy(map[string]int{"a": 1, "b": 2, "c": 3}, func(key string, val int) bool {
+		return val%2 == 1
+	}))
+
 	fmt.Println("==================PartitionMap")
 	pm := gogu.PartitionMap[string, any](in, func(m map[string]any) bool {
 		return m["age"] == false

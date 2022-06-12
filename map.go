@@ -194,6 +194,28 @@ func PickBy[K comparable, V any](collection map[K]V, fn func(key K, val V) bool)
 	return result
 }
 
+// Omit is the opposite of Pick, it extracts all the map elements which keys are not omitted.
+func Omit[K comparable, V any](collection map[K]V, keys ...K) map[K]V {
+	for k := range collection {
+		if Contains(keys, k) {
+			delete(collection, k)
+		}
+	}
+
+	return collection
+}
+
+// OmitBy is the opposite of Omit, it removes all the map elements for which the callback function returns true.
+func OmitBy[K comparable, V any](collection map[K]V, fn func(key K, val V) bool) map[K]V {
+	for k, v := range collection {
+		if fn(k, v) {
+			delete(collection, k)
+		}
+	}
+
+	return collection
+}
+
 // PartitionMap split the collection into two arrays, the one whose elements satisfies the condition
 // expressed in the callback function (fn) and one whose elements don't satisfies the condition.
 func PartitionMap[K comparable, V any](mapSlice []map[K]V, fn func(map[K]V) bool) [2][]map[K]V {
