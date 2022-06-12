@@ -23,7 +23,7 @@ func SumBy[T Number](collection []T, fn func(val T) T) T {
 	return acc
 }
 
-// Mean computes the mean of the values in slice.
+// Mean computes the mean value of the slice elements.
 func Mean[T Number](s []T) T {
 	var result T
 	for i := 0; i < len(s); i++ {
@@ -160,7 +160,7 @@ func Contains[T comparable](s []T, value T) bool {
 // Duplicate returns the duplicated values of a collection.
 func Duplicate[T comparable](s []T) []T {
 	keyCount := make(map[T]int)
-	result := []T{}
+	result := make([]T, 0, len(s))
 
 	// Count how many times a value is showing up in the provided collection.
 	for _, v := range s {
@@ -212,7 +212,7 @@ func DuplicateWithIndex[T comparable](s []T) map[T]int {
 
 // Merge merges the first slice with the other slices defined as variadic parameter.
 func Merge[T any](s []T, slices ...[]T) []T {
-	merged := []T{}
+	merged := make([]T, 0, len(s))
 
 	for i := 0; i < len(slices); i++ {
 		merged = append(merged, slices[i]...)
@@ -273,7 +273,8 @@ func Intersection[T comparable](s any) ([]T, error) {
 
 // IntersectionBy is like Intersection, except that it accepts and callback function which is invoked on each element of the collection.
 func IntersectionBy[T comparable](fn func(T) T, slices ...[]T) ([]T, error) {
-	merged, result := []T{}, []T{}
+	merged := make([]T, 0, len(slices))
+	result := make([]T, 0, len(slices))
 
 	for _, s := range slices {
 		merged = append(merged, s...)
@@ -290,7 +291,7 @@ func IntersectionBy[T comparable](fn func(T) T, slices ...[]T) ([]T, error) {
 // Without returns a copy of the slice with all the values defined in the variadic parameter removed.
 func Without[T1 comparable, T2 any](s []T1, values ...T1) []T1 {
 	keys := make(map[T1]bool)
-	uni := []T1{}
+	uni := make([]T1, 0, len(s))
 loop:
 	for _, v := range s {
 		for _, val := range values {
@@ -353,6 +354,7 @@ loop:
 // In case the source slice cannot be distributed equally, the last slice will contain fewer elements.
 func Chunk[T comparable](slice []T, size int) [][]T {
 	var result = make([][]T, 0, len(slice)/2+1)
+
 	for i := 0; i < len(slice); i++ {
 		if i%size == 0 {
 			if i+size < len(slice) {
@@ -362,5 +364,49 @@ func Chunk[T comparable](slice []T, size int) [][]T {
 			}
 		}
 	}
+	return result
+}
+
+// Drop creates a new slice with n elements dropped from the beginning.
+func Drop[T any](s []T, n int) []T {
+	if n < len(s) {
+		return s[n:]
+	}
+	return []T{}
+}
+
+// DropRight creates a new slice with n elements dropped from the end.
+func DropRight[T any](s []T, n int) []T {
+	if n < len(s) {
+		return s[:len(s)-n]
+	}
+	return []T{}
+}
+
+// DropWhile creates a new slice excluding the elements dropped from the beginning.
+// Elements are dropped by applying the conditional invoked in the callback function.
+func DropWhile[T any](s []T, fn func(val T) bool) []T {
+	result := make([]T, 0, len(s))
+
+	for _, v := range s {
+		if !fn(v) {
+			result = append(result, v)
+		}
+	}
+
+	return result
+}
+
+// DropRightWhile creates a new slice excluding the elements dropped from the beginning.
+// Elements are dropped by applying the conditional invoked in the callback function.
+func DropRightWhile[T any](s []T, fn func(val T) bool) []T {
+	result := make([]T, 0, len(s))
+
+	for i := len(s) - 1; i > 0; i-- {
+		if !fn(s[i]) {
+			result = append(result, s[i])
+		}
+	}
+
 	return result
 }

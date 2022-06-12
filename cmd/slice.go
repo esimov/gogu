@@ -122,4 +122,20 @@ func main() {
 
 	fmt.Println("==================Chunk")
 	fmt.Println(gogu.Chunk([]int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}, 5))
+
+	fmt.Println("==================Drop")
+	fmt.Println(gogu.Drop([]int{1, 2, 3}, 2))
+
+	fmt.Println("==================DropRight")
+	fmt.Println(gogu.DropRight([]int{1, 2, 3}, 1))
+
+	fmt.Println("==================DropWhile")
+	fmt.Println(gogu.DropWhile([]string{"AAA", "AA", "A", "AAAA"}, func(elem string) bool {
+		return len(elem) > 2
+	}))
+
+	fmt.Println("==================DropRightWhile")
+	fmt.Println(gogu.DropRightWhile([]string{"AAA", "AA", "A", "AAAA"}, func(elem string) bool {
+		return len(elem) > 2
+	}))
 }
