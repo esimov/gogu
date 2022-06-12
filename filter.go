@@ -12,6 +12,17 @@ func Filter[T any](s []T, fn func(T) bool) []T {
 	return rs
 }
 
+// Reject is the opposite of Filter.
+// It returns the values from the collection without the elements for which the callback function returns true.
+func Reject[T any](s []T, fn func(val T) bool) []T {
+	for i := 0; i < len(s); i++ {
+		if fn(s[i]) {
+			s = append(s[:i], s[i+1:]...)
+		}
+	}
+	return s
+}
+
 // FilterMap iterates over the elements of a collection and returns a new collection
 // representing all the items which satisfies the criteria formulated in the callback function.
 func FilterMap[K comparable, V any](m map[K]V, fn func(V) bool) map[K]V {

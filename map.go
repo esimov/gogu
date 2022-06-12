@@ -168,6 +168,32 @@ func Pluck[K comparable, V any](mapSlice []map[K]V, key K) []V {
 	return result
 }
 
+// Pick extracts the elements from the map which have the key defined in the allowed keys.
+func Pick[K comparable, V any](collection map[K]V, keys ...K) map[K]V {
+	var result = make(map[K]V)
+
+	for k := range collection {
+		if Contains(keys, k) {
+			result[k] = collection[k]
+		}
+	}
+
+	return result
+}
+
+// PickBy extracts all the map elements for which the callback function returns truthy.
+func PickBy[K comparable, V any](collection map[K]V, fn func(key K, val V) bool) map[K]V {
+	var result = make(map[K]V)
+
+	for k, v := range collection {
+		if fn(k, v) {
+			result[k] = collection[k]
+		}
+	}
+
+	return result
+}
+
 // PartitionMap split the collection into two arrays, the one whose elements satisfies the condition
 // expressed in the callback function (fn) and one whose elements don't satisfies the condition.
 func PartitionMap[K comparable, V any](mapSlice []map[K]V, fn func(map[K]V) bool) [2][]map[K]V {

@@ -83,6 +83,14 @@ func main() {
 	pl := gogu.Pluck[string, any](in, "name")
 	fmt.Println(pl)
 
+	fmt.Println("==================Pick")
+	fmt.Println(gogu.Pick(map[string]any{"name": "moe", "age": 40, "active": false}, "name", "age"))
+
+	fmt.Println("==================PickBy")
+	fmt.Println(gogu.PickBy(map[string]int{"aa": 1, "b": 2, "c": 3}, func(key string, val int) bool {
+		return len(key) == 1
+	}))
+
 	fmt.Println("==================PartitionMap")
 	pm := gogu.PartitionMap[string, any](in, func(m map[string]any) bool {
 		return m["age"] == false

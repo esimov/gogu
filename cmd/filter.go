@@ -9,6 +9,7 @@ import (
 func main() {
 	ints := []int{12, 23, 1, 643, 99}
 
+	fmt.Println("==================Filter")
 	result := gogu.Filter(ints, func(a int) bool {
 		return a > 10
 	})
@@ -19,6 +20,11 @@ func main() {
 		return a > 10
 	})
 	fmt.Println(result2)
+
+	fmt.Println("==================Reject")
+	fmt.Println(gogu.Reject([]int{1, 2, 3, 4, 5, 6}, func(num int) bool {
+		return num%2 == 0
+	}))
 
 	mp := map[int]string{1: "John", 2: "Doe", 3: "Fred"}
 
