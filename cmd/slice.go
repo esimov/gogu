@@ -138,4 +138,7 @@ func main() {
 	fmt.Println(gogu.DropRightWhile([]string{"AAA", "AA", "A", "AAAA"}, func(elem string) bool {
 		return len(elem) > 2
 	}))
+
+	fmt.Println("==================Shuffle")
+	fmt.Println(gogu.Shuffle([]int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}))
 }
