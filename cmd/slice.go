@@ -141,4 +141,12 @@ func main() {
 
 	fmt.Println("==================Shuffle")
 	fmt.Println(gogu.Shuffle([]int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}))
+
+	fmt.Println("==================GroupBy")
+	fmt.Println(gogu.GroupBy[float64, float64]([]float64{1.3, 2.1, 2.4}, func(val float64) float64 {
+		return math.Floor(val)
+	}))
+	fmt.Println(gogu.GroupBy[string, int]([]string{"one", "two", "three"}, func(val string) int {
+		return len(val)
+	}))
 }

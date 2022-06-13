@@ -2,12 +2,13 @@ package gogu
 
 import (
 	"errors"
+	"fmt"
 )
 
 // Sum returns the sum of the slice items. These needs to satisfy the type constraints declared as Number.
-func Sum[T Number](s []T) T {
+func Sum[T Number](slice []T) T {
 	var acc T
-	for _, v := range s {
+	for _, v := range slice {
 		acc += v
 	}
 	return acc
@@ -15,53 +16,53 @@ func Sum[T Number](s []T) T {
 
 // SumBy is like Sum except the it accept a callback function which is invoked
 // for each element in the slice to generate the value to be summed.
-func SumBy[T Number](collection []T, fn func(val T) T) T {
+func SumBy[T Number](slice []T, fn func(T) T) T {
 	var acc T
-	for _, v := range collection {
+	for _, v := range slice {
 		acc += fn(v)
 	}
 	return acc
 }
 
 // Mean computes the mean value of the slice elements.
-func Mean[T Number](s []T) T {
+func Mean[T Number](slice []T) T {
 	var result T
-	for i := 0; i < len(s); i++ {
-		result += s[i]
+	for i := 0; i < len(slice); i++ {
+		result += slice[i]
 	}
-	return result / T(len(s))
+	return result / T(len(slice))
 }
 
 // Map produces a new slice of values by mapping each value in the list through a transformation function.
-func Map[T, R any](s []T, fn func(T) R) []R {
-	result := make([]R, len(s))
+func Map[T1, T2 any](slice []T1, fn func(T1) T2) []T2 {
+	result := make([]T2, len(slice))
 
-	for idx, v := range s {
+	for idx, v := range slice {
 		result[idx] = fn(v)
 	}
 	return result
 }
 
 // ForEach iterates over the elements of a collection and invokes the callback fn function on each element.
-func ForEach[T any](s []T, fn func(T)) {
-	for _, v := range s {
+func ForEach[T any](slice []T, fn func(T)) {
+	for _, v := range slice {
 		fn(v)
 	}
 }
 
 // ForEachRight is the same as ForEach, but starts the iteration from the last element.
-func ForEachRight[T any](s []T, fn func(T)) {
-	for i := len(s) - 1; i >= 0; i-- {
-		fn(s[i])
+func ForEachRight[T any](slice []T, fn func(T)) {
+	for i := len(slice) - 1; i >= 0; i-- {
+		fn(slice[i])
 	}
 }
 
 // Reduce reduces the collection to a value which is the accumulated result of running
 // each element in the collection through the callback function yielding a single value.
-func Reduce[T1, T2 any](s []T1, fn func(T1, T2) T2, initVal T2) T2 {
+func Reduce[T1, T2 any](slice []T1, fn func(T1, T2) T2, initVal T2) T2 {
 	actual := initVal
 
-	for _, v := range s {
+	for _, v := range slice {
 		actual = fn(v, actual)
 	}
 
@@ -70,22 +71,22 @@ func Reduce[T1, T2 any](s []T1, fn func(T1, T2) T2, initVal T2) T2 {
 
 // Reverse reverses the order of elements so that the first element becomes the last,
 // the second element becomes the second to last, and so on.
-func Reverse[T any](s []T) []T {
-	rev := make([]T, len(s))
+func Reverse[T any](slice []T) []T {
+	rev := make([]T, len(slice))
 
-	for i, j := 0, len(s)-1; i < j; i, j = i+1, j-1 {
-		rev[i], rev[j] = s[j], s[i]
+	for i, j := 0, len(slice)-1; i < j; i, j = i+1, j-1 {
+		rev[i], rev[j] = slice[j], slice[i]
 	}
 
 	return rev
 }
 
 // Unique returns the collection unique values.
-func Unique[T comparable](s []T) []T {
+func Unique[T comparable](slice []T) []T {
 	keys := make(map[T]bool)
 	result := []T{}
 
-	for _, v := range s {
+	for _, v := range slice {
 		if _, ok := keys[v]; !ok {
 			keys[v] = true
 			result = append(result, v)
@@ -97,11 +98,11 @@ func Unique[T comparable](s []T) []T {
 
 // UniqueBy is like Unique except that it accept a callback function which is invoked on each
 // element of the slice applying the criterion by which the uniqueness is computed.
-func UniqueBy[T comparable](s []T, fn func(v T) T) []T {
+func UniqueBy[T comparable](slice []T, fn func(v T) T) []T {
 	keys := make(map[T]bool)
 	result := []T{}
 
-	for _, v := range s {
+	for _, v := range slice {
 		if _, ok := keys[fn(v)]; !ok {
 			keys[fn(v)] = true
 			result = append(result, v)
@@ -112,8 +113,8 @@ func UniqueBy[T comparable](s []T, fn func(v T) T) []T {
 }
 
 // Every returns true if all of the elements of a slice satisfies the criteria of the callback function.
-func Every[T any](s []T, fn func(T) bool) bool {
-	for _, v := range s {
+func Every[T any](slice []T, fn func(T) bool) bool {
+	for _, v := range slice {
 		if !fn(v) {
 			return false
 		}
@@ -122,8 +123,8 @@ func Every[T any](s []T, fn func(T) bool) bool {
 }
 
 // Some returns true if some of the elements of a slice satisfies the criteria of the callback function.
-func Some[T any](s []T, fn func(T) bool) bool {
-	for _, v := range s {
+func Some[T any](slice []T, fn func(T) bool) bool {
+	for _, v := range slice {
 		if fn(v) {
 			return true
 		}
@@ -133,10 +134,10 @@ func Some[T any](s []T, fn func(T) bool) bool {
 
 // Partition split the slice into two arrays, the one whose elements satisfies the condition
 // expressed in the callback function (fn) and one whose elements don't satisfies the condition.
-func Partition[T comparable](sl []T, fn func(val T) bool) [2][]T {
+func Partition[T comparable](slice []T, fn func(T) bool) [2][]T {
 	var result = [2][]T{}
 
-	for _, v := range sl {
+	for _, v := range slice {
 		if fn(v) {
 			result[0] = append(result[0], v)
 		} else {
@@ -148,8 +149,8 @@ func Partition[T comparable](sl []T, fn func(val T) bool) [2][]T {
 }
 
 // Contains returns true if the value is present in the slice.
-func Contains[T comparable](s []T, value T) bool {
-	for _, v := range s {
+func Contains[T comparable](slice []T, value T) bool {
+	for _, v := range slice {
 		if v == value {
 			return true
 		}
@@ -158,12 +159,12 @@ func Contains[T comparable](s []T, value T) bool {
 }
 
 // Duplicate returns the duplicated values of a collection.
-func Duplicate[T comparable](s []T) []T {
+func Duplicate[T comparable](slice []T) []T {
 	keyCount := make(map[T]int)
-	result := make([]T, 0, len(s))
+	result := make([]T, 0, len(slice))
 
 	// Count how many times a value is showing up in the provided collection.
-	for _, v := range s {
+	for _, v := range slice {
 		if _, ok := keyCount[v]; !ok {
 			keyCount[v] = 1
 		} else {
@@ -181,28 +182,28 @@ func Duplicate[T comparable](s []T) []T {
 }
 
 // DuplicateWithIndex returns the duplicated values of a collection and their corresponding position as map.
-func DuplicateWithIndex[T comparable](s []T) map[T]int {
+func DuplicateWithIndex[T comparable](slice []T) map[T]int {
 	var count int
-	kv := make(map[T][]int)
+	kvMap := make(map[T][]int)
 	result := make(map[T]int)
 
 	// Count how many times a value is showing up in the provided collection.
-	for idx, v := range s {
-		if _, ok := kv[v]; !ok {
+	for idx, v := range slice {
+		if _, ok := kvMap[v]; !ok {
 			// Create a slice with a dimension of 2, which first element contains the position (the index)
 			// of the first found duplicate value and the second indicates the number of appearance.
-			kv[v] = make([]int, 2)
+			kvMap[v] = make([]int, 2)
 			count = 1
-			kv[v][0] = idx
-			kv[v][1] = count
+			kvMap[v][0] = idx
+			kvMap[v][1] = count
 		} else {
 			count++
-			kv[v][1] = count
+			kvMap[v][1] = count
 		}
 	}
 
 	// Include only the values which count frequency is greater than 1 into the resulting slice.
-	for k, v := range kv {
+	for k, v := range kvMap {
 		if v[1] > 1 {
 			result[k] = v[0]
 		}
@@ -223,14 +224,14 @@ func Merge[T any](s []T, slices ...[]T) []T {
 }
 
 // Flatten flattens the slice all the way to the deepest nesting level.
-func Flatten[T any](s any) ([]T, error) {
-	return baseFlatten([]T{}, s)
+func Flatten[T any](slice any) ([]T, error) {
+	return baseFlatten([]T{}, slice)
 }
 
-func baseFlatten[T any](acc []T, s any) ([]T, error) {
+func baseFlatten[T any](acc []T, slice any) ([]T, error) {
 	var err error
 
-	switch v := (any)(s).(type) {
+	switch v := (any)(slice).(type) {
 	case T:
 		acc = append(acc, v)
 	case []T:
@@ -251,19 +252,19 @@ func baseFlatten[T any](acc []T, s any) ([]T, error) {
 
 // Union computes the union of the passed-in slice and returns in order the list
 // of unique items that are present in one or more of the slices.
-func Union[T comparable](s any) ([]T, error) {
+func Union[T comparable](slice any) ([]T, error) {
 	var err error
-	if flatten, err := baseFlatten([]T{}, s); err == nil {
+	if flatten, err := baseFlatten([]T{}, slice); err == nil {
 		return Unique(flatten), nil
 	}
 	return nil, err
 }
 
 // Intersection computes the list of values that are the intersection of all the slices.
-func Intersection[T comparable](s any) ([]T, error) {
+func Intersection[T comparable](slice any) ([]T, error) {
 	var err error
 
-	flatten, err := baseFlatten([]T{}, s)
+	flatten, err := baseFlatten([]T{}, slice)
 	if err != nil {
 		return nil, err
 	}
@@ -289,11 +290,11 @@ func IntersectionBy[T comparable](fn func(T) T, slices ...[]T) ([]T, error) {
 }
 
 // Without returns a copy of the slice with all the values defined in the variadic parameter removed.
-func Without[T1 comparable, T2 any](s []T1, values ...T1) []T1 {
+func Without[T1 comparable, T2 any](slice []T1, values ...T1) []T1 {
 	keys := make(map[T1]bool)
-	uni := make([]T1, 0, len(s))
+	uni := make([]T1, 0, len(slice))
 loop:
-	for _, v := range s {
+	for _, v := range slice {
 		for _, val := range values {
 			if v == val {
 				continue loop
@@ -368,27 +369,27 @@ func Chunk[T comparable](slice []T, size int) [][]T {
 }
 
 // Drop creates a new slice with n elements dropped from the beginning.
-func Drop[T any](s []T, n int) []T {
-	if n < len(s) {
-		return s[n:]
+func Drop[T any](slice []T, n int) []T {
+	if n < len(slice) {
+		return slice[n:]
 	}
 	return []T{}
 }
 
 // DropRight creates a new slice with n elements dropped from the end.
-func DropRight[T any](s []T, n int) []T {
-	if n < len(s) {
-		return s[:len(s)-n]
+func DropRight[T any](slice []T, n int) []T {
+	if n < len(slice) {
+		return slice[:len(slice)-n]
 	}
 	return []T{}
 }
 
 // DropWhile creates a new slice excluding the elements dropped from the beginning.
 // Elements are dropped by applying the conditional invoked in the callback function.
-func DropWhile[T any](s []T, fn func(val T) bool) []T {
-	result := make([]T, 0, len(s))
+func DropWhile[T any](slice []T, fn func(T) bool) []T {
+	result := make([]T, 0, len(slice))
 
-	for _, v := range s {
+	for _, v := range slice {
 		if !fn(v) {
 			result = append(result, v)
 		}
@@ -399,14 +400,33 @@ func DropWhile[T any](s []T, fn func(val T) bool) []T {
 
 // DropRightWhile creates a new slice excluding the elements dropped from the beginning.
 // Elements are dropped by applying the conditional invoked in the callback function.
-func DropRightWhile[T any](s []T, fn func(val T) bool) []T {
-	result := make([]T, 0, len(s))
+func DropRightWhile[T any](slice []T, fn func(T) bool) []T {
+	result := make([]T, 0, len(slice))
 
-	for i := len(s) - 1; i > 0; i-- {
-		if !fn(s[i]) {
-			result = append(result, s[i])
+	for i := len(slice) - 1; i > 0; i-- {
+		if !fn(slice[i]) {
+			result = append(result, slice[i])
 		}
 	}
 
 	return result
+}
+
+// MapByIndex
+func mapByIndex[T1 comparable, T2 any](origSlice []T2, mapSlice []T1) map[T1][]T2 {
+	result := make(map[T1][]T2)
+
+	for idx, v := range mapSlice {
+		if _, ok := result[v]; !ok {
+			result[v] = make([]T2, 0, len(mapSlice))
+		}
+		result[v] = append(result[v], origSlice[idx])
+	}
+
+	return result
+}
+
+// GroupBy splits a collection into sets, grouped by the result of running each value through the callback function fn.
+func GroupBy[T1, T2 comparable](slice []T1, fn func(val T1) T2) map[T2][]T1 {
+	return mapByIndex(slice, Map(slice, fn))
 }
