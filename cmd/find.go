@@ -64,9 +64,6 @@ func main() {
 	fmt.Println("==================FindMax")
 	fmt.Println(gogu.FindMax([]int{-1, 10, 2, 4, 99}))
 
-	fmt.Println("==================Bounds")
-	fmt.Println(gogu.Bounds[int]([]int{1, 2, 3, 4}))
-
 	fmt.Println("==================Nth")
 	fmt.Println(gogu.Nth[int]([]int{1, 2, 3, 4}, 1))
 }

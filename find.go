@@ -1,6 +1,8 @@
 package gogu
 
 import (
+	"fmt"
+
 	"golang.org/x/exp/constraints"
 )
 
@@ -172,4 +174,35 @@ func FindMaxByKey[K comparable, T constraints.Ordered](mapSlice []map[K]T, key K
 	}
 
 	return max
+}
+
+// Nth returns the nth element of the collection. In case of negative value the nth element is returned from the end of the collection.
+// In case nth is out of bounds an error is returned.
+func Nth[T any](slice []T, nth int) (T, error) {
+	bounds := Bound[int]{0, len(slice)}
+
+	if Abs(nth) > bounds.Max {
+		var t T
+		return t, fmt.Errorf("%d out of slice bounds %d", nth, bounds.Max)
+	}
+
+	if bounds.Enclose(nth) {
+		if nth >= 0 {
+			return slice[nth], nil
+		}
+	}
+	return slice[len(slice)-Abs(nth)], nil
+}
+
+type Bound[T constraints.Signed] struct {
+	Min, Max T
+}
+
+// Enclose checks if an element is inside the bounds.
+func (b Bound[T]) Enclose(nth T) bool {
+	if Abs(nth) >= b.Min && Abs(nth) <= b.Max {
+		return true
+	}
+
+	return false
 }
