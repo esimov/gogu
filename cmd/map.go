@@ -104,4 +104,7 @@ func main() {
 		return m["age"] == false
 	})
 	fmt.Println(pm)
+
+	fmt.Println("==================SliceToMap")
+	fmt.Println(gogu.SliceToMap[string, int]([]string{"a", "b", "c"}, []int{1, 2, 3}))
 }

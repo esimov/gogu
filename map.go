@@ -236,3 +236,19 @@ func PartitionMap[K comparable, V any](mapSlice []map[K]V, fn func(map[K]V) bool
 
 	return result
 }
+
+// SliceToMap converts a slice to a map. It panic in case the parameter slices lenght are not identical.
+// The map keys will be the items from the first slice and the values the items from the second slice.
+func SliceToMap[K comparable, T any](s1 []K, s2 []T) map[K]T {
+	var result = make(map[K]T)
+
+	if len(s1) != len(s2) {
+		panic("the paremeter slices should have identical length")
+	}
+
+	for i := 0; i < len(s1); i++ {
+		result[s1[i]] = s2[i]
+	}
+
+	return result
+}
