@@ -12,6 +12,11 @@ func main() {
 	fmt.Println("==================Sum")
 	fmt.Println(gogu.Sum([]int{1, 2, 3}))
 
+	fmt.Println("==================SumBy")
+	fmt.Println(gogu.SumBy[string, int]([]string{"one", "two"}, func(elem string) int {
+		return len(elem)
+	}))
+
 	fmt.Println("==================Mean")
 	fmt.Println(gogu.Mean([]int{4, 2, 8, 6}))
 
@@ -149,4 +154,8 @@ func main() {
 	fmt.Println(gogu.GroupBy[string, int]([]string{"one", "two", "three"}, func(val string) int {
 		return len(val)
 	}))
+
+	fmt.Println("==================Zip")
+	fmt.Println(gogu.Zip[any]([]any{"one", "two", "three"}, []any{10, 20, 30}, []any{true, true, false}))
+
 }

@@ -16,8 +16,8 @@ func Sum[T Number](slice []T) T {
 
 // SumBy is like Sum except the it accept a callback function which is invoked
 // for each element in the slice to generate the value to be summed.
-func SumBy[T Number](slice []T, fn func(T) T) T {
-	var acc T
+func SumBy[T1 any, T2 Number](slice []T1, fn func(T1) T2) T2 {
+	var acc T2
 	for _, v := range slice {
 		acc += fn(v)
 	}
@@ -212,11 +212,11 @@ func DuplicateWithIndex[T comparable](slice []T) map[T]int {
 }
 
 // Merge merges the first slice with the other slices defined as variadic parameter.
-func Merge[T any](s []T, slices ...[]T) []T {
+func Merge[T any](s []T, params ...[]T) []T {
 	merged := make([]T, 0, len(s))
 
-	for i := 0; i < len(slices); i++ {
-		merged = append(merged, slices[i]...)
+	for i := 0; i < len(params); i++ {
+		merged = append(merged, params[i]...)
 	}
 	merged = append(s, merged...)
 
@@ -231,7 +231,7 @@ func Flatten[T any](slice any) ([]T, error) {
 func baseFlatten[T any](acc []T, slice any) ([]T, error) {
 	var err error
 
-	switch v := (any)(slice).(type) {
+	switch v := any(slice).(type) {
 	case T:
 		acc = append(acc, v)
 	case []T:
@@ -273,11 +273,11 @@ func Intersection[T comparable](slice any) ([]T, error) {
 }
 
 // IntersectionBy is like Intersection, except that it accepts and callback function which is invoked on each element of the collection.
-func IntersectionBy[T comparable](fn func(T) T, slices ...[]T) ([]T, error) {
-	merged := make([]T, 0, len(slices))
-	result := make([]T, 0, len(slices))
+func IntersectionBy[T comparable](fn func(T) T, params ...[]T) ([]T, error) {
+	merged := make([]T, 0, len(params))
+	result := make([]T, 0, len(params))
 
-	for _, s := range slices {
+	for _, s := range params {
 		merged = append(merged, s...)
 	}
 
@@ -429,4 +429,32 @@ func mapByIndex[T1 comparable, T2 any](origSlice []T2, mapSlice []T1) map[T1][]T
 // GroupBy splits a collection into sets, grouped by the result of running each value through the callback function fn.
 func GroupBy[T1, T2 comparable](slice []T1, fn func(val T1) T2) map[T2][]T1 {
 	return mapByIndex(slice, Map(slice, fn))
+}
+
+// Zip iteratively merges together the values of the slice parameters with the values at the corresponding position.
+func Zip[T any](slices ...[]T) [][]T {
+	var result = make([][]T, len(slices))
+	var sliceLen int
+
+	if len(slices) > 0 {
+		sliceLen = len(slices[0])
+	}
+
+	if sliceLen != len(slices) {
+		panic(fmt.Sprintf("the number of slice parameters (%d) does not match with the slice length (%d)", len(slices), sliceLen))
+	}
+
+	for idx, sl := range slices {
+		if sliceLen != len(sl) {
+			panic("the slice parameters should have identical length")
+		}
+		result[idx] = make([]T, len(sl))
+	}
+
+	for x := 0; x < sliceLen; x++ {
+		for i := 0; i < len(slices); i++ {
+			result[i][x] = slices[x][i]
+		}
+	}
+	return result
 }
