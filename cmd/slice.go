@@ -158,4 +158,7 @@ func main() {
 	fmt.Println("==================Zip")
 	fmt.Println(gogu.Zip[any]([]any{"one", "two", "three"}, []any{10, 20, 30}, []any{true, true, false}))
 
+	fmt.Println("==================UnZip")
+	fmt.Println(gogu.Unzip[any]([]any{"one", "two", "three"}, []any{10, 20, 30}, []any{true, true, false}))
+
 }
