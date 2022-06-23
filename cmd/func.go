@@ -39,20 +39,20 @@ func main() {
 		fmt.Printf("Printing value... %d %v\n", val, res)
 	})
 
-	// fmt.Println("==================Once")
-	// n = 2
-	// gogu.ForEach[int](sample, func(val int) {
-	// 	res := gogu.Once[string, int](n, func() string {
-	// 		time.Sleep(time.Millisecond * 100)
-	// 		return "invoked once"
-	// 	})
-	// 	fmt.Printf("Printing value... %d %v\n", val, res)
-	// })
+	fmt.Println("==================Once")
+	n = 2
+	gogu.ForEach[int](sample, func(val int) {
+		res := gogu.Once[string, int](n, func() string {
+			time.Sleep(time.Millisecond * 100)
+			return "invoked once"
+		})
+		fmt.Printf("Printing value... %d %v\n", val, res)
+	})
 
 	fmt.Println("==================Retry")
 	n = 4
 	gogu.ForEach[string]([]string{"one", "two", "three"}, func(val string) {
-		rt := gogu.RetryTyp[string]{In: val}
+		rt := gogu.RType[string]{Input: val}
 		r, e := rt.Retry(n, func(elem string) (err error) {
 			if len(elem)%3 != 0 {
 				err = fmt.Errorf("retry failed: number of %d attempts exceeded", n)
@@ -60,6 +60,19 @@ func main() {
 			return err
 		})
 		fmt.Println(r, e)
+	})
+
+	fmt.Println("==================RetryWithDelay")
+	gogu.ForEach[string]([]string{"one", "two", "three"}, func(val string) {
+		rt := gogu.RType[string]{Input: val}
+		duration, r, e := rt.RetryWithDelay(n, time.Second, func(d time.Duration, elem string) (err error) {
+			if len(elem)%3 != 0 {
+				err = fmt.Errorf("retry failed: number of %d attempts exceeded", n)
+			}
+			//fmt.Println("retry")
+			return err
+		})
+		fmt.Println(duration.String(), r, e)
 	})
 
 	fmt.Println("==================Retry Struct")
@@ -82,12 +95,12 @@ func main() {
 	}
 
 	for _, srv := range services {
-		s := Service[string, int]{
+		service := Service[string, int]{
 			Service: srv.service,
 			Time:    srv.time,
 		}
-		rtyp := gogu.RetryTyp[Service[string, int]]{
-			In: s,
+		rtyp := gogu.RType[Service[string, int]]{
+			Input: service,
 		}
 
 		r, e := rtyp.Retry(n, func(srv Service[string, int]) (err error) {
@@ -98,4 +111,33 @@ func main() {
 		})
 		fmt.Println(r, e)
 	}
+
+	fmt.Println("==================Debounce")
+	f := func() {
+		fmt.Println("DEBOUNCING - might be doing a time consuming operation...")
+	}
+
+	debounce, cancel := gogu.NewDebounce(500 * time.Millisecond)
+	for i := 0; i < 2; i++ {
+		debounce(f)
+		time.Sleep(time.Second)
+	}
+	fmt.Println("FINISHED!")
+	cancel()
+
+	producer := func(ch chan<- int) chan<- int {
+		for i := 0; i < 10; i++ {
+			ch <- i
+		}
+		return ch
+	}
+	consumer := func(arg int) {
+		fmt.Println("*****************************")
+		fmt.Println("DEBOUNCING - might be doing a time consuming operation...!")
+		fmt.Println("*****************************")
+	}
+
+	gogu.Debounce[int](250*time.Millisecond, producer, consumer)
+
+	time.Sleep(time.Second)
 }
