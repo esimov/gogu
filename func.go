@@ -100,7 +100,7 @@ func (v RType[T]) RetryWithDelay(n int, delay time.Duration, fn func(time.Durati
 type debouncer struct {
 	duration time.Duration
 	timer    *time.Timer
-	mu       sync.RWMutex
+	mu       sync.Mutex
 }
 
 // NewDebounce creates a new debounced version of the invoked function which will postpone the execution
@@ -115,7 +115,7 @@ func NewDebounce(wait time.Duration) (func(f func()), func()) {
 	}, d.cancel
 }
 
-// schedule the execution of the passed in function after a predefined delay.
+// add method schedules the execution of the passed in function after a predefined delay.
 func (d *debouncer) add(f func()) {
 	d.mu.Lock()
 	defer d.mu.Unlock()
@@ -138,27 +138,78 @@ func (d *debouncer) cancel() {
 	}
 }
 
-// Debounce
-func Debounce[T any](wait time.Duration, prodFn func(chan<- T) chan<- T, consFn func(val T)) func() {
-	var input = make(chan T)
+type throttler struct {
+	duration time.Duration
+	cond     *sync.Cond
+	last     time.Time
+	waiting  bool
+	trailing bool
+	stop     bool
+}
 
-	go func() {
-		var item T
-		timer := time.NewTimer(wait)
-
-		for {
-			select {
-			case item = <-input:
-				timer.Reset(wait)
-			case <-time.After(wait):
-				consFn(item)
-			}
-		}
-	}()
-
-	prodFn(input)
-
-	return func() {
-		close(input)
+// NewThrottle creates a throttled function, useful to limit the frequency rate at which the passed in function is called.
+// The throttled function comes with a cancel method for canceling delayed function invocation.
+// If the trailing parameter is true, the function is invoked right after the throttled code
+// has been started, but at the trailing edge of the timeout.
+// In this case the code will be executed one more time at the beginning of the next period.
+func NewThrottle(wait time.Duration, trailing bool) (func(f func()), func()) {
+	t := &throttler{
+		cond: &sync.Cond{
+			L: new(sync.Mutex),
+		},
+		duration: wait,
+		trailing: trailing,
 	}
+
+	return func(f func()) {
+		go func() {
+			for t.next() {
+				f()
+			}
+		}()
+		t.add(f)
+	}, t.cancel
+}
+
+// add method schedules the execution of the passed in function after a predefined delay.
+func (t *throttler) add(fn func()) {
+	t.cond.L.Lock()
+	defer t.cond.L.Unlock()
+
+	if !t.waiting && !t.stop {
+		delta := time.Since(t.last)
+		if delta > t.duration {
+			t.waiting = true
+			t.cond.Broadcast()
+		} else if t.trailing {
+			t.waiting = true
+			time.AfterFunc(t.duration-delta, t.cond.Broadcast)
+		}
+	}
+}
+
+// next returns true at most once per time period. It runs until the throttled function is not canceled.
+func (t *throttler) next() bool {
+	t.cond.L.Lock()
+	defer t.cond.L.Unlock()
+
+	for !t.waiting && !t.stop {
+		t.cond.Wait()
+	}
+
+	if !t.stop {
+		t.waiting = false
+		t.last = time.Now()
+	}
+
+	return !t.stop
+}
+
+// cancel the execution of a scheduled throttle function.
+func (t *throttler) cancel() {
+	t.cond.L.Lock()
+	defer t.cond.L.Unlock()
+
+	t.stop = true
+	t.cond.Broadcast()
 }
