@@ -9,6 +9,12 @@ import (
 )
 
 func main() {
+	fmt.Println("==================Flip")
+	flipped := gogu.Flip[int, string](func(args ...int) []int {
+		return gogu.ToSlice[int](args...)
+	})
+	fmt.Println(flipped(1, 2, 3))
+
 	fmt.Println("==================Delay")
 	ch := make(chan struct{})
 	t := gogu.Delay(time.Millisecond*500, func() {

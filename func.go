@@ -7,6 +7,14 @@ import (
 	"golang.org/x/exp/constraints"
 )
 
+// Flip creates a function that invokes fn with arguments reversed.
+func Flip[T, R any](fn func(args ...T) []T) func(args ...T) []T {
+	return func(args ...T) []T {
+		return Reverse(fn(args...))
+	}
+}
+
+// Delay invokes the function with a predefined delay.
 func Delay(delay time.Duration, fn func()) *time.Timer {
 	t := time.AfterFunc(delay, fn)
 	return t
@@ -152,6 +160,8 @@ type throttler struct {
 // If the trailing parameter is true, the function is invoked right after the throttled code
 // has been started, but at the trailing edge of the timeout.
 // In this case the code will be executed one more time at the beginning of the next period.
+//
+// Useful for rate-limiting events that occur faster than you can keep up with.
 func NewThrottle(wait time.Duration, trailing bool) (func(f func()), func()) {
 	t := &throttler{
 		cond: &sync.Cond{
