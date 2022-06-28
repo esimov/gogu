@@ -71,14 +71,12 @@ func Reduce[T1, T2 any](slice []T1, fn func(T1, T2) T2, initVal T2) T2 {
 
 // Reverse reverses the order of elements so that the first element becomes the last,
 // the second element becomes the second to last, and so on.
-func Reverse[T any](slice []T) []T {
-	rev := make([]T, len(slice))
-
-	for i, j := 0, len(slice)-1; i < j; i, j = i+1, j-1 {
-		rev[i], rev[j] = slice[j], slice[i]
+func Reverse[T any](sl []T) []T {
+	for i, j := 0, len(sl)-1; i < j; i, j = i+1, j-1 {
+		sl[i], sl[j] = sl[j], sl[i]
 	}
 
-	return rev
+	return sl
 }
 
 // Unique returns the collection unique values.
@@ -457,4 +455,39 @@ func Zip[T any](slices ...[]T) [][]T {
 		}
 	}
 	return result
+}
+
+// Zip iteratively merges together the values of the slice parameters with the values at the corresponding position.
+func Unzip[T any](slices ...[]T) [][]T {
+	var result = make([][]T, len(slices))
+	var sliceLen int
+
+	if len(slices) > 0 {
+		sliceLen = len(slices[0])
+	}
+
+	if sliceLen != len(slices) {
+		panic(fmt.Sprintf("the number of slice parameters (%d) does not match with the slice length (%d)", len(slices), sliceLen))
+	}
+
+	for idx, sl := range slices {
+		if sliceLen != len(sl) {
+			panic("the slice parameters should have identical length")
+		}
+		result[idx] = make([]T, len(sl))
+	}
+
+	for x := 0; x < sliceLen; x++ {
+		for i := 0; i < len(slices); i++ {
+			result[x][i] = slices[i][x]
+		}
+	}
+	return result
+}
+
+func ToSlice[T any](args ...T) []T {
+	slice := make([]T, 0, len(args))
+	slice = append(slice, args...)
+
+	return slice
 }
