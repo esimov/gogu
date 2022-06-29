@@ -45,7 +45,7 @@ func NewCache[T ~string, V any](d time.Duration) *Cache[T, V] {
 func (c *cache[T, V]) Set(key T, val V, d time.Duration) error {
 	_, err := c.Get(key)
 	if err != nil {
-		return fmt.Errorf("item with key %v already exists. Use the Update method", key)
+		return fmt.Errorf("item with key '%v' already exists. Use the Update method", key)
 	}
 	c.Add(key, val, d)
 
@@ -64,7 +64,7 @@ func (c *cache[T, V]) Add(key T, val V, d time.Duration) error {
 
 	_, err := c.Get(key)
 	if err != nil {
-		return fmt.Errorf("item with key %v already exists", key)
+		return fmt.Errorf("item with key '%v' already exists", key)
 	}
 
 	c.mu.Lock()
@@ -84,7 +84,7 @@ func (c *cache[T, V]) Get(key T) (*Item[V], error) {
 			now := time.Now().UnixNano()
 			if now > item.Expiration {
 				c.mu.RUnlock()
-				return &Item[V]{}, fmt.Errorf("item with key %v expired", key)
+				return &Item[V]{}, fmt.Errorf("item with key '%v' expired", key)
 			}
 		}
 		c.mu.RUnlock()
@@ -99,7 +99,7 @@ func (c *cache[T, V]) Update(key T, val V, d time.Duration) error {
 	_, err := c.Get(key)
 	if err != nil {
 		c.mu.Unlock()
-		return fmt.Errorf("item with key %v does not exists", key)
+		return fmt.Errorf("item with key '%v' does not exists", key)
 	}
 	c.Set(key, val, d)
 	c.mu.Unlock()
@@ -119,7 +119,21 @@ func (c *cache[T, V]) Delete(key T) error {
 		c.mu.Unlock()
 	}
 
-	return fmt.Errorf("item with key %v does not exists", key)
+	return fmt.Errorf("item with key '%v' does not exists", key)
+}
+
+func (c *cache[T, V]) DeleteExpired() error {
+	for k, item := range c.items {
+		now := time.Now().UnixNano()
+		if now > item.Expiration {
+			return c.Delete(k)
+		}
+	}
+	return nil
+}
+
+func (c *cache[T, V]) List() map[T]*Item[V] {
+	return c.items
 }
 
 func (c *cache[T, V]) IsExpired(key T) bool {
