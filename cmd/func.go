@@ -10,7 +10,7 @@ import (
 
 func main() {
 	fmt.Println("==================Flip")
-	flipped := gogu.Flip[int, string](func(args ...int) []int {
+	flipped := gogu.Flip[int](func(args ...int) []int {
 		return gogu.ToSlice[int](args...)
 	})
 	fmt.Println(flipped(1, 2, 3))
