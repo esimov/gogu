@@ -11,104 +11,123 @@ const (
 	DefaultExpiration time.Duration = 0
 )
 
-type Item struct {
-	Object     any
+type Item[V any] struct {
+	Object     V
 	Expiration int64
 }
 
-type cache struct {
-	duration time.Duration
-	items    map[string]*Item
-	mu       *sync.RWMutex
+type cache[T ~string, V any] struct {
+	mu         *sync.RWMutex
+	items      map[T]*Item[V]
+	expiration time.Duration
 }
 
-type Cache struct {
-	*cache
+type Cache[T ~string, V any] struct {
+	*cache[T, V]
 }
 
-func newCache(d time.Duration, item map[string]*Item) *cache {
-	c := &cache{
-		mu:       &sync.RWMutex{},
-		duration: d,
-		items:    item,
+func newCache[T ~string, V any](du time.Duration, item map[T]*Item[V]) *cache[T, V] {
+	c := &cache[T, V]{
+		mu:         &sync.RWMutex{},
+		items:      item,
+		expiration: du,
 	}
 	return c
 }
 
-func NewCache(d time.Duration) *Cache {
-	items := make(map[string]*Item)
+func NewCache[T ~string, V any](d time.Duration) *Cache[T, V] {
+	items := make(map[T]*Item[V])
 	c := newCache(d, items)
 
-	return &Cache{c}
+	return &Cache[T, V]{c}
 }
 
-func (c *cache) Set(k string, val any, d time.Duration) error {
-	_, found := c.Get(k)
-	if found {
-		return fmt.Errorf("item with key %s already exists. Use Update method", k)
-	} else {
-		c.Add(k, val, d)
+func (c *cache[T, V]) Set(key T, val V, d time.Duration) error {
+	_, err := c.Get(key)
+	if err != nil {
+		return fmt.Errorf("item with key %v already exists. Use the Update method", key)
 	}
+	c.Add(key, val, d)
 
 	return nil
-
 }
 
-func (c *cache) Add(k string, val any, d time.Duration) error {
-	var ex int64
+func (c *cache[T, V]) Add(key T, val V, d time.Duration) error {
+	var exp int64
+
+	if d == DefaultExpiration {
+		d = c.expiration
+	}
 	if d > 0 {
-		ex = time.Now().Add(d).UnixNano()
+		exp = time.Now().Add(d).UnixNano()
 	}
 
-	_, found := c.Get(k)
-	if found {
-		return fmt.Errorf("item with key %s already exists", k)
+	_, err := c.Get(key)
+	if err != nil {
+		return fmt.Errorf("item with key %v already exists", key)
 	}
 
 	c.mu.Lock()
-	c.items[k] = &Item{
+	c.items[key] = &Item[V]{
 		Object:     val,
-		Expiration: ex,
+		Expiration: exp,
 	}
 	c.mu.Unlock()
 
 	return nil
 }
 
-func (c *cache) Get(k string) (*Item, bool) {
+func (c *cache[T, V]) Get(key T) (*Item[V], error) {
 	c.mu.RLock()
-	if _, ok := c.items[k]; ok {
+	if item, ok := c.items[key]; ok {
+		if item.Expiration > 0 {
+			now := time.Now().UnixNano()
+			if now > item.Expiration {
+				c.mu.RUnlock()
+				return &Item[V]{}, fmt.Errorf("item with key %v expired", key)
+			}
+		}
 		c.mu.RUnlock()
-		return c.items[k], true
+		return c.items[key], nil
 	}
 	c.mu.RUnlock()
-	return &Item{}, false
+	return &Item[V]{}, nil
 }
 
-func (c *cache) Update(k string, val any, d time.Duration) error {
+func (c *cache[T, V]) Update(key T, val V, d time.Duration) error {
 	c.mu.Lock()
-	_, found := c.Get(k)
-	if !found {
+	_, err := c.Get(key)
+	if err != nil {
 		c.mu.Unlock()
-		return fmt.Errorf("item with key %s does not exists", k)
+		return fmt.Errorf("item with key %v does not exists", key)
 	}
-	c.Set(k, val, d)
+	c.Set(key, val, d)
 	c.mu.Unlock()
+
 	return nil
-
 }
 
-func (c *cache) SetDefault(k string, val any) {
-	c.Set(k, val, DefaultExpiration)
+func (c *cache[T, V]) SetDefault(key T, val V) {
+	c.Set(key, val, DefaultExpiration)
 }
 
-func (c *cache) Delete(k string) error {
-	_, found := c.Get(k)
-	if found {
+func (c *cache[T, V]) Delete(key T) error {
+	_, err := c.Get(key)
+	if err != nil {
 		c.mu.Lock()
-		delete(c.items, k)
+		delete(c.items, key)
 		c.mu.Unlock()
 	}
 
-	return fmt.Errorf("Item with key %s does not exists", k)
+	return fmt.Errorf("item with key %v does not exists", key)
+}
+
+func (c *cache[T, V]) IsExpired(key T) bool {
+	item, err := c.Get(key)
+	if err != nil {
+		if item.Expiration > time.Now().UnixNano() {
+			return true
+		}
+	}
+	return false
 }

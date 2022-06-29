@@ -8,11 +8,19 @@ import (
 )
 
 func main() {
-	c := gogu.NewCache(5 * time.Minute)
-	c.Set("foo", "bar", gogu.DefaultExpiration)
+	c := gogu.NewCache[string, string](1 * time.Second)
+	err := c.Set("foo", "bar", gogu.DefaultExpiration)
+	if err != nil {
+		fmt.Println(err)
+	}
+	time.Sleep(2 * time.Second)
 
-	foo, found := c.Get("foo")
-	if found {
+	foo, err := c.Get("foo")
+	if err != nil {
 		fmt.Println(foo)
+	}
+	err = c.Set("foo", "bar", gogu.DefaultExpiration)
+	if err != nil {
+		fmt.Println(err)
 	}
 }
