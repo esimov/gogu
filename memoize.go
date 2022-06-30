@@ -2,146 +2,37 @@ package gogu
 
 import (
 	"fmt"
-	"sync"
 	"time"
+
+	"golang.org/x/sync/singleflight"
 )
 
-const (
-	NoExpiration      time.Duration = -1
-	DefaultExpiration time.Duration = 0
-)
-
-type Item[V any] struct {
-	Object     V
-	Expiration int64
+type Memoizer[T ~string, V any] struct {
+	Cache *Cache[T, V]
+	group *singleflight.Group
 }
 
-type cache[T ~string, V any] struct {
-	mu         *sync.RWMutex
-	items      map[T]*Item[V]
-	expiration time.Duration
-}
-
-type Cache[T ~string, V any] struct {
-	*cache[T, V]
-}
-
-func newCache[T ~string, V any](du time.Duration, item map[T]*Item[V]) *cache[T, V] {
-	c := &cache[T, V]{
-		mu:         &sync.RWMutex{},
-		items:      item,
-		expiration: du,
+func NewMemoizer[T ~string, V any](expiration, cleanup time.Duration) *Memoizer[T, V] {
+	return &Memoizer[T, V]{
+		Cache: NewCache[T, V](expiration, cleanup),
+		group: &singleflight.Group{},
 	}
-	return c
 }
 
-func NewCache[T ~string, V any](d time.Duration) *Cache[T, V] {
-	items := make(map[T]*Item[V])
-	c := newCache(d, items)
-
-	return &Cache[T, V]{c}
-}
-
-func (c *cache[T, V]) Set(key T, val V, d time.Duration) error {
-	_, err := c.Get(key)
-	if err != nil {
-		return fmt.Errorf("item with key '%v' already exists. Use the Update method", key)
-	}
-	c.Add(key, val, d)
-
-	return nil
-}
-
-func (c *cache[T, V]) Add(key T, val V, d time.Duration) error {
-	var exp int64
-
-	if d == DefaultExpiration {
-		d = c.expiration
-	}
-	if d > 0 {
-		exp = time.Now().Add(d).UnixNano()
+func (m Memoizer[T, V]) Memoize(key T, fn func() (*Item[V], error)) (*Item[V], error) {
+	item, _ := m.Cache.Get(key)
+	if item != nil {
+		return item, nil
 	}
 
-	_, err := c.Get(key)
-	if err != nil {
-		return fmt.Errorf("item with key '%v' already exists", key)
-	}
-
-	c.mu.Lock()
-	c.items[key] = &Item[V]{
-		Object:     val,
-		Expiration: exp,
-	}
-	c.mu.Unlock()
-
-	return nil
-}
-
-func (c *cache[T, V]) Get(key T) (*Item[V], error) {
-	c.mu.RLock()
-	if item, ok := c.items[key]; ok {
-		if item.Expiration > 0 {
-			now := time.Now().UnixNano()
-			if now > item.Expiration {
-				c.mu.RUnlock()
-				return &Item[V]{}, fmt.Errorf("item with key '%v' expired", key)
-			}
+	data, err, _ := m.group.Do(string(key), func() (any, error) {
+		item, err := fn()
+		if err == nil {
+			m.Cache.Set(key, item.Object, DefaultExpiration)
 		}
-		c.mu.RUnlock()
-		return c.items[key], nil
-	}
-	c.mu.RUnlock()
-	return &Item[V]{}, nil
-}
+		return item, err
+	})
+	fmt.Println("Data:", data)
 
-func (c *cache[T, V]) Update(key T, val V, d time.Duration) error {
-	c.mu.Lock()
-	_, err := c.Get(key)
-	if err != nil {
-		c.mu.Unlock()
-		return fmt.Errorf("item with key '%v' does not exists", key)
-	}
-	c.Set(key, val, d)
-	c.mu.Unlock()
-
-	return nil
-}
-
-func (c *cache[T, V]) SetDefault(key T, val V) {
-	c.Set(key, val, DefaultExpiration)
-}
-
-func (c *cache[T, V]) Delete(key T) error {
-	_, err := c.Get(key)
-	if err != nil {
-		c.mu.Lock()
-		delete(c.items, key)
-		c.mu.Unlock()
-	}
-
-	return fmt.Errorf("item with key '%v' does not exists", key)
-}
-
-func (c *cache[T, V]) DeleteExpired() error {
-	for k, item := range c.items {
-		now := time.Now().UnixNano()
-		if now > item.Expiration {
-			return c.Delete(k)
-		}
-	}
-	return nil
-}
-
-func (c *cache[T, V]) List() map[T]*Item[V] {
-	return c.items
-}
-
-func (c *cache[T, V]) IsExpired(key T) bool {
-	item, err := c.Get(key)
-	if err != nil {
-		if item.Expiration > time.Now().UnixNano() {
-			return true
-		}
-	}
-	return false
+	return data.(*Item[V]), err
 }

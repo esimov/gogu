@@ -8,25 +8,23 @@ import (
 )
 
 func main() {
-	c := gogu.NewCache[string, string](1 * time.Second)
-	err := c.Set("foo", "bar", gogu.DefaultExpiration)
-	if err != nil {
-		fmt.Println(err)
-	}
-	time.Sleep(2 * time.Second)
+	m := gogu.NewMemoizer[string, any](time.Second, time.Minute)
 
-	_, err = c.Get("foo")
-	if err != nil {
-		fmt.Println(err)
-	}
-	err = c.Set("foo", "bar", gogu.DefaultExpiration)
-	if err != nil {
-		fmt.Println(err)
+	expensiveOperation := func() (*gogu.Item[interface{}], error) {
+		time.Sleep(2 * time.Second)
+		bigDataStructure := struct{ key string }{key: "key1"}
+
+		return &gogu.Item[interface{}]{
+			Object: bigDataStructure,
+		}, nil
 	}
 
-	items := c.List()
-	for key, val := range items {
-		fmt.Printf("Key: %v, value: %v\n", key, val)
+	data, err := m.Memoize("key1", expensiveOperation)
+	if err != nil {
+		fmt.Println(err)
 	}
-	c.DeleteExpired()
+	fmt.Println(data)
+	// Return data instantly
+	data, err = m.Memoize("key1", expensiveOperation)
+	fmt.Println(data)
 }
