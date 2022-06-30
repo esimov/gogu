@@ -8,7 +8,7 @@ import (
 )
 
 // Flip creates a function that invokes fn with arguments reversed.
-func Flip[T, R any](fn func(args ...T) []T) func(args ...T) []T {
+func Flip[T any](fn func(args ...T) []T) func(args ...T) []T {
 	return func(args ...T) []T {
 		return Reverse(fn(args...))
 	}
