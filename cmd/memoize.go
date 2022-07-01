@@ -8,23 +8,34 @@ import (
 )
 
 func main() {
+	sampleMap := map[string]any{
+		"foo": "one",
+		"bar": "two",
+		"baz": "three",
+	}
+
 	m := gogu.NewMemoizer[string, any](time.Second, time.Minute)
 
-	expensiveOperation := func() (*gogu.Item[interface{}], error) {
+	expensiveOp := func() (*gogu.Item[any], error) {
+		// We simulate here an extensive operation.
 		time.Sleep(2 * time.Second)
-		bigDataStructure := struct{ key string }{key: "key1"}
 
-		return &gogu.Item[interface{}]{
-			Object: bigDataStructure,
+		foo := gogu.FindByKey(sampleMap, func(key string) bool {
+			return key == "foo"
+		})
+		return &gogu.Item[any]{
+			Object: foo,
 		}, nil
 	}
 
-	data, err := m.Memoize("key1", expensiveOperation)
+	// At the first call key1 does not exists, so the simulated extensive operation will take more time.
+	data, err := m.Memoize("key1", expensiveOp)
 	if err != nil {
 		fmt.Println(err)
 	}
 	fmt.Println(data)
-	// Return data instantly
-	data, err = m.Memoize("key1", expensiveOperation)
+
+	// Second time the date will be read from cache. It will return the result instantly.
+	data, err = m.Memoize("key1", expensiveOp)
 	fmt.Println(data)
 }
