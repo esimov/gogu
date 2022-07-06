@@ -159,6 +159,8 @@ func main() {
 	fmt.Println(gogu.Zip[any]([]any{"one", "two", "three"}, []any{10, 20, 30}, []any{true, true, false}))
 
 	fmt.Println("==================UnZip")
-	fmt.Println(gogu.Unzip[any]([]any{"one", "two", "three"}, []any{10, 20, 30}, []any{true, true, false}))
+	fmt.Println(gogu.Unzip[any]([]any{"one", 10}, []any{"two", 20}))
 
+	fmt.Println("==================ToSlice")
+	fmt.Println(gogu.ToSlice[int](1, 2, 3, 4))
 }
