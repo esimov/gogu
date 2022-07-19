@@ -1,3 +1,1 @@
-# go-generics
-
-Go generics playground. 
+# gogu
