@@ -1,14 +1,19 @@
 package gogu
 
-import "math/rand"
+import (
+	"math/rand"
+)
 
 // Shuffle implements the Fisher-Yates shuffle algorithm applied to a slice.
-func Shuffle[T any](collection []T) []T {
-	for i := len(collection) - 1; i > 0; i-- {
+func Shuffle[T any](src []T) []T {
+	dst := make([]T, len(src))
+	copy(dst, src)
+
+	for i := len(src) - 1; i > 0; i-- {
 		j := rand.Int() % (i + 1)
-		swap(&collection[i], &collection[j])
+		swap(&dst[i], &dst[j])
 	}
-	return collection
+	return dst
 }
 
 // swap the two items.
