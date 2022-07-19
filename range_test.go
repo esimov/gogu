@@ -41,6 +41,9 @@ func TestRange(t *testing.T) {
 	// Testing range with negative values using 3 arguments.
 	range6, _ := Range(0, -1, -4)
 	assert.Equal(range6, []int{0, -1, -2, -3})
+
+	range7, _ := Range[float64](0, 0.12, 0.9)
+	assert.Equal(range7, []float64{0, 0.12, 0.24, 0.36, 0.48, 0.6, 0.72, 0.84})
 }
 
 func TestRangeRight(t *testing.T) {

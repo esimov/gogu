@@ -2,6 +2,9 @@ package gogu
 
 import (
 	"errors"
+	"fmt"
+	"reflect"
+	"strconv"
 )
 
 // Range creates a slice of numbers (integers) progressing from start up to, but not including end.
@@ -47,11 +50,13 @@ func Range[T Number](args ...T) ([]T, error) {
 
 	if end > 0 {
 		for i := start; i < end; i += step {
-			result = append(result, i)
+			n, _ := N[T](conv(i))
+			result = append(result, T(n))
 		}
 	} else {
 		for i := start; end < i; i -= Abs(step) {
-			result = append(result, i)
+			n, _ := N[T](conv(i))
+			result = append(result, T(n))
 		}
 	}
 
@@ -65,4 +70,44 @@ func RangeRight[T Number](params ...T) ([]T, error) {
 		return nil, err
 	}
 	return Reverse(ran), nil
+}
+
+// N converts a string to a generic number.
+func N[T Number](s string) (T, error) {
+	var val T
+	typ := reflect.TypeOf(val)
+	switch typ.Kind() {
+	case reflect.Float32, reflect.Float64:
+		t, err := strconv.ParseFloat(s, typ.Bits())
+		if err != nil {
+			return val, err
+		}
+		return T(t), nil
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		t, err := strconv.ParseInt(s, 10, typ.Bits())
+		if err != nil {
+			return val, err
+		}
+		return T(t), nil
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
+		t, err := strconv.ParseUint(s, 10, typ.Bits())
+		if err != nil {
+			return val, err
+		}
+		return T(t), nil
+	default:
+		return val, fmt.Errorf("unsupported type")
+	}
+}
+
+// conv converts a number to a string.
+// In case of a number of type float (float32|float64) this will be rounded to 2 decimal places.
+func conv[T Number](n T) string {
+	if reflect.TypeOf(n).Kind() == reflect.Float32 ||
+		reflect.TypeOf(n).Kind() == reflect.Float64 {
+
+		return fmt.Sprintf("%.2f", float64(n))
+	}
+
+	return fmt.Sprintf("%v", n)
 }
