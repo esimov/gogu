@@ -4,44 +4,45 @@ import (
 	"errors"
 )
 
-// Range creates a slice of numbers (integers) progressing from start (if omitted defaults to 0) until the end.
-// This method can accept 1, 2 or 3 parameters. Depending on the number of provided parameters, `start`, `step` and `end` are having the following meanings:
-// [start=0]: The start of the range.
+// Range creates a slice of numbers (integers) progressing from start up to, but not including end.
+// This method can accept 1, 2 or 3 arguments.
+// Depending on the number of provided parameters, `start`, `step` and `end` has the following meaning:
+// [start=0]: The start of the range. If ommited it defaults to 0.
 // [step=1]: The value to increment or decrement by.
 // end: The end of the range.
 
 // In case you'd like negative values, use a negative step.
-// TODO make a thorough test.
-func Range[T Number](params ...T) ([]T, error) {
+func Range[T Number](args ...T) ([]T, error) {
 	var result []T
 
-	if len(params) > 3 {
+	if len(args) > 3 {
 		return nil, errors.New("the method require maximum 3 paramenters")
 	}
 
 	var start, step, end T
 
-	switch len(params) {
+	switch len(args) {
 	case 1:
 		step = 1
-		end = params[len(params)-1]
+		end = args[len(args)-1]
 	case 2:
-		start = params[0]
+		start = args[0]
 		step = 1
-		end = params[len(params)-1]
+		end = args[len(args)-1]
 	case 3:
-		start = params[0]
-		step = params[1]
-		end = params[len(params)-1]
+		start = args[0]
+		step = args[1]
+		end = args[len(args)-1]
 
+		if start > end && end > 0 {
+			return nil, errors.New("the end value should be greater than start value")
+		}
 		if step == 0 {
 			return nil, errors.New("step value should not be zero")
 		}
 		if step < 0 && end > start {
 			return nil, errors.New("the end value should be less than the start value in case you are using a negative increment")
 		}
-	default:
-		return nil, errors.New("the method require at least one paramenter, which should be the range dimension in this case")
 	}
 
 	if end > 0 {
