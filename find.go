@@ -16,10 +16,10 @@ func FindIndex[T any](s []T, fn func(T) bool) int {
 	return -1
 }
 
-// FindLastIndex is like FindIndex, only that iterates the slice in reverse order.
+// FindLastIndex is like FindIndex, only that returns the index of last found element.
 func FindLastIndex[T any](s []T, fn func(T) bool) int {
 	for i, j := len(s)-1, 0; i >= 0; i, j = i-1, j+1 {
-		if fn(s[j]) {
+		if fn(s[i]) {
 			return i
 		}
 	}

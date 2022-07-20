@@ -12,13 +12,13 @@ func main() {
 
 	fmt.Println("==================FindIndex")
 	res3 := gogu.FindIndex(ints, func(v int) bool {
-		return v == 23
+		return v == 2
 	})
 	fmt.Println(res3)
 
 	fmt.Println("==================FindLastIndex")
 	res4 := gogu.FindLastIndex(ints, func(v int) bool {
-		return v == 23
+		return v == 2
 	})
 	fmt.Println(res4)
 
