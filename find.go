@@ -26,27 +26,15 @@ func FindLastIndex[T any](s []T, fn func(T) bool) int {
 	return -1
 }
 
-// FindAll is like FindIndex, but put into a map all the values which stisfy the conditional logic of the callback function.
-// The map key represents the position of the found value and the map value is the number itself.
+// FindAll is like FindIndex, but inserts into a map all the values
+// which stisfies the conditional logic of the callback function.
+// The map key represents the position of the found value and the value is the item itself.
 func FindAll[T any](s []T, fn func(T) bool) map[int]T {
 	m := make(map[int]T, len(s))
 
 	for k, v := range s {
 		if fn(v) {
 			m[k] = v
-		}
-	}
-
-	return m
-}
-
-// FindAllFromLast is like FindAll, but run the slice iteration in backward order.
-func FindAllFromLast[T any](s []T, fn func(T) bool) map[int]T {
-	m := make(map[int]T, len(s))
-
-	for i, j := len(s)-1, 0; i >= 0; i, j = i-1, j+1 {
-		if fn(s[i]) {
-			m[i] = s[j]
 		}
 	}
 
@@ -64,11 +52,11 @@ func IndexOf[T comparable](s []T, val T) int {
 	return -1
 }
 
-// LastIndexOf returns the index of the last occurrence of value.
+// LastIndexOf returns the index of the last occurrence of a value.
 func LastIndexOf[T comparable](s []T, val T) int {
 	for i, j := len(s)-1, 0; i >= 0; i, j = i-1, j+1 {
 		if s[i] == val {
-			return j
+			return i
 		}
 	}
 	return -1
@@ -90,14 +78,16 @@ func FindMin[T constraints.Ordered](s []T) T {
 
 // FindMinBy is like FindMin except that it accept a callback function
 // and the conditional logic is applied over the resulted value.
+// If there are more than one identical values resulted
+// from the callback function the first one is used.
 func FindMinBy[T constraints.Ordered](s []T, fn func(val T) T) T {
 	var min T
 	if len(s) > 0 {
-		min = fn(s[0])
+		min = s[0]
 	}
 
 	for i := 0; i < len(s); i++ {
-		if s[i] < fn(min) {
+		if fn(s[i]) < fn(min) {
 			min = s[i]
 		}
 	}
