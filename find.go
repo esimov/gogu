@@ -1,6 +1,7 @@
 package gogu
 
 import (
+	"errors"
 	"fmt"
 
 	"golang.org/x/exp/constraints"
@@ -95,8 +96,12 @@ func FindMinBy[T constraints.Ordered](s []T, fn func(val T) T) T {
 }
 
 // FindMinByKey finds the minimum value from a map by using some existing key as a parameter.
-func FindMinByKey[K comparable, T constraints.Ordered](mapSlice []map[K]T, key K) T {
+func FindMinByKey[K comparable, T constraints.Ordered](mapSlice []map[K]T, key K) (T, error) {
 	var min T
+	if _, ok := mapSlice[0][key]; !ok {
+		return min, errors.New("key not found")
+	}
+
 	if len(mapSlice) > 0 {
 		min = mapSlice[0][key]
 	}
@@ -112,7 +117,7 @@ func FindMinByKey[K comparable, T constraints.Ordered](mapSlice []map[K]T, key K
 		}
 	}
 
-	return min
+	return min, nil
 }
 
 // FindMax finds the maximum value of a slice.
@@ -131,23 +136,29 @@ func FindMax[T constraints.Ordered](s []T) T {
 
 // FindMaxBy is like FindMax except that it accept a callback function
 // and the conditional logic is applied over the resulted value.
+// If there are more than one identical values resulted
+// from the callback function the first one is used.
 func FindMaxBy[T constraints.Ordered](s []T, fn func(val T) T) T {
-	var min T
+	var max T
 	if len(s) > 0 {
-		min = fn(s[0])
+		max = s[0]
 	}
 
 	for i := 0; i < len(s); i++ {
-		if s[i] < fn(min) {
-			min = s[i]
+		if fn(s[i]) > fn(max) {
+			max = s[i]
 		}
 	}
-	return min
+	return max
 }
 
 // FindMaxByKey finds the maximum value from a map by using some existing key as a parameter.
-func FindMaxByKey[K comparable, T constraints.Ordered](mapSlice []map[K]T, key K) T {
+func FindMaxByKey[K comparable, T constraints.Ordered](mapSlice []map[K]T, key K) (T, error) {
 	var max T
+	if _, ok := mapSlice[0][key]; !ok {
+		return max, errors.New("key not found")
+	}
+
 	if len(mapSlice) > 0 {
 		max = mapSlice[0][key]
 	}
@@ -163,15 +174,18 @@ func FindMaxByKey[K comparable, T constraints.Ordered](mapSlice []map[K]T, key K
 		}
 	}
 
-	return max
+	return max, nil
 }
 
-// Nth returns the nth element of the collection. In case of negative value the nth element is returned from the end of the collection.
+// Nth returns the nth element of the collection.
+// In case of negative value the nth element is returned from the end of the collection.
 // In case nth is out of bounds an error is returned.
 func Nth[T any](slice []T, nth int) (T, error) {
 	bounds := Bound[int]{0, len(slice)}
 
-	if Abs(nth) > bounds.Max {
+	if (nth > 0 && nth > bounds.Max-1) ||
+		(nth < 0 && bounds.Max-Abs(nth) < 0) {
+
 		var t T
 		return t, fmt.Errorf("%d out of slice bounds %d", nth, bounds.Max)
 	}

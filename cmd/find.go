@@ -28,12 +28,6 @@ func main() {
 	})
 	fmt.Println(res1)
 
-	fmt.Println("==================FindAllFromLast")
-	res2 := gogu.FindAllFromLast(ints, func(v int) bool {
-		return v == 12
-	})
-	fmt.Println(res2)
-
 	fmt.Println("==================IndexOf")
 	fmt.Println(gogu.IndexOf(ints, 12))
 
