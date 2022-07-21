@@ -1,26 +1,31 @@
 package gogu
 
-func Filter[T any](s []T, fn func(T) bool) []T {
-	rs := make([]T, 0)
+// Filter returns all the elements from the collection which satisfies the conditional logic of the callback function.
+func Filter[T any](slice []T, fn func(T) bool) []T {
+	res := make([]T, 0)
 
-	for _, v := range s {
+	for _, v := range slice {
 		if fn(v) {
-			rs = append(rs, v)
+			res = append(res, v)
 		}
 	}
 
-	return rs
+	return res
 }
 
 // Reject is the opposite of Filter.
 // It returns the values from the collection without the elements for which the callback function returns true.
-func Reject[T any](s []T, fn func(val T) bool) []T {
-	for i := 0; i < len(s); i++ {
-		if fn(s[i]) {
-			s = append(s[:i], s[i+1:]...)
+func Reject[T any](slice []T, fn func(val T) bool) []T {
+	// TODO considering to create a new slice and append the values resulted
+	// from the callback function, even if this imply a new allocation.
+	for i := 0; i < len(slice); i++ {
+		if fn(slice[i]) {
+			slice = append(slice[:i], slice[i+1:]...)
+			i--
 		}
 	}
-	return s
+
+	return slice
 }
 
 // FilterMap iterates over the elements of a collection and returns a new collection
@@ -38,7 +43,7 @@ func FilterMap[K comparable, V any](m map[K]V, fn func(V) bool) map[K]V {
 }
 
 // Filter2DMap is like FilterMap only applied on a two dimmensional map.
-func Filter2DMap[K comparable, V any](m map[K]map[K]V, fn func(V) bool) map[K]map[K]V {
+func Filter2DCollection[K comparable, V any](m map[K]map[K]V, fn func(V) bool) map[K]map[K]V {
 	filtered := map[K]map[K]V{}
 
 	for k, v := range m {
@@ -52,8 +57,8 @@ func Filter2DMap[K comparable, V any](m map[K]map[K]V, fn func(V) bool) map[K]ma
 	return filtered
 }
 
-// TODO consider to remove
-func Filter2DMapSlice[K comparable, V any](sm []map[K]map[K]V, fn func(map[K]V) bool) []map[K]map[K]V {
+// Filter2DMapCollection is like FilterMap only that it's applied on a map slice.
+func Filter2DMapCollection[K comparable, V any](sm []map[K]map[K]V, fn func(map[K]V) bool) []map[K]map[K]V {
 	filtered := []map[K]map[K]V{}
 
 	for _, s := range sm {
