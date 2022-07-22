@@ -22,7 +22,7 @@ func main() {
 	fmt.Println(result2)
 
 	fmt.Println("==================Reject")
-	fmt.Println(gogu.Reject([]int{1, 2, 3, 4, 5, 6}, func(num int) bool {
+	fmt.Println(gogu.Reject([]int{1, 2, 3, 4, 5, 6, 10, 20, 30, 40, 50}, func(num int) bool {
 		return num%2 == 0
 	}))
 
@@ -33,24 +33,6 @@ func main() {
 		return v == "John"
 	})
 	fmt.Println(res2)
-
-	usersMap := map[string]map[string]int{
-		"bernie": {
-			"age":     30,
-			"ranking": 1,
-		},
-
-		"robert": {
-			"age":     20,
-			"ranking": 5,
-		},
-	}
-
-	fmt.Println("==================Filter2DMap")
-	res3 := gogu.Filter2DMap[string, int](usersMap, func(v int) bool {
-		return v > 20
-	})
-	fmt.Println(res3)
 
 	usersSlice := []map[string]map[string]int{
 		{
@@ -67,9 +49,19 @@ func main() {
 		},
 	}
 
-	fmt.Println("==================Filter2DMapSlice")
-	res4 := gogu.Filter2DMapSlice[string, int](usersSlice, func(v map[string]int) bool {
+	fmt.Println("==================Filter2DMapCollection")
+	res3 := gogu.Filter2DMapCollection[string, int](usersSlice, func(v map[string]int) bool {
 		return v["age"] > 20 && v["ranking"] < 5
+	})
+	fmt.Println(res3)
+
+	fmt.Println("==================FilterMapCollection")
+	users := []map[string]int{
+		{"bernie": 22},
+		{"robert": 30},
+	}
+	res4 := gogu.FilterMapCollection[string, int](users, func(val int) bool {
+		return val > 22
 	})
 	fmt.Println(res4)
 }

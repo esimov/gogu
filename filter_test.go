@@ -68,5 +68,4 @@ func TestFilter(t *testing.T) {
 	assert.NotEqual(expected, Filter2DMapCollection(input2, func(v map[string]int) bool {
 		return v["age"] > 20 && v["ranking"] > 1
 	}))
-
 }
