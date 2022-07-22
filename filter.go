@@ -42,14 +42,15 @@ func FilterMap[K comparable, V any](m map[K]V, fn func(V) bool) map[K]V {
 	return filtered
 }
 
-// Filter2DMap is like FilterMap only applied on a two dimmensional map.
-func Filter2DCollection[K comparable, V any](m map[K]map[K]V, fn func(V) bool) map[K]map[K]V {
-	filtered := map[K]map[K]V{}
+// FilterMapCollection filter out a one dimmensional collection of map items
+// by applying the conditional logic of the callback function.
+func FilterMapCollection[K comparable, V any](collection []map[K]V, fn func(V) bool) []map[K]V {
+	filtered := []map[K]V{}
 
-	for k, v := range m {
-		for _, v1 := range v {
-			if fn(v1) {
-				filtered[k] = v
+	for _, item := range collection {
+		for _, v := range item {
+			if fn(v) {
+				filtered = append(filtered, item)
 			}
 		}
 	}
@@ -57,14 +58,15 @@ func Filter2DCollection[K comparable, V any](m map[K]map[K]V, fn func(V) bool) m
 	return filtered
 }
 
-// Filter2DMapCollection is like FilterMap only that it's applied on a map slice.
-func Filter2DMapCollection[K comparable, V any](sm []map[K]map[K]V, fn func(map[K]V) bool) []map[K]map[K]V {
+// Filter2DMapCollection filter out a two dimmensional collection of map items
+// by applying the conditional logic of the callback function.
+func Filter2DMapCollection[K comparable, V any](collection []map[K]map[K]V, fn func(map[K]V) bool) []map[K]map[K]V {
 	filtered := []map[K]map[K]V{}
 
-	for _, s := range sm {
-		for _, v := range s {
+	for _, item := range collection {
+		for _, v := range item {
 			if fn(v) {
-				filtered = append(filtered, s)
+				filtered = append(filtered, item)
 			}
 		}
 	}

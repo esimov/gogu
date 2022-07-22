@@ -42,7 +42,19 @@ func TestFilter(t *testing.T) {
 		return v == "John"
 	}))
 
-	users := []map[string]map[string]int{
+	input1 := []map[string]int{
+		{"bernie": 22},
+		{"robert": 30},
+	}
+	expected1 := []map[string]int{
+		{"robert": 30},
+	}
+
+	assert.Equal(expected1, FilterMapCollection(input1, func(val int) bool {
+		return val > 22
+	}))
+
+	input2 := []map[string]map[string]int{
 		{"bernie": {"age": 30, "ranking": 1}},
 		{"robert": {"age": 20, "ranking": 5}},
 	}
@@ -50,10 +62,11 @@ func TestFilter(t *testing.T) {
 		{"bernie": {"age": 30, "ranking": 1}},
 	}
 
-	assert.Equal(expected, Filter2DMapCollection(users, func(v map[string]int) bool {
+	assert.Equal(expected, Filter2DMapCollection(input2, func(v map[string]int) bool {
 		return v["age"] > 20 && v["ranking"] < 5
 	}))
-	assert.NotEqual(expected, Filter2DMapCollection(users, func(v map[string]int) bool {
+	assert.NotEqual(expected, Filter2DMapCollection(input2, func(v map[string]int) bool {
 		return v["age"] > 20 && v["ranking"] > 1
 	}))
+
 }
