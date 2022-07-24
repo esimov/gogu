@@ -1,10 +1,13 @@
 package gogu
 
 import (
+	"sort"
+
 	"golang.org/x/exp/constraints"
 )
 
-// Number is a custom type set of constraints extending the Float and Integer type set from the experimental constraints package.
+// Number is a custom type set of constraints extending the Float and Integer
+// type set from the experimental constraints package.
 type Number interface {
 	constraints.Float | constraints.Integer
 }
@@ -60,11 +63,26 @@ func MapKeys[K comparable, V any, R comparable](m map[K]V, fn func(K, V) R) map[
 }
 
 // Find iterates over the elements of a map and returns the first item for which the callback function returns true.
-func Find[K comparable, V any](m map[K]V, fn func(V) bool) map[K]V {
-	var result = make(map[K]V)
-	for k, v := range m {
-		if fn(v) {
-			result[k] = v
+func Find[K constraints.Ordered, V any](m map[K]V, fn func(V) bool) map[K]V {
+	var (
+		result = make(map[K]V)
+		keys   = make([]K, len(m))
+	)
+	var i = 0
+
+	// When iterating over a map with a range loop, the order is not guaranteed
+	// to be preserved from one iteration to the next.
+	// We have to store the keys in a separate data structure like a slice
+	// which will be sorted before checking the existence of a value in the map.
+	// This way we ensure, that on duplicate values always the first one is returned.
+	for k := range m {
+		keys[i] = k
+		i++
+	}
+	sort.Slice(keys, func(i, j int) bool { return keys[i] < keys[j] })
+	for _, k := range keys {
+		if fn(m[k]) {
+			result[k] = m[k]
 			break
 		}
 	}
@@ -83,12 +101,13 @@ func FindKey[K comparable, V any](m map[K]V, fn func(V) bool) K {
 	return result
 }
 
-// FindByKey is like Find, but returns the first item key position for which the callback function returns true.
+// FindByKey is like Find, but returns the first item for which the callback function returns true.
 func FindByKey[K comparable, V any](m map[K]V, fn func(K) bool) map[K]V {
 	var result = make(map[K]V)
 	for k, v := range m {
 		if fn(k) {
 			result[k] = v
+			break
 		}
 	}
 	return result
