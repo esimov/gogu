@@ -1,6 +1,7 @@
 package gogu
 
 import (
+	"errors"
 	"sort"
 
 	"golang.org/x/exp/constraints"
@@ -60,6 +61,66 @@ func MapKeys[K comparable, V any, R comparable](m map[K]V, fn func(K, V) R) map[
 	}
 
 	return newMap
+}
+
+// MapEvery returns true if all of the elements of a map satisfies the criteria of the callback function.
+func MapEvery[K comparable, V any](m map[K]V, fn func(V) bool) bool {
+	for _, v := range m {
+		if !fn(v) {
+			return false
+		}
+	}
+
+	return true
+}
+
+// MapSome returns true if some of the elements of a map satisfies the criteria of the callback function.
+func MapSome[K comparable, V any](m map[K]V, fn func(V) bool) bool {
+	for _, v := range m {
+		if fn(v) {
+			return true
+		}
+	}
+
+	return false
+}
+
+// MapContains returns true if the value is present in the list otherwise false.
+func MapContains[K, V comparable](m map[K]V, value V) bool {
+	for _, v := range m {
+		if v == value {
+			return true
+		}
+	}
+	return false
+}
+
+// MapUnique removes the duplicate values from a map.
+func MapUnique[K, V comparable](m map[K]V) map[K]V {
+	result := make(map[K]V, len(m))
+	ref := make(map[V]bool, len(m))
+
+	for k, v := range m {
+		if _, ok := ref[v]; !ok {
+			ref[v] = true
+			result[k] = v
+		}
+	}
+
+	return result
+}
+
+// MapCollection is like the Map method applied on slices, but this time applied on maps.
+// It runs each element over an iteratee function and saves the resulted values into a new map.
+func MapCollection[K comparable, V any](m map[K]V, fn func(V) V) []V {
+	result := make([]V, len(m))
+
+	idx := 0
+	for _, v := range m {
+		result[idx] = fn(v)
+		idx++
+	}
+	return result
 }
 
 // Find iterates over the elements of a map and returns the first item for which the callback function returns true.
@@ -126,51 +187,6 @@ func Invert[K, V comparable](m map[K]V) map[V]K {
 	return inverted
 }
 
-// MapEvery returns true if all of the elements of a map satisfies the criteria of the callback function.
-func MapEvery[K comparable, V any](m map[K]V, fn func(V) bool) bool {
-	for _, v := range m {
-		if !fn(v) {
-			return false
-		}
-	}
-
-	return true
-}
-
-// MapSome returns true if some of the elements of a map satisfies the criteria of the callback function.
-func MapSome[K comparable, V any](m map[K]V, fn func(V) bool) bool {
-	for _, v := range m {
-		if fn(v) {
-			return true
-		}
-	}
-
-	return false
-}
-
-// MapContains returns true if the value is present in the list otherwise false.
-func MapContains[K, V comparable](m map[K]V, value V) bool {
-	for _, v := range m {
-		if v == value {
-			return true
-		}
-	}
-	return false
-}
-
-// MapCollection is like the Map method applied on slices, but this time applied on maps.
-// It runs each element over an iteratee function and saves the resulted values into a new map.
-func MapCollection[K comparable, V any](m map[K]V, fn func(V) V) []V {
-	result := make([]V, len(m))
-
-	idx := 0
-	for _, v := range m {
-		result[idx] = fn(v)
-		idx++
-	}
-	return result
-}
-
 // Pluck extracts all the values of a map by the key definition.
 func Pluck[K comparable, V any](mapSlice []map[K]V, key K) []V {
 	var result = []V{}
@@ -188,8 +204,11 @@ func Pluck[K comparable, V any](mapSlice []map[K]V, key K) []V {
 }
 
 // Pick extracts the elements from the map which have the key defined in the allowed keys.
-func Pick[K comparable, V any](collection map[K]V, keys ...K) map[K]V {
+func Pick[K comparable, V any](collection map[K]V, keys ...K) (map[K]V, error) {
 	var result = make(map[K]V)
+	if len(keys) == 0 {
+		return result, errors.New("no map keys provided for the Pick function")
+	}
 
 	for k := range collection {
 		if Contains(keys, k) {
@@ -197,7 +216,7 @@ func Pick[K comparable, V any](collection map[K]V, keys ...K) map[K]V {
 		}
 	}
 
-	return result
+	return result, nil
 }
 
 // PickBy extracts all the map elements for which the callback function returns truthy.
