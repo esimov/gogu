@@ -50,12 +50,12 @@ func Range[T Number](args ...T) ([]T, error) {
 
 	if end > 0 {
 		for i := start; i < end; i += step {
-			n, _ := N[T](conv(i))
+			n, _ := N[T](NumToString(i))
 			result = append(result, T(n))
 		}
 	} else {
 		for i := start; end < i; i -= Abs(step) {
-			n, _ := N[T](conv(i))
+			n, _ := N[T](NumToString(i))
 			result = append(result, T(n))
 		}
 	}
@@ -100,9 +100,9 @@ func N[T Number](s string) (T, error) {
 	}
 }
 
-// conv converts a number to a string.
+// NumToString converts a number to a string.
 // In case of a number of type float (float32|float64) this will be rounded to 2 decimal places.
-func conv[T Number](n T) string {
+func NumToString[T Number](n T) string {
 	if reflect.TypeOf(n).Kind() == reflect.Float32 ||
 		reflect.TypeOf(n).Kind() == reflect.Float64 {
 
