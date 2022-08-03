@@ -1,8 +1,10 @@
 package gogu
 
 import (
-	"fmt"
+	"math"
+	"sort"
 	"strconv"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -70,7 +72,6 @@ func TestSlice_ForEach(t *testing.T) {
 		input2[idx] = val + val
 		idx++
 	})
-	fmt.Println(input2)
 	assert.Equal([]string{"aa", "bb", "cc", "dd"}, input2)
 
 	output3 := []string{}
@@ -78,4 +79,57 @@ func TestSlice_ForEach(t *testing.T) {
 		output3 = append(output3, strconv.Itoa(val))
 	})
 	assert.Equal([]string{"4", "3", "2", "1"}, output3)
+}
+
+func TestSlice_Reduce(t *testing.T) {
+	assert := assert.New(t)
+
+	input1 := []int{1, 2, 3, 4}
+	assert.Equal(10, Reduce(input1, func(a, b int) int {
+		return a + b
+	}, 0))
+
+	input2 := []string{"a", "b", "c", "d"}
+	assert.Equal("abcd", Reduce(input2, func(a, b string) string {
+		return b + a
+	}, ""))
+
+	res := Reduce(input2, func(a, b string) string {
+		return a + b
+	}, "")
+	res1 := []byte(res)
+	sort.Slice(res1, func(i, j int) bool { return res[i] < res[j] })
+
+	assert.Equal("abcd", string(res1))
+}
+
+func TestSlice_Reverse(t *testing.T) {
+	assert := assert.New(t)
+
+	assert.Equal([]int{4, 3, 2, 1}, Reverse([]int{1, 2, 3, 4}))
+	assert.Equal([]string{"a", "b", "c"}, Reverse([]string{"c", "b", "a"}))
+
+	assert.Equal("abcd", Reduce(Reverse([]string{"a", "b", "c", "d"}), func(a, b string) string {
+		return a + b
+	}, ""))
+
+	assert.NotEqual("abcd", Reverse([]string{"a", "b", "c", "d"}))
+}
+
+func TestSlice_Unique(t *testing.T) {
+	assert := assert.New(t)
+
+	input := []int{1, 2, 4, 3, 1, 4, 5}
+	res := Unique(input)
+
+	sort.Slice(res, func(i, j int) bool { return res[i] < res[j] })
+	assert.Equal([]int{1, 2, 3, 4, 5}, res)
+
+	assert.Equal([]float64{2.1, 1.2}, UniqueBy([]float64{2.1, 1.2, 2.3}, func(v float64) float64 {
+		return math.Floor(v)
+	}))
+
+	assert.Equal([]string{"a", "b", "c"}, UniqueBy([]string{"a", "b", "c", "B", "c", "A"}, func(v string) string {
+		return strings.ToUpper(v)
+	}))
 }
