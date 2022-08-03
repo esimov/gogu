@@ -2,6 +2,7 @@ package gogu
 
 import (
 	"math"
+	"reflect"
 	"sort"
 	"strconv"
 	"strings"
@@ -132,4 +133,90 @@ func TestSlice_Unique(t *testing.T) {
 	assert.Equal([]string{"a", "b", "c"}, UniqueBy([]string{"a", "b", "c", "B", "c", "A"}, func(v string) string {
 		return strings.ToUpper(v)
 	}))
+}
+
+func TestSlice_Every(t *testing.T) {
+	assert := assert.New(t)
+
+	assert.Equal(true, Every([]int{2, 4, 6, 8, 10}, func(val int) bool {
+		return val%2 == 0
+	}))
+	assert.NotEqual(true, Every([]int{-1, -2, 6, 8, 10}, func(val int) bool {
+		return val > 0
+	}))
+	assert.Equal(false, Every([]any{"1", 1, 10, false}, func(val any) bool {
+		return reflect.TypeOf(val).Kind() == reflect.Int
+	}))
+	assert.Equal(true, Every([]string{"1", "2", "3", "4"}, func(val string) bool {
+		v, _ := strconv.Atoi(val)
+		return reflect.TypeOf(v).Kind() == reflect.Int
+	}))
+}
+
+func TestSlice_Some(t *testing.T) {
+	assert := assert.New(t)
+
+	assert.Equal(true, Some([]int{1, 2, 3, 4, 5, 6}, func(val int) bool {
+		return val%2 == 0
+	}))
+	assert.Equal(false, Some([]int{1, 3, 5}, func(val int) bool {
+		return val%2 == 0
+	}))
+	assert.Equal(true, Some([]string{"1", "2", "3", "a"}, func(val string) bool {
+		v, _ := strconv.Atoi(val)
+		return reflect.TypeOf(v).Kind() == reflect.Int
+	}))
+
+	assert.Equal(false, Some([]string{"a", "b", "c"}, func(val string) bool {
+		return reflect.TypeOf(val).Kind() == reflect.Int
+	}))
+}
+
+func TestSlice_Partition(t *testing.T) {
+	assert := assert.New(t)
+
+	input := []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+	assert.Len(Partition(input, func(val int) bool {
+		return val >= 5
+	}), 2)
+
+	res1 := Partition(input, func(val int) bool {
+		return val < 5
+	})
+	assert.Equal([]int{0, 1, 2, 3, 4}, res1[0])
+
+	res2 := Partition(input, func(val int) bool {
+		return val < 0
+	})
+	assert.Empty(res2[0])
+	assert.NotEmpty(res2[1])
+}
+
+func TestSlice_Contains(t *testing.T) {
+	assert := assert.New(t)
+
+	input := []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+	assert.Empty(Contains(input, -1))
+	assert.Equal(true, Contains(input, 0))
+	assert.NotEqual(true, Contains(input, 100))
+}
+
+func TestSlice_Duplicate(t *testing.T) {
+	assert := assert.New(t)
+
+	input := []int{-1, -1, 0, 1, 2, 3, 2, 5, 1, 6}
+	assert.NotEmpty(Duplicate(input))
+	assert.Len(Duplicate(input), 3)
+	assert.ElementsMatch([]int{-1, 1, 2}, Duplicate(input))
+
+	assert.ElementsMatch([]string{"aa"}, Duplicate([]string{"aa", "a", "aa", "b", "bb"}))
+
+	assert.Len(DuplicateWithIndex(input), 3)
+	res := DuplicateWithIndex(input)
+
+	indices := make([]int, 0, len(input))
+	for k := range res {
+		indices = append(indices, k)
+	}
+	assert.ElementsMatch([]int{-1, 1, 2}, indices)
 }

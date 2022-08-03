@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-// Sum returns the sum of the slice items. These needs to satisfy the type constraints declared as Number.
+// Sum returns the sum of the slice items. These have to satisfy the type constraints declared as Number.
 func Sum[T Number](slice []T) T {
 	var acc T
 	for _, v := range slice {
@@ -69,7 +69,7 @@ func Reduce[T1, T2 any](slice []T1, fn func(T1, T2) T2, initVal T2) T2 {
 	return actual
 }
 
-// Reverse reverses the order of elements so that the first element becomes the last,
+// Reverse reverses the order of elements, so that the first element becomes the last,
 // the second element becomes the second to last, and so on.
 func Reverse[T any](sl []T) []T {
 	for i, j := 0, len(sl)-1; i < j; i, j = i+1, j-1 {
@@ -95,7 +95,7 @@ func Unique[T comparable](slice []T) []T {
 }
 
 // UniqueBy is like Unique except that it accept a callback function which is invoked on each
-// element of the slice applying the criterion by which the uniqueness is computed.
+// element of the slice applying the criteria by which the uniqueness is computed.
 func UniqueBy[T comparable](slice []T, fn func(v T) T) []T {
 	keys := make(map[T]bool)
 	result := []T{}
@@ -130,8 +130,8 @@ func Some[T any](slice []T, fn func(T) bool) bool {
 	return false
 }
 
-// Partition split the slice into two arrays, the one whose elements satisfies the condition
-// expressed in the callback function (fn) and one whose elements don't satisfies the condition.
+// Partition splits the collection elements into two, the ones which satisfies the condition
+// expressed in the callback function (fn) and those which does not satisfies the condition.
 func Partition[T comparable](slice []T, fn func(T) bool) [2][]T {
 	var result = [2][]T{}
 
@@ -146,7 +146,7 @@ func Partition[T comparable](slice []T, fn func(T) bool) [2][]T {
 	return result
 }
 
-// Contains returns true if the value is present in the slice.
+// Contains returns true if the value is present in the collection.
 func Contains[T comparable](slice []T, value T) bool {
 	for _, v := range slice {
 		if v == value {
@@ -179,7 +179,8 @@ func Duplicate[T comparable](slice []T) []T {
 	return result
 }
 
-// DuplicateWithIndex returns the duplicated values of a collection and their corresponding position as map.
+// DuplicateWithIndex puts the duplicated values of a collection into a map as a key value pair,
+// where the key is the collection element and the value is it's position.
 func DuplicateWithIndex[T comparable](slice []T) map[T]int {
 	var count int
 	kvMap := make(map[T][]int)
@@ -200,7 +201,7 @@ func DuplicateWithIndex[T comparable](slice []T) map[T]int {
 		}
 	}
 
-	// Include only the values which count frequency is greater than 1 into the resulting slice.
+	// Include into the resulting slice only the values which frequency is greater than 1.
 	for k, v := range kvMap {
 		if v[1] > 1 {
 			result[k] = v[0]
@@ -329,7 +330,7 @@ loop:
 }
 
 // DifferenceBy is like Difference, except that invokes a callback function on each
-// element of the slice, applying the criterion by which the difference is computed.
+// element of the slice, applying the criteria by which the difference is computed.
 func DifferenceBy[T comparable](s1, s2 []T, fn func(val T) T) []T {
 	keys := make(map[T]bool)
 	unique := []T{}
