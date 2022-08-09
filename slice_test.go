@@ -204,19 +204,34 @@ func TestSlice_Contains(t *testing.T) {
 func TestSlice_Duplicate(t *testing.T) {
 	assert := assert.New(t)
 
-	input := []int{-1, -1, 0, 1, 2, 3, 2, 5, 1, 6}
-	assert.NotEmpty(Duplicate(input))
-	assert.Len(Duplicate(input), 3)
-	assert.ElementsMatch([]int{-1, 1, 2}, Duplicate(input))
+	input1 := []int{-1, -1, 0, 1, 2, 3, 2, 5, 1, 6}
+	assert.NotEmpty(Duplicate(input1))
+	assert.Len(Duplicate(input1), 3)
+	assert.ElementsMatch([]int{-1, 1, 2}, Duplicate(input1))
 
-	assert.ElementsMatch([]string{"aa"}, Duplicate([]string{"aa", "a", "aa", "b", "bb"}))
+	input2 := []string{"One", "Two", "Three", "two", "One"}
+	assert.ElementsMatch([]string{"One"}, Duplicate(input2))
+	assert.ElementsMatch([]string{"one", "two"}, Duplicate(Map(input2, func(val string) string {
+		return strings.ToLower(val)
+	})))
 
-	assert.Len(DuplicateWithIndex(input), 3)
-	res := DuplicateWithIndex(input)
+	assert.Len(DuplicateWithIndex(input1), 3)
+	res := DuplicateWithIndex(input1)
 
-	indices := make([]int, 0, len(input))
+	indices := make([]int, 0, len(input1))
 	for k := range res {
 		indices = append(indices, k)
 	}
 	assert.ElementsMatch([]int{-1, 1, 2}, indices)
+}
+
+func TestSlice_Merge(t *testing.T) {
+	assert := assert.New(t)
+
+	sl1 := []int{1, 2, 3, 4}
+	sl2 := []int{5, 6, 7, 8}
+
+	assert.Len(Merge(sl1, sl2), len(sl1)+len(sl2))
+	assert.Equal([]int{1, 2, 3, 4, 5, 6, 7, 8}, Merge(sl1, sl2))
+	assert.Equal([]int{1, 2, 3}, Merge([]int{1}, []int{2}, []int{3}))
 }
