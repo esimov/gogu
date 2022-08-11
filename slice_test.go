@@ -235,3 +235,78 @@ func TestSlice_Merge(t *testing.T) {
 	assert.Equal([]int{1, 2, 3, 4, 5, 6, 7, 8}, Merge(sl1, sl2))
 	assert.Equal([]int{1, 2, 3}, Merge([]int{1}, []int{2}, []int{3}))
 }
+
+func TestSlice_Flatten(t *testing.T) {
+	assert := assert.New(t)
+
+	input1 := []any{[]float64{1.0, 2.0}, 1.1}
+	result1, err := Flatten[float64](input1)
+	assert.Equal([]float64{1.0, 2.0, 1.1}, result1)
+	assert.NotNil(result1)
+	assert.NoError(err)
+	assert.Len(result1, 3)
+
+	input2 := []any{[]float32{1.0, 2.0}, 3.0}
+	result2, err := Flatten[float32](input2)
+	assert.Error(err)
+	assert.Nil(result2) // result is nil, because the last element in the slice is of type float64
+
+	input3 := []string{"a", "b", "c"}
+	result3, err := Flatten[string](Merge(input3, []string{"d", "e"}))
+	assert.Equal([]string{"a", "b", "c", "d", "e"}, result3)
+	assert.NotNil(result3)
+	assert.NoError(err)
+
+	input4 := []any{[]int{1, 2, 3}, []any{[]int{4}, 5}}
+	result4, _ := Flatten[int](input4)
+	assert.Equal([]int{1, 2, 3, 4, 5}, result4)
+
+	int1 := []int{1, 2}
+	res1 := Map([]string{"3", "4"}, func(val string) int {
+		res, _ := strconv.Atoi(val)
+		return res
+	})
+	result5, err := Flatten[int]([]any{int1, res1})
+	assert.Equal([]int{1, 2, 3, 4}, result5)
+	assert.NoError(err)
+}
+
+func TestSlice_Union(t *testing.T) {
+	assert := assert.New(t)
+
+	input1 := []any{[]any{1, 2, []any{3, []int{4, 5, 6}}}, 7, []int{1, 2}, 3, []int{4, 7}, 8, 9, 9}
+	result1, err := Union[int](input1)
+	assert.Len(result1, 9)
+	assert.NoError(err)
+	assert.Equal([]int{1, 2, 3, 4, 5, 6, 7, 8, 9}, result1)
+
+	input2 := []any{[]any{"One", "Two", []any{"Foo", []string{"Bar", "Baz", "Qux"}}}, "Foo", []string{"Foo", "Two"}, "Baz", "bar"}
+	result2, err := Union[string](input2)
+	assert.Len(result2, 7)
+	assert.NoError(err)
+	assert.Equal([]string{"One", "Two", "Foo", "Bar", "Baz", "Qux", "bar"}, result2)
+
+	resMap := Map(result2, func(val string) string {
+		return strings.ToLower(val)
+	})
+	result3, err := Union[string](resMap)
+	assert.Equal([]string{"one", "two", "foo", "bar", "baz", "qux"}, result3)
+	assert.NoError(err)
+}
+
+func TestSlice_Intersection(t *testing.T) {
+	assert := assert.New(t)
+
+	result1 := Intersection([]int{1, 2, 4}, []int{0, 2, 1}, []int{2, 1, -2})
+	sort.Slice(result1, func(i, j int) bool { return result1[i] < result1[j] })
+	assert.Equal([]int{1, 2}, result1)
+
+	result2 := Intersection([]int{-1, 0}, []int{2, 3})
+	sort.Slice(result2, func(i, j int) bool { return result2[i] < result2[j] })
+	assert.Empty(result2)
+	assert.Equal([]int{}, result2)
+
+	result3 := Intersection([]int{0, 1, 2}, []int{2, 0, 1}, []int{2, 1, 0})
+	sort.Slice(result3, func(i, j int) bool { return result3[i] < result3[j] })
+	assert.Equal([]int{0, 1, 2}, result3)
+}

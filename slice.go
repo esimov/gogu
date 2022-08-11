@@ -260,15 +260,27 @@ func Union[T comparable](slice any) ([]T, error) {
 }
 
 // Intersection computes the list of values that are the intersection of all the slices.
-func Intersection[T comparable](slice any) ([]T, error) {
-	var err error
+// Each value in the result should be present in each of the provided slices.
+func Intersection[T comparable](slice ...[]T) []T {
+	result := []T{}
 
-	flatten, err := baseFlatten([]T{}, slice)
-	if err != nil {
-		return nil, err
+	for i := 0; i < len(slice[0]); i++ {
+		item := slice[0][i]
+		if Contains(result, item) {
+			continue
+		}
+		var j int
+		for j = 1; j < len(slice); j++ {
+			if !Contains(slice[j], item) {
+				break
+			}
+		}
+		if j == len(slice) {
+			result = append(result, item)
+		}
 	}
 
-	return Duplicate(flatten), nil
+	return result
 }
 
 // IntersectionBy is like Intersection, except that it accepts and callback function which is invoked on each element of the collection.
