@@ -115,12 +115,11 @@ func main() {
 	fmt.Println(sl3)
 
 	fmt.Println("==================Intersection")
-	sl4 := []any{[]int{1, 2, 3}, []int{101, 2, 1, 10}, []int{2, 1}}
-	in, _ := gogu.Intersection[int](sl4)
+	in := gogu.Intersection[int]([]int{1, 2, 3}, []int{101, 2, 1, 10}, []int{2, 1})
 	fmt.Println(in)
 
 	fmt.Println("==================IntersectionBy")
-	fl4, _ := gogu.IntersectionBy(func(v float64) float64 {
+	fl4 := gogu.IntersectionBy(func(v float64) float64 {
 		return math.Floor(v)
 	}, []float64{2.1, 1.2, 5.09}, []float64{2.3, 2.2, 3.04, 3.1, 4.8, 4.1})
 	fmt.Println(fl4)

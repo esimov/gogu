@@ -96,7 +96,7 @@ func Unique[T comparable](slice []T) []T {
 
 // UniqueBy is like Unique except that it accept a callback function which is invoked on each
 // element of the slice applying the criteria by which the uniqueness is computed.
-func UniqueBy[T comparable](slice []T, fn func(v T) T) []T {
+func UniqueBy[T comparable](slice []T, fn func(T) T) []T {
 	keys := make(map[T]bool)
 	result := []T{}
 
@@ -261,21 +261,22 @@ func Union[T comparable](slice any) ([]T, error) {
 
 // Intersection computes the list of values that are the intersection of all the slices.
 // Each value in the result should be present in each of the provided slices.
-func Intersection[T comparable](slice ...[]T) []T {
+func Intersection[T comparable](params ...[]T) []T {
 	result := []T{}
 
-	for i := 0; i < len(slice[0]); i++ {
-		item := slice[0][i]
+	for i := 0; i < len(params[0]); i++ {
+		item := params[0][i]
 		if Contains(result, item) {
 			continue
 		}
 		var j int
-		for j = 1; j < len(slice); j++ {
-			if !Contains(slice[j], item) {
+		for j = 1; j < len(params); j++ {
+			if !Contains(params[j], item) {
 				break
 			}
 		}
-		if j == len(slice) {
+
+		if j == len(params) {
 			result = append(result, item)
 		}
 	}
@@ -284,20 +285,35 @@ func Intersection[T comparable](slice ...[]T) []T {
 }
 
 // IntersectionBy is like Intersection, except that it accepts and callback function which is invoked on each element of the collection.
-func IntersectionBy[T comparable](fn func(T) T, params ...[]T) ([]T, error) {
-	merged := make([]T, 0, len(params))
-	result := make([]T, 0, len(params))
+func IntersectionBy[T comparable](fn func(T) T, params ...[]T) []T {
+	result := []T{}
 
-	for _, s := range params {
-		merged = append(merged, s...)
+	for i := 0; i < len(params[0]); i++ {
+		item := params[0][i]
+		if Contains(result, fn(item)) {
+			continue
+		}
+		var j int
+		for j = 1; j < len(params); j++ {
+			has := func() bool {
+				for _, v := range params[j] {
+					if fn(v) == fn(item) {
+						return true
+					}
+				}
+				return false
+			}
+			if !has() {
+				break
+			}
+		}
+
+		if j == len(params) {
+			result = append(result, item)
+		}
 	}
 
-	dups := DuplicateWithIndex(Map(merged, fn))
-	for _, v := range dups {
-		result = append(result, merged[v])
-	}
-
-	return result, nil
+	return result
 }
 
 // Without returns a copy of the slice with all the values defined in the variadic parameter removed.
@@ -343,7 +359,7 @@ loop:
 
 // DifferenceBy is like Difference, except that invokes a callback function on each
 // element of the slice, applying the criteria by which the difference is computed.
-func DifferenceBy[T comparable](s1, s2 []T, fn func(val T) T) []T {
+func DifferenceBy[T comparable](s1, s2 []T, fn func(T) T) []T {
 	keys := make(map[T]bool)
 	unique := []T{}
 loop:
@@ -438,7 +454,7 @@ func mapByIndex[T1 comparable, T2 any](origSlice []T2, mapSlice []T1) map[T1][]T
 }
 
 // GroupBy splits a collection into sets, grouped by the result of running each value through the callback function fn.
-func GroupBy[T1, T2 comparable](slice []T1, fn func(val T1) T2) map[T2][]T1 {
+func GroupBy[T1, T2 comparable](slice []T1, fn func(T1) T2) map[T2][]T1 {
 	return mapByIndex(slice, Map(slice, fn))
 }
 

@@ -298,15 +298,36 @@ func TestSlice_Intersection(t *testing.T) {
 	assert := assert.New(t)
 
 	result1 := Intersection([]int{1, 2, 4}, []int{0, 2, 1}, []int{2, 1, -2})
-	sort.Slice(result1, func(i, j int) bool { return result1[i] < result1[j] })
 	assert.Equal([]int{1, 2}, result1)
 
 	result2 := Intersection([]int{-1, 0}, []int{2, 3})
-	sort.Slice(result2, func(i, j int) bool { return result2[i] < result2[j] })
 	assert.Empty(result2)
 	assert.Equal([]int{}, result2)
 
 	result3 := Intersection([]int{0, 1, 2}, []int{2, 0, 1}, []int{2, 1, 0})
-	sort.Slice(result3, func(i, j int) bool { return result3[i] < result3[j] })
 	assert.Equal([]int{0, 1, 2}, result3)
+
+	result4 := Intersection([]string{"a", "b"}, []string{"a", "a", "a"}, []string{"b", "a", "e"})
+	assert.Equal([]string{"a"}, result4)
+}
+
+func TestSlice_IntersectionBy(t *testing.T) {
+	assert := assert.New(t)
+
+	result1 := IntersectionBy(func(v float64) float64 {
+		return math.Floor(v)
+	}, []float64{2.1, 1.2}, []float64{2.3, 3.4}, []float64{1.0, 2.3})
+	assert.Equal([]float64{2.1}, result1)
+
+	result2 := IntersectionBy(func(v int) int {
+		return v % 2
+	}, []int{1, 2}, []int{2, 1})
+	assert.Equal([]int{1, 2}, result2)
+
+	result3 := IntersectionBy(func(v float64) float64 {
+		return math.Floor(v)
+	}, []float64{1.1, 2.0, 3.2}, []float64{4.0})
+
+	assert.Equal([]float64{}, result3)
+
 }
