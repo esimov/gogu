@@ -327,7 +327,30 @@ func TestSlice_IntersectionBy(t *testing.T) {
 	result3 := IntersectionBy(func(v float64) float64 {
 		return math.Floor(v)
 	}, []float64{1.1, 2.0, 3.2}, []float64{4.0})
-
 	assert.Equal([]float64{}, result3)
+}
 
+func TestSlice_Without(t *testing.T) {
+	assert := assert.New(t)
+
+	assert.Equal([]int{3}, Without[int, int]([]int{2, 1, 2, 3}, 1, 2))
+	assert.Equal([]int{1, 2}, Without[int, int]([]int{1, 2, 3, 4}, 3, 4))
+	assert.Equal([]int{1, 2}, Without[int, int]([]int{0, 1, 2, 3, 4, 5}, 0, 3, 4, 5))
+	assert.Equal([]float64{1.0, 2.2}, Without[float64, float64]([]float64{1.0, 2.2, 3.0, 4.2}, 3.0, 4.2))
+
+	assert.Empty(Without[int, int]([]int{}, 1, 2, 3, 4))
+	assert.Empty(Without[int, int]([]int{0, 1, 2}, 0, 1, 2))
+	assert.Empty(Without[int, int]([]int{}, 0, 1, 2))
+	assert.Empty(Without[int, int]([]int{}))
+}
+
+func TestSlice_Difference(t *testing.T) {
+	assert := assert.New(t)
+
+	assert.Equal([]int{1, 3}, Difference([]int{1, 2, 3, 4}, []int{2, 4}))
+	assert.Equal([]int{1, 2, 3}, Difference([]int{1, 2, 3, 4}, []int{4, 5, 6, 7}))
+	assert.Equal([]int{1, 2, 3, 4}, Difference([]int{1, 2, 3, 4}, []int{}))
+
+	assert.Empty(Difference([]int{}, []int{1, 2, 3, 4}))
+	assert.Empty(Difference([]int{}, []int{-1}))
 }
