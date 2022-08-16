@@ -350,7 +350,129 @@ func TestSlice_Difference(t *testing.T) {
 	assert.Equal([]int{1, 3}, Difference([]int{1, 2, 3, 4}, []int{2, 4}))
 	assert.Equal([]int{1, 2, 3}, Difference([]int{1, 2, 3, 4}, []int{4, 5, 6, 7}))
 	assert.Equal([]int{1, 2, 3, 4}, Difference([]int{1, 2, 3, 4}, []int{}))
+	assert.Equal([]int{}, Difference([]int{1}, []int{1}))
 
 	assert.Empty(Difference([]int{}, []int{1, 2, 3, 4}))
 	assert.Empty(Difference([]int{}, []int{-1}))
+
+	assert.Equal([]float64{1.2}, DifferenceBy([]float64{2.1, 1.2}, []float64{2.3, 3.4}, func(v float64) float64 {
+		return math.Floor(v)
+	}))
+	assert.Equal([]float64{}, DifferenceBy([]float64{1.2}, []float64{1.4}, func(v float64) float64 {
+		return math.Floor(v)
+	}))
+	assert.Equal([]int{1}, DifferenceBy([]int{1}, []int{4}, func(v int) int {
+		return v % 2
+	}))
+	assert.Empty(DifferenceBy([]int{2}, []int{4}, func(v int) int {
+		return v % 2
+	}))
+}
+
+func TestSlice_Chunk(t *testing.T) {
+	assert := assert.New(t)
+
+	assert.Equal([][]int{{0, 1}, {2, 3}}, Chunk([]int{0, 1, 2, 3}, 2))
+	assert.Equal([][]int{{0, 1}, {2, 3}, {4}}, Chunk([]int{0, 1, 2, 3, 4}, 2))
+	assert.Equal([][]int{{0}, {1}}, Chunk([]int{0, 1}, 1))
+	assert.Equal([][]string{{"Tyrone", "Elie"}, {"Aidan", "Sam"}, {"Little Timmy"}}, Chunk([]string{"Tyrone", "Elie", "Aidan", "Sam", "Little Timmy"}, 2))
+
+	input := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
+	assert.Equal([][]int{{1, 2, 3, 4, 5}, {6, 7, 8, 9, 10}, {11, 12}}, Chunk(input, 5))
+	assert.Len(Chunk(input, 5), 3)
+	assert.Len(Chunk(input, 12), 1)
+	assert.Panics(func() { Chunk([]int{0, 1}, 0) })
+}
+
+func TestSlice_Drop(t *testing.T) {
+	assert := assert.New(t)
+
+	assert.Equal([]int{1, 2}, Drop([]int{0, 1, 2}, 1))
+	assert.Equal([]int{2}, Drop([]int{0, 1, 2}, 2))
+	assert.Equal([]int{0, 1, 2}, Drop([]int{0, 1, 2}, 0))
+	assert.Equal([]int{}, Drop([]int{0, 1, 2}, 3))
+	assert.Equal([]int{}, Drop([]int{0, 1, 2}, 4))
+
+	assert.Equal([]int{0, 1}, Drop([]int{0, 1, 2}, -1))
+	assert.Equal([]int{}, Drop([]int{0, 1, 2}, -3))
+	assert.Equal([]int{}, Drop([]int{0, 1, 2}, -4))
+
+	assert.Equal([]string{"a", "AA"}, DropWhile([]string{"a", "AA", "bbb", "ccc"}, func(elem string) bool {
+		return len(elem) > 2
+	}))
+	assert.Equal([]int{1, 3}, DropWhile([]int{1, 2, 3, 4}, func(val int) bool {
+		return val%2 == 0
+	}))
+	assert.Equal([]int{2}, DropWhile([]int{1, 2}, func(val int) bool {
+		return val < 2
+	}))
+	assert.Empty(DropWhile([]int{1, 2}, func(val int) bool {
+		return val <= 2
+	}))
+
+	assert.Equal([]string{"AA", "a"}, DropRightWhile([]string{"a", "AA", "bbb", "ccc"}, func(elem string) bool {
+		return len(elem) > 2
+	}))
+	assert.Equal([]int{3, 1}, DropRightWhile([]int{1, 2, 3, 4}, func(val int) bool {
+		return val%2 == 0
+	}))
+	assert.Equal([]int{2}, DropRightWhile([]int{1, 2}, func(val int) bool {
+		return val < 2
+	}))
+	assert.Empty(DropRightWhile([]int{1, 2}, func(val int) bool {
+		return val <= 2
+	}))
+}
+
+func TestSlice_GroupBy(t *testing.T) {
+	assert := assert.New(t)
+
+	input1 := []float64{1.3, 1.5, 2.1, 2.9}
+	assert.Len(GroupBy(input1, func(val float64) float64 {
+		return math.Floor(val)
+	}), 2)
+	assert.Equal(map[float64][]float64{1: {1.3, 1.5}, 2: {2.1, 2.9}}, GroupBy(input1, func(val float64) float64 {
+		return math.Floor(val)
+	}))
+	assert.Equal(map[float64][]float64{1: {1.3, 1.5}, 2: {2.1, 2.9}}, GroupBy(input1, func(val float64) float64 {
+		return math.Floor(val)
+	}))
+	res1 := GroupBy(input1, func(val float64) int {
+		if math.Floor(val) == 1 {
+			return 2
+		}
+		return int(math.Floor(val))
+	})
+	assert.Len(res1, 1)
+	assert.Equal(map[int][]float64{2: {1.3, 1.5, 2.1, 2.9}}, res1)
+
+	input2 := []string{"one", "two", "three"}
+	assert.Equal(map[int][]string{3: {"one", "two"}, 5: {"three"}}, GroupBy(input2, func(val string) int {
+		return len(val)
+	}))
+
+	input3 := []string{"1", "2", "3"}
+	assert.Len(GroupBy(input3, func(val string) int {
+		res, _ := strconv.Atoi(val)
+		return res
+	}), 3)
+
+	res3 := GroupBy(input3, func(val string) int {
+		res, _ := strconv.Atoi(val)
+		return res
+	})
+	for k, v := range res3 {
+		val, _ := strconv.Atoi(v[0])
+		assert.Equal(k, val)
+	}
+}
+
+func TestSlice_ToSlice(t *testing.T) {
+	assert := assert.New(t)
+
+	assert.Len(ToSlice[int](), 0)
+	assert.Empty(ToSlice[string]())
+	assert.Equal([]int{1, 2}, ToSlice(1, 2))
+	assert.Equal([]int{1, 2, 3}, ToSlice(1, 2, 3))
+	assert.Equal([]string{"a", "b"}, ToSlice("a", "b"))
 }

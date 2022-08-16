@@ -383,6 +383,9 @@ loop:
 func Chunk[T comparable](slice []T, size int) [][]T {
 	var result = make([][]T, 0, len(slice)/2+1)
 
+	if size <= 0 {
+		panic("Chunk size should be greater than zero.")
+	}
 	for i := 0; i < len(slice); i++ {
 		if i%size == 0 {
 			if i+size < len(slice) {
@@ -396,17 +399,14 @@ func Chunk[T comparable](slice []T, size int) [][]T {
 }
 
 // Drop creates a new slice with n elements dropped from the beginning.
+// If n < 0 the elements will be dropped from the back of the collection.
 func Drop[T any](slice []T, n int) []T {
-	if n < len(slice) {
-		return slice[n:]
-	}
-	return []T{}
-}
-
-// DropRight creates a new slice with n elements dropped from the end.
-func DropRight[T any](slice []T, n int) []T {
-	if n < len(slice) {
-		return slice[:len(slice)-n]
+	if Abs(n) < len(slice) {
+		if n > 0 {
+			return slice[n:]
+		} else {
+			return slice[:len(slice)-Abs(n)]
+		}
 	}
 	return []T{}
 }
@@ -425,12 +425,12 @@ func DropWhile[T any](slice []T, fn func(T) bool) []T {
 	return result
 }
 
-// DropRightWhile creates a new slice excluding the elements dropped from the beginning.
+// DropRightWhile creates a new slice excluding the elements dropped from the end.
 // Elements are dropped by applying the conditional invoked in the callback function.
 func DropRightWhile[T any](slice []T, fn func(T) bool) []T {
 	result := make([]T, 0, len(slice))
 
-	for i := len(slice) - 1; i > 0; i-- {
+	for i := len(slice) - 1; i >= 0; i-- {
 		if !fn(slice[i]) {
 			result = append(result, slice[i])
 		}
@@ -453,7 +453,9 @@ func mapByIndex[T1 comparable, T2 any](origSlice []T2, mapSlice []T1) map[T1][]T
 	return result
 }
 
-// GroupBy splits a collection into sets, grouped by the result of running each value through the callback function fn.
+// GroupBy splits a collection into a key-value set, grouped by the result of running each value through the callback function fn.
+// The return value is a map where the key is the conditional logic of the callback function
+// and the values are the callback function returned values.
 func GroupBy[T1, T2 comparable](slice []T1, fn func(T1) T2) map[T2][]T1 {
 	return mapByIndex(slice, Map(slice, fn))
 }
@@ -514,6 +516,7 @@ func Unzip[T any](slices ...[]T) [][]T {
 	return result
 }
 
+// ToSlice returns the function arguments as a slice.
 func ToSlice[T any](args ...T) []T {
 	slice := make([]T, 0, len(args))
 	slice = append(slice, args...)

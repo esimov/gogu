@@ -130,9 +130,6 @@ func main() {
 	fmt.Println("==================Drop")
 	fmt.Println(gogu.Drop([]int{1, 2, 3}, 2))
 
-	fmt.Println("==================DropRight")
-	fmt.Println(gogu.DropRight([]int{1, 2, 3}, 1))
-
 	fmt.Println("==================DropWhile")
 	fmt.Println(gogu.DropWhile([]string{"AAA", "AA", "A", "AAAA"}, func(elem string) bool {
 		return len(elem) > 2
