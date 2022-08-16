@@ -53,7 +53,7 @@ func NewCache[T ~string, V any](expTime, cleanupTime time.Duration) *Cache[T, V]
 
 	if expTime != NoExpiration {
 		go c.cleanup()
-		// Because there is no human interaction happening in the background, we need to have
+		// Because no human interaction is happening in the background, we need to have
 		// a guarentee that the goroutine responsible for the cache purge stops after the cleanup.
 		// This is the reason why runtime.SetFinalizer is used. This will be called when the garbage collector
 		// finds an unreachable block ready to be garbage collected.
