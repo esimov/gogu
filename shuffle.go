@@ -9,7 +9,7 @@ func Shuffle[T any](src []T) []T {
 	dst := make([]T, len(src))
 	copy(dst, src)
 
-	for i := len(src) - 1; i > 0; i-- {
+	for i := len(src) - 1; i >= 0; i-- {
 		j := rand.Int() % (i + 1)
 		swap(&dst[i], &dst[j])
 	}
