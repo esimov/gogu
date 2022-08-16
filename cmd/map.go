@@ -101,7 +101,7 @@ func main() {
 
 	fmt.Println("==================PartitionMap")
 	pm := gogu.PartitionMap[string, any](in, func(m map[string]any) bool {
-		return m["age"] == false
+		return m["age"] == 60
 	})
 	fmt.Println(pm)
 
