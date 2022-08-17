@@ -46,6 +46,7 @@ func newCache[T ~string, V any](exp, ci time.Duration, item map[T]*Item[V]) *cac
 
 // NewCache instantiates a new cache struct which require an expiration and a cleanup time.
 // The cache will be invalidated once the expiration time is reached.
+// If the expiration time is less than zero (or NoExpiration) the cache items never expires and should be manually deleted.
 // A cleanup method is running in the background and removes the expired caches at a predifined interval.
 func NewCache[T ~string, V any](expTime, cleanupTime time.Duration) *Cache[T, V] {
 	items := make(map[T]*Item[V])
@@ -76,6 +77,8 @@ func (c *cache[T, V]) Set(key T, val V, d time.Duration) error {
 
 // add place a new item into the cache. This method is not exported.
 // It puts the item into the cache together with the expiration time.
+// If the duration is 0 (or DefaultExpiration) the cache default expiration time is used.
+// If the duration is < 0 (or NoExpiration), the item never expires and should be manually deleted.
 func (c *cache[T, V]) add(key T, val V, d time.Duration) error {
 	var exp int64
 
@@ -139,21 +142,16 @@ func (it *Item[V]) Val() V {
 
 // Update replaces an item from the cache with the new values.
 func (c *cache[T, V]) Update(key T, val V, d time.Duration) error {
-	c.mu.Lock()
-	item, _ := c.Get(key)
-	if item == nil {
-		c.mu.Unlock()
-		return fmt.Errorf("item with key '%v' does not exists", key)
+	item, err := c.Get(key)
+	if item != nil && err != nil {
+		return err
 	}
-	c.Set(key, val, d)
-	c.mu.Unlock()
-
-	return nil
+	return c.add(key, val, d)
 }
 
 // SetDefault includes a new item in the cache with the default expiration time.
-func (c *cache[T, V]) SetDefault(key T, val V) {
-	c.Set(key, val, DefaultExpiration)
+func (c *cache[T, V]) SetDefault(key T, val V) error {
+	return c.Set(key, val, DefaultExpiration)
 }
 
 // Delete deletes an item from the cache.
