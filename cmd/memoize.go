@@ -23,9 +23,13 @@ func main() {
 		foo := gogu.FindByKey(sampleMap, func(key string) bool {
 			return key == "foo"
 		})
-		return &gogu.Item[any]{
-			Object: foo,
-		}, nil
+		m.Cache.Set("item", foo, gogu.DefaultExpiration)
+
+		res, err := m.Cache.Get("item")
+		if err != nil {
+			return nil, err
+		}
+		return res, nil
 	}
 
 	// At the first call key1 does not exists, so the simulated extensive operation will take more time.

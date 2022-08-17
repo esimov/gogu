@@ -476,3 +476,11 @@ func TestSlice_ToSlice(t *testing.T) {
 	assert.Equal([]int{1, 2, 3}, ToSlice(1, 2, 3))
 	assert.Equal([]string{"a", "b"}, ToSlice("a", "b"))
 }
+
+func TestSlice_Zip(t *testing.T) {
+	assert := assert.New(t)
+
+	input1 := [][]any{{"one", "two"}, {1, 2}}
+	assert.Panics(func() { Zip(input1) })
+	assert.Equal([][]any{{"one", 1}, {"two", 2}}, Zip([]any{"one", "two"}, []any{1, 2}))
+}

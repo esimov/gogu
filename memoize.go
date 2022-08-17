@@ -36,7 +36,7 @@ func (m Memoizer[T, V]) Memoize(key T, fn func() (*Item[V], error)) (*Item[V], e
 	data, err, _ := m.group.Do(string(key), func() (any, error) {
 		item, err := fn()
 		if err == nil {
-			m.Cache.Set(key, item.Object, DefaultExpiration)
+			m.Cache.Set(key, item.Val(), DefaultExpiration)
 		}
 		return item, err
 	})
