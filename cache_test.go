@@ -95,17 +95,74 @@ func TestCache_Update(t *testing.T) {
 	c1.Update("item1", "d", NoExpiration)
 }
 
+func TestCache_Delete(t *testing.T) {
+	assert := assert.New(t)
+
+	c1 := NewCache[string, string](DefaultExpiration, 0)
+	c1.SetDefault("item1", "a")
+	c1.SetDefault("item2", "a")
+	c1.SetDefault("item3", "a")
+	c1.SetDefault("item4", "a")
+
+	assert.Len(c1.List(), 4)
+	err := c1.Delete("item1")
+	assert.NoError(err)
+	assert.Len(c1.List(), 3)
+	res, err := c1.Get("item1")
+	assert.Nil(res)
+	assert.Error(err)
+	err = c1.Delete("item1")
+	assert.Error(err)
+
+	err = c1.Delete("item5")
+	assert.Error(err)
+	c1.Delete("item2")
+	assert.Len(c1.List(), 2)
+
+	c1.Delete("item4")
+	assert.Len(c1.List(), 1)
+
+	res, err = c1.Get("item3")
+	assert.NoError(err)
+	assert.Equal("a", res.Val())
+	c1.Delete("item3")
+	assert.Empty(c1.List())
+}
+
 func TestCache_ExpirationTime(t *testing.T) {
 	assert := assert.New(t)
 
-	c2 := NewCache[string, string](NoExpiration, 0)
-	c2.Set("item2", "a", DefaultExpiration)
-	res2, _ := c2.Get("item2")
-	assert.Equal(int64(DefaultExpiration), res2.expiration)
+	c1 := NewCache[string, string](NoExpiration, 0)
+	c1.Set("item1", "a", DefaultExpiration)
+	res, _ := c1.Get("item1")
+	assert.Equal(int64(DefaultExpiration), res.expiration)
 
-	c2.Update("item2", "b", NoExpiration)
-	res2, _ = c2.Get("item2")
-	assert.Equal(int64(DefaultExpiration), res2.expiration)
+	c1.Update("item1", "b", NoExpiration)
+	res, _ = c1.Get("item1")
+	assert.Equal(int64(DefaultExpiration), res.expiration)
+
+	c1.Set("item1", "a", 10*time.Millisecond)
+	c1.Delete("item1")
+	assert.Empty(c1.List())
+
+	err := c1.DeleteExpired()
+	assert.Nil(err)
+
+	c1.Set("item1", "a", 1*time.Millisecond)
+	c1.Set("item2", "a", 1*time.Millisecond)
+	<-time.After(2 * time.Millisecond)
+	err = c1.DeleteExpired()
+	assert.NoError(err)
+	assert.Len(c1.List(), 0)
+
+	c1.Set("item1", "b", 1*time.Millisecond)
+	c1.Set("item2", "b", 3*time.Millisecond)
+	<-time.After(2 * time.Millisecond)
+	c1.DeleteExpired()
+	assert.Len(c1.List(), 1)
+	<-time.After(1 * time.Millisecond)
+	c1.DeleteExpired()
+	assert.Empty(c1.List())
 
 	fmt.Println()
 }

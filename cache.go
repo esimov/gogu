@@ -2,6 +2,7 @@ package gogu
 
 import (
 	"fmt"
+	"go.uber.org/multierr"
 	"runtime"
 	"sync"
 	"time"
@@ -52,7 +53,7 @@ func NewCache[T ~string, V any](expTime, cleanupTime time.Duration) *Cache[T, V]
 	items := make(map[T]*Item[V])
 	c := newCache(expTime, cleanupTime, items)
 
-	if expTime != NoExpiration {
+	if expTime > 0 {
 		go c.cleanup()
 		// In case no human interaction is happening in the background, we need to make sure
 		// that the goroutine responsible for the cache purge stops after the cleanup.
@@ -154,26 +155,35 @@ func (c *cache[T, V]) SetDefault(key T, val V) error {
 	return c.Set(key, val, DefaultExpiration)
 }
 
-// Delete deletes an item from the cache.
+// Delete removes an item from the cache.
 func (c *cache[T, V]) Delete(key T) error {
-	item, _ := c.Get(key)
-	if item != nil {
+	if _, ok := c.items[key]; ok {
 		c.mu.Lock()
 		delete(c.items, key)
 		c.mu.Unlock()
+
+		return nil
 	}
 
 	return fmt.Errorf("item with key '%v' does not exists", key)
 }
 
-// DeleteExpired deletes all the expired items from the cache.
+// DeleteExpired removes all the expired items from the cache.
 func (c *cache[T, V]) DeleteExpired() error {
+	var err error
+
 	for k, item := range c.items {
 		now := time.Now().UnixNano()
 		if now > item.expiration {
-			return c.Delete(k)
+			if e := c.Delete(k); e != nil {
+				err = multierr.Append(err, e)
+			}
 		}
 	}
+	if err := multierr.Combine(err); err != nil {
+		return err
+	}
+
 	return nil
 }
 
