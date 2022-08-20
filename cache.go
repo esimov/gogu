@@ -21,11 +21,11 @@ type Item[V any] struct {
 }
 
 type cache[T ~string, V any] struct {
-	mu    *sync.RWMutex
-	items map[T]*Item[V]
-	exp   time.Duration
-	ci    time.Duration
-	done  chan struct{}
+	mu         *sync.RWMutex
+	items      map[T]*Item[V]
+	expTime    time.Duration
+	cleanupInt time.Duration
+	done       chan struct{}
 }
 
 // Exported cache struct.
@@ -34,31 +34,31 @@ type Cache[T ~string, V any] struct {
 }
 
 // newCache has a local scope only. NewCache will be used for the cache instantiation outside of this package.
-func newCache[T ~string, V any](exp, ci time.Duration, item map[T]*Item[V]) *cache[T, V] {
+func newCache[T ~string, V any](expTime, cleanupInt time.Duration, item map[T]*Item[V]) *cache[T, V] {
 	c := &cache[T, V]{
-		mu:    &sync.RWMutex{},
-		items: item,
-		exp:   exp,
-		ci:    ci,
-		done:  make(chan struct{}),
+		mu:         &sync.RWMutex{},
+		items:      item,
+		expTime:    expTime,
+		cleanupInt: cleanupInt,
+		done:       make(chan struct{}),
 	}
 	return c
 }
 
-// NewCache instantiates a new cache struct which require an expiration and a cleanup time.
+// NewCache instantiates a cache struct which requires an expiration time and a cleanup interval.
 // The cache will be invalidated once the expiration time is reached.
-// If the expiration time is less than zero (or NoExpiration) the cache items never expires and should be manually deleted.
+// If the expiration time is less than zero (or NoExpiration) the cache items will never expire and should be manually deleted.
 // A cleanup method is running in the background and removes the expired caches at a predifined interval.
 func NewCache[T ~string, V any](expTime, cleanupTime time.Duration) *Cache[T, V] {
 	items := make(map[T]*Item[V])
 	c := newCache(expTime, cleanupTime, items)
 
-	if expTime > 0 {
+	if cleanupTime > 0 {
 		go c.cleanup()
 		// In case no human interaction is happening in the background, we need to make sure
 		// that the goroutine responsible for the cache purge stops after the cleanup.
 		// This is the reason why runtime.SetFinalizer is used.
-		// This method is called when the garbage collector finds an unreachable block ready to be purged.
+		// This method is invoked when the garbage collector finds an unreachable block ready to be collected.
 		runtime.SetFinalizer(c, stopCleanup[T, V])
 	}
 
@@ -84,7 +84,7 @@ func (c *cache[T, V]) add(key T, val V, d time.Duration) error {
 	var exp int64
 
 	if d == DefaultExpiration {
-		d = c.exp
+		d = c.expTime
 	}
 	if d > 0 {
 		exp = time.Now().Add(d).UnixNano()
@@ -157,10 +157,16 @@ func (c *cache[T, V]) SetDefault(key T, val V) error {
 
 // Delete removes an item from the cache.
 func (c *cache[T, V]) Delete(key T) error {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	return c.delete(key)
+}
+
+// delete has a local scope only.
+func (c *cache[T, V]) delete(key T) error {
 	if _, ok := c.items[key]; ok {
-		c.mu.Lock()
 		delete(c.items, key)
-		c.mu.Unlock()
 
 		return nil
 	}
@@ -172,14 +178,21 @@ func (c *cache[T, V]) Delete(key T) error {
 func (c *cache[T, V]) DeleteExpired() error {
 	var err error
 
+	now := time.Now().UnixNano()
+
+	c.mu.Lock()
+	// TODO replace multierr package when proposal https://github.com/golang/go/issues/53435
+	// will be accepted and integrated into the standard library.
 	for k, item := range c.items {
-		now := time.Now().UnixNano()
 		if now > item.expiration {
-			if e := c.Delete(k); e != nil {
+			if e := c.delete(k); e != nil {
 				err = multierr.Append(err, e)
 			}
 		}
+
 	}
+	c.mu.Unlock()
+
 	if err := multierr.Combine(err); err != nil {
 		return err
 	}
@@ -187,9 +200,28 @@ func (c *cache[T, V]) DeleteExpired() error {
 	return nil
 }
 
+// Flush deletes all the items from the cache.
+func (c *cache[T, V]) Flush() {
+	c.mu.Lock()
+	c.items = make(map[T]*Item[V])
+	c.mu.Unlock()
+}
+
 // List returns the cache items.
 func (c *cache[T, V]) List() map[T]*Item[V] {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+
 	return c.items
+}
+
+// Count the number of items existing in the cache.
+func (c *cache[T, V]) Count() int {
+	c.mu.RLock()
+	n := len(c.items)
+	c.mu.RUnlock()
+
+	return n
 }
 
 // MapToCache moves the items from a map into the cache.
@@ -215,15 +247,17 @@ func (c *cache[T, V]) IsExpired(key T) bool {
 	return false
 }
 
-// cleanup runs the cache cleanup function at the specified time interval an deletes all the expired cache items.
+// cleanup runs the cache cleanup function at the specified time interval an removes all the expired cache items.
 func (c *cache[T, V]) cleanup() {
-	tick := time.NewTicker(c.ci)
+	tick := time.NewTicker(c.cleanupInt)
+
 	for {
 		select {
 		case <-tick.C:
 			c.DeleteExpired()
 		case <-c.done:
 			tick.Stop()
+			return
 		}
 	}
 }
