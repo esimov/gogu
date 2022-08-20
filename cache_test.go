@@ -21,20 +21,20 @@ func TestCache_Basic(t *testing.T) {
 	assert.Error(err)
 	assert.Nil(res1)
 
-	res2, err := c1.Get("bar")
+	res1, err = c1.Get("bar")
 	assert.Error(err)
-	assert.Nil(res2)
+	assert.Nil(res1)
 
 	err = c1.Set("foo", "bar", DefaultExpiration)
 	assert.NoError(err)
 	err = c1.Set("foo", "", DefaultExpiration)
 	assert.Error(err)
 
-	res3, err := c1.Get("foo")
+	res1, err = c1.Get("foo")
 	assert.NoError(err)
-	assert.NotEmpty(res3.Val())
-	assert.Equal("bar", res3.Val())
-	assert.NotEqual("baz", res3.Val())
+	assert.NotEmpty(res1.Val())
+	assert.Equal("bar", res1.Val())
+	assert.NotEqual("baz", res1.Val())
 
 	assert.False(c1.IsExpired("foo"))
 	assert.False(c1.IsExpired("baz"))
@@ -43,15 +43,20 @@ func TestCache_Basic(t *testing.T) {
 	err = c2.Set("foo", 1, DefaultExpiration)
 	assert.NoError(err)
 
-	r4, err := c2.Get("foo")
+	res2, err := c2.Get("foo")
 	assert.NoError(err)
-	assert.NotEmpty(r4.Val())
-	assert.Equal(1, r4.Val())
+	assert.NotEmpty(res2.Val())
+	assert.Equal(1, res2.Val())
 
 	err = c2.SetDefault("bar", 2)
 	assert.NoError(err)
 	res4, _ := c2.Get("bar")
 	assert.Equal(int64(DefaultExpiration), res4.expiration)
+
+	res2, _ = c2.Get("bar")
+	list := c2.List()
+	assert.Equal(res2.Val(), list["bar"].object)
+	assert.Len(list, 2)
 }
 
 func TestCache_PointerStruct(t *testing.T) {
@@ -163,6 +168,26 @@ func TestCache_ExpirationTime(t *testing.T) {
 	<-time.After(1 * time.Millisecond)
 	c1.DeleteExpired()
 	assert.Empty(c1.List())
+
+	c1.Set("item1", "c", 1*time.Millisecond)
+	<-time.After(2 * time.Millisecond)
+	res, err = c1.Get("item1")
+	assert.Nil(res)
+	assert.Error(err)
+
+	c2 := NewCache[string, int](5*time.Millisecond, 1*time.Millisecond)
+	c2.Set("a", 1, DefaultExpiration)
+	c2.Set("b", 2, NoExpiration)
+	c2.Set("c", 3, 5*time.Millisecond)
+	c2.Set("d", 4, 20*time.Millisecond)
+	<-time.After(10 * time.Millisecond)
+	assert.Equal(1, c2.Count())
+	<-time.After(15 * time.Millisecond)
+	assert.Equal(0, c2.Count())
+
+	c2.Set("a", 1, 2*time.Millisecond)
+	<-time.After(5 * time.Millisecond)
+	assert.Equal(0, c2.Count())
 
 	fmt.Println()
 }
