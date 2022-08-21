@@ -193,11 +193,7 @@ func (c *cache[T, V]) DeleteExpired() error {
 	}
 	c.mu.Unlock()
 
-	if err := multierr.Combine(err); err != nil {
-		return err
-	}
-
-	return nil
+	return multierr.Combine(err)
 }
 
 // Flush deletes all the items from the cache.
@@ -225,15 +221,15 @@ func (c *cache[T, V]) Count() int {
 }
 
 // MapToCache moves the items from a map into the cache.
-func (c *cache[T, V]) MapToCache(m map[T]V) []error {
-	errors := []error{}
+func (c *cache[T, V]) MapToCache(m map[T]V) error {
+	var err error
 
 	for k, v := range m {
-		err := c.Set(k, v, DefaultExpiration)
-		errors = append(errors, err)
+		e := c.Set(k, v, DefaultExpiration)
+		err = multierr.Append(err, e)
 	}
 
-	return errors
+	return multierr.Combine(err)
 }
 
 // IsExpired checks if an item is expired or not.

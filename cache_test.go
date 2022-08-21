@@ -50,13 +50,28 @@ func TestCache_Basic(t *testing.T) {
 
 	err = c2.SetDefault("bar", 2)
 	assert.NoError(err)
-	res4, _ := c2.Get("bar")
-	assert.Equal(int64(DefaultExpiration), res4.expiration)
+	res2, _ = c2.Get("bar")
+	assert.Equal(int64(DefaultExpiration), res2.expiration)
 
 	res2, _ = c2.Get("bar")
 	list := c2.List()
 	assert.Equal(res2.Val(), list["bar"].object)
 	assert.Len(list, 2)
+
+	c2.Flush()
+	assert.Equal(0, c2.Count())
+	assert.Len(c2.List(), 0)
+
+	items := make(map[string]int)
+	items["item1"] = 1
+	items["item2"] = 2
+	err = c2.MapToCache(items)
+	assert.Equal(2, c2.Count())
+	assert.NoError(err)
+	res3, _ := c2.Get("item1")
+	res4, _ := c2.Get("item2")
+	assert.Equal(1, res3.Val())
+	assert.Equal(2, res4.Val())
 }
 
 func TestCache_PointerStruct(t *testing.T) {
