@@ -2,10 +2,11 @@ package gogu
 
 import (
 	"fmt"
-	"go.uber.org/multierr"
 	"runtime"
 	"sync"
 	"time"
+
+	"go.uber.org/multierr"
 )
 
 const (
