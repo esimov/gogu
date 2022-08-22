@@ -76,6 +76,11 @@ func (c *cache[T, V]) Set(key T, val V, d time.Duration) error {
 	return nil
 }
 
+// SetDefault includes a new item in the cache with the default expiration time.
+func (c *cache[T, V]) SetDefault(key T, val V) error {
+	return c.Set(key, val, DefaultExpiration)
+}
+
 // add place a new item into the cache. This method is not exported.
 // It puts the item into the cache together with the expiration time.
 // If the duration is 0 (or DefaultExpiration) the cache default expiration time is used.
@@ -126,7 +131,7 @@ func (c *cache[T, V]) Get(key T) (*Item[V], error) {
 			}
 		}
 		c.mu.RUnlock()
-		return c.items[key], nil
+		return item, nil
 	}
 	c.mu.RUnlock()
 	return nil, fmt.Errorf("item with key '%v' not found", key)
@@ -148,11 +153,6 @@ func (c *cache[T, V]) Update(key T, val V, d time.Duration) error {
 		return err
 	}
 	return c.add(key, val, d)
-}
-
-// SetDefault includes a new item in the cache with the default expiration time.
-func (c *cache[T, V]) SetDefault(key T, val V) error {
-	return c.Set(key, val, DefaultExpiration)
 }
 
 // Delete removes an item from the cache.
@@ -221,11 +221,11 @@ func (c *cache[T, V]) Count() int {
 }
 
 // MapToCache moves the items from a map into the cache.
-func (c *cache[T, V]) MapToCache(m map[T]V) error {
+func (c *cache[T, V]) MapToCache(m map[T]V, d time.Duration) error {
 	var err error
 
 	for k, v := range m {
-		e := c.Set(k, v, DefaultExpiration)
+		e := c.Set(k, v, d)
 		err = multierr.Append(err, e)
 	}
 

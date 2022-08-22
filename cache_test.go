@@ -65,7 +65,7 @@ func TestCache_Basic(t *testing.T) {
 	items := make(map[string]int)
 	items["item1"] = 1
 	items["item2"] = 2
-	err = c2.MapToCache(items)
+	err = c2.MapToCache(items, DefaultExpiration)
 	assert.Equal(2, c2.Count())
 	assert.NoError(err)
 	res3, _ := c2.Get("item1")
