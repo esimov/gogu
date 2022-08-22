@@ -22,7 +22,7 @@ func NewMemoizer[T ~string, V any](expiration, cleanup time.Duration) *Memoizer[
 	}
 }
 
-// Memoize returns (almost) instantly the item under a specific key in case the key exists,
+// Memoize returns the item under a specific key instantly in case the key exists,
 // otherwise returns the results of the given function, making sure that only one execution
 // is in-flight for a given key at a time.
 // This method is useful for caching the result of a time consuming operation when is more important
@@ -36,7 +36,7 @@ func (m Memoizer[T, V]) Memoize(key T, fn func() (*Item[V], error)) (*Item[V], e
 	data, err, _ := m.group.Do(string(key), func() (any, error) {
 		item, err := fn()
 		if err == nil {
-			m.Cache.Set(key, item.Val(), DefaultExpiration)
+			m.Cache.SetDefault(key, item.Val())
 		}
 		return item, err
 	})
