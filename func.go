@@ -1,6 +1,7 @@
 package gogu
 
 import (
+	"fmt"
 	"sync"
 	"time"
 
@@ -61,15 +62,18 @@ type RType[T any] struct {
 }
 
 // Retry tries to invoke the callback function n times.
-// It runs until the number of attempts is reached or the callback function error return value is nil.
-// In case n is less then 0, it runs until a successful response or no error is returned.
+// It runs until the number of attempts is reached or the returned value of the callback function is nil.
 func (v RType[T]) Retry(n int, fn func(T) error) (int, error) {
 	var (
 		err     error
 		attempt int
 	)
 
-	for attempt < n || n < 0 {
+	if n < 0 {
+		return attempt, fmt.Errorf("the number of attempts should be a positive number, got %v", n)
+	}
+
+	for attempt < n {
 		if err = fn(v.Input); err == nil {
 			return attempt, nil
 		}
@@ -80,8 +84,7 @@ func (v RType[T]) Retry(n int, fn func(T) error) (int, error) {
 }
 
 // RetryWithDelay tries to invoke the callback function n times, but with a delay between each calls.
-// It runs until the number of attempts is reached or the callback function error return value is nil.
-// In case n is less then 0, it runs until a successful response or no error is returned.
+// It runs until the number of attempts is reached or the error return value of the callback function is nil.
 func (v RType[T]) RetryWithDelay(n int, delay time.Duration, fn func(time.Duration, T) error) (time.Duration, int, error) {
 	var (
 		err     error
@@ -89,12 +92,12 @@ func (v RType[T]) RetryWithDelay(n int, delay time.Duration, fn func(time.Durati
 	)
 
 	start := time.Now()
-	for attempt < n || n < 0 {
+	for attempt < n {
 		err = fn(time.Since(start), v.Input)
 		if err == nil {
 			return time.Since(start), attempt, nil
 		}
-		time.Sleep(delay)
+		<-time.After(delay)
 		attempt++
 	}
 
