@@ -47,18 +47,12 @@ func Before[S ~string, T any, V constraints.Signed](n *V, c *Cache[S, T], fn fun
 	return memo.Val()
 }
 
+var n = 2
+
 // Once is like Before, but it's invoked only once.
-func Once[T any, V constraints.Signed](n V, fn func() T) T {
-	var memo *T = new(T)
-	if n > 0 {
-		*memo = fn()
-	}
-	if n <= 1 {
-		fn()
-		memo = new(T)
-	}
-	n-- // decrease the n through the pointer receiver
-	return *memo
+// Repeated calls to the modified function will have no effect, returning the value from the cache.
+func Once[S ~string, T any](c *Cache[S, T], fn func() T) T {
+	return Before(&n, c, fn)
 }
 
 // RType is a generic struct type used as method receiver on retry operations.

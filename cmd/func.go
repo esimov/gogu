@@ -29,7 +29,7 @@ func main() {
 	length := len(sample) - 1
 	gogu.ForEach[int](sample, func(val int) {
 		fmt.Printf("Printing value... %d\n", val)
-		gogu.After[string, int](&length, func() {
+		gogu.After(&length, func() {
 			time.Sleep(time.Millisecond * 100)
 			fmt.Println("save after")
 		})
@@ -37,21 +37,24 @@ func main() {
 
 	fmt.Println("==================Before")
 	var n int = 3
+	c1 := gogu.NewCache[string, int](gogu.DefaultExpiration, gogu.NoExpiration)
 	gogu.ForEach[int](sample, func(val int) {
-		res := gogu.Before[string, int](&n, func() string {
-			time.Sleep(time.Millisecond * 100)
-			return "memoized function"
-		})
+		fn := func() int {
+			<-time.After(10 * time.Millisecond)
+			return n
+		}
+		res := gogu.Before[string, int](&n, c1, fn)
 		fmt.Printf("Printing value... %d %v\n", val, res)
 	})
 
 	fmt.Println("==================Once")
-	n = 2
+	c2 := gogu.NewCache[string, string](gogu.DefaultExpiration, gogu.NoExpiration)
 	gogu.ForEach[int](sample, func(val int) {
-		res := gogu.Once[string, int](n, func() string {
-			time.Sleep(time.Millisecond * 100)
-			return "invoked once"
-		})
+		fn := func() string {
+			<-time.After(10 * time.Millisecond)
+			return "memoized"
+		}
+		res := gogu.Once(c2, fn)
 		fmt.Printf("Printing value... %d %v\n", val, res)
 	})
 
