@@ -217,7 +217,8 @@ func TestFunc_RetryWithDelay(t *testing.T) {
 		r := random(1, 10)
 
 		// Here we are simulating the response time of the external service
-		// by generating some random duration between 5ms and 20ms.
+		// by generating some random duration between 1ms and 10ms.
+		// All the test should pass because all of the responses are inside the predefined limit (10ms).
 		service := Service[string]{
 			Service: srv.service,
 			Time:    time.Duration(r) * time.Millisecond,
@@ -241,7 +242,8 @@ func TestFunc_RetryWithDelay(t *testing.T) {
 		r := random(20, 30)
 
 		// Here we are simulating the response time of the external service
-		// by generating some random duration between 5ms and 20ms.
+		// by generating some random duration between 20ms and 30ms.
+		// All the test should fail because all of the responses are outside the predefined limit (10ms).
 		service := Service[string]{
 			Service: srv.service,
 			Time:    time.Duration(r) * time.Millisecond,
