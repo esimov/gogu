@@ -350,3 +350,28 @@ func TestFunc_Debounce(t *testing.T) {
 	c3 = atomic.LoadUint64(&counter3)
 	assert.Equal(1, int(c3))
 }
+
+func TestFunc_Throttle(t *testing.T) {
+	assert := assert.New(t)
+
+	c := NewCache[string, int](DefaultExpiration, NoExpiration)
+	c.SetDefault("item", 0)
+
+	limit := 100 * time.Millisecond
+	throttle, cancel := NewThrottle(limit, true)
+
+	var count int
+	for i := 0; i < 10; i++ {
+		// throttle should be invoked only once.
+		throttle(func() {
+			count++
+			c.Update("item", count, DefaultExpiration)
+			time.Sleep(limit / 2)
+		})
+	}
+
+	time.Sleep(2 * limit)
+	item, _ := c.Get("item")
+	assert.Equal(1, item.Val())
+	cancel()
+}

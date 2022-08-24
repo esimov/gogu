@@ -154,13 +154,13 @@ type throttler struct {
 	stop     bool
 }
 
-// NewThrottle creates a throttled function, useful to limit the frequency rate at which the passed in function is called.
+// NewThrottle creates a throttled function in order to limit the frequency rate at which the passed in function is called.
 // The throttled function comes with a cancel method for canceling delayed function invocation.
 // If the trailing parameter is true, the function is invoked right after the throttled code
 // has been started, but at the trailing edge of the timeout.
 // In this case the code will be executed one more time at the beginning of the next period.
 //
-// Useful for rate-limiting events that occur faster than you can keep up with.
+// This function is useful for rate-limiting events that occur faster than you can keep up with.
 func NewThrottle(wait time.Duration, trailing bool) (func(f func()), func()) {
 	t := &throttler{
 		cond: &sync.Cond{
