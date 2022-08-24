@@ -2,12 +2,12 @@ package gogu
 
 import (
 	"fmt"
+	"math/rand"
 	"sync"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
-	"golang.org/x/exp/constraints"
 )
 
 func TestFunc_Flip(t *testing.T) {
@@ -171,6 +171,8 @@ func TestFunc_Retry(t *testing.T) {
 }
 
 func TestFunc_RetryWithDelay(t *testing.T) {
+	rand.Seed(time.Now().UTC().UnixNano())
+
 	assert := assert.New(t)
 
 	n := 5
@@ -197,41 +199,69 @@ func TestFunc_RetryWithDelay(t *testing.T) {
 	})
 
 	// Here we are simulating an external service. In case the response time
-	// exceeds a certain limit we are stop retrying and we are returning an error.
+	// exceeds a certain limit we stop retrying and we are returning an error.
 	services := []struct {
 		service string
-		time    int
+		time    time.Duration
 	}{
-		{
-			service: "AWS1",
-			time:    10,
-		}, {
-			service: "AWS2",
-			time:    20,
-		},
+		{service: "AWS1"},
+		{service: "AWS2"},
 	}
 
-	type Service[T ~string, N constraints.Integer] struct {
+	type Service[T ~string] struct {
 		Service T
-		Time    N
+		Time    time.Duration
 	}
 
 	for _, srv := range services {
-		service := Service[string, int]{
+		r := random(1, 10)
+
+		// Here we are simulating the response time of the external service
+		// by generating some random duration between 5ms and 20ms.
+		service := Service[string]{
 			Service: srv.service,
-			Time:    srv.time,
+			Time:    time.Duration(r) * time.Millisecond,
 		}
-		rtyp := RType[Service[string, int]]{
+		rtyp := RType[Service[string]]{
 			Input: service,
 		}
 
-		d, att, e := rtyp.RetryWithDelay(n, 20*time.Millisecond, func(d time.Duration, srv Service[string, int]) (err error) {
-			if srv.Time > 10 {
+		d, att, e := rtyp.RetryWithDelay(n, 20*time.Millisecond, func(d time.Duration, srv Service[string]) (err error) {
+			if srv.Time.Milliseconds() > 10 {
 				err = fmt.Errorf("retry failed: service time exceeded")
 			}
 			return err
 		})
-
-		fmt.Println(d, att, e)
+		assert.NoError(e)
+		assert.Equal(0, att)
+		assert.LessOrEqual(int(d.Milliseconds()), 10)
 	}
+
+	for _, srv := range services {
+		r := random(20, 30)
+
+		// Here we are simulating the response time of the external service
+		// by generating some random duration between 5ms and 20ms.
+		service := Service[string]{
+			Service: srv.service,
+			Time:    time.Duration(r) * time.Millisecond,
+		}
+		rtyp := RType[Service[string]]{
+			Input: service,
+		}
+
+		d, att, e := rtyp.RetryWithDelay(n, 20*time.Millisecond, func(d time.Duration, srv Service[string]) (err error) {
+			if srv.Time.Milliseconds() > 10 {
+				err = fmt.Errorf("retry failed: service time exceeded")
+			}
+			return err
+		})
+		assert.Error(e)
+		assert.Equal(5, att)
+		assert.Greater(int(d.Milliseconds()), 10)
+	}
+}
+
+func random(min, max int) int {
+	return min + rand.Intn(max-min)
 }
