@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math/rand"
 	"sync"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -266,4 +267,86 @@ func TestFunc_RetryWithDelay(t *testing.T) {
 
 func random(min, max int) int {
 	return min + rand.Intn(max-min)
+}
+
+func TestFunc_Debounce(t *testing.T) {
+	assert := assert.New(t)
+
+	var (
+		counter1 uint64
+		counter2 uint64
+		counter3 uint64
+	)
+
+	f1 := func() {
+		atomic.AddUint64(&counter1, 1)
+	}
+
+	f2 := func() {
+		atomic.AddUint64(&counter2, 1)
+	}
+
+	f3 := func() {
+		atomic.AddUint64(&counter3, 1)
+	}
+
+	debounce, cancel := NewDebounce(10 * time.Millisecond)
+	for i := 0; i < 2; i++ {
+		for j := 0; j < 100; j++ {
+			debounce(f1)
+		}
+		<-time.After(20 * time.Millisecond)
+	}
+	cancel()
+
+	debounce, cancel = NewDebounce(10 * time.Millisecond)
+	for i := 0; i < 5; i++ {
+		for j := 0; j < 50; j++ {
+			debounce(f2)
+		}
+		for j := 0; j < 50; j++ {
+			debounce(f2)
+		}
+		<-time.After(20 * time.Millisecond)
+	}
+	cancel()
+
+	c1 := atomic.LoadUint64(&counter1)
+	c2 := atomic.LoadUint64(&counter2)
+	assert.Equal(2, int(c1))
+	assert.Equal(5, int(c2))
+
+	debounce, _ = NewDebounce(10 * time.Millisecond)
+	var wg sync.WaitGroup
+
+	for j := 0; j < 100; j++ {
+		wg.Add(1)
+		go func() {
+			debounce(f3)
+			wg.Done()
+		}()
+	}
+	wg.Wait()
+	<-time.After(20 * time.Millisecond)
+
+	c3 := atomic.LoadUint64(&counter3)
+	assert.Equal(1, int(c3))
+
+	debounce, cancel = NewDebounce(10 * time.Millisecond)
+	atomic.SwapUint64(&counter3, 0)
+
+	for i := 0; i < 2; i++ {
+		for j := 0; j < 50; j++ {
+			debounce(func() {
+				atomic.AddUint64(&counter3, 1)
+			})
+		}
+		if i == 1 {
+			cancel()
+		}
+		<-time.After(20 * time.Millisecond)
+	}
+
+	c3 = atomic.LoadUint64(&counter3)
+	assert.Equal(1, int(c3))
 }

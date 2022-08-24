@@ -111,7 +111,7 @@ type debouncer struct {
 }
 
 // NewDebounce creates a new debounced version of the invoked function which will postpone the execution
-// until the time duration passed in as a function argument has elapsed since the last invocation.
+// until the time duration has elapsed since the last invocation passed in as a function argument.
 //
 // It returns a callback function which will be invoked after the predefined delay and
 // also a cancel function which should be invoked to cancel a scheduled debounce.
