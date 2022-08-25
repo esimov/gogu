@@ -132,19 +132,4 @@ func main() {
 	}
 	fmt.Println("FINISHED!")
 	cancel()
-
-	fmt.Println("==================Throttle")
-	period := time.Second
-	throttle, cancel := gogu.NewThrottle(period, true)
-
-	go func() {
-		for i := 0; i < 10; i++ {
-			throttle(func() {
-				fmt.Println("throttled function invoked")
-			})
-			time.Sleep(period / 2)
-		}
-	}()
-	time.Sleep(2 * period)
-	cancel()
 }
