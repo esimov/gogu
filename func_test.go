@@ -24,29 +24,24 @@ func TestFunc_Flip(t *testing.T) {
 }
 
 func TestFunc_Delay(t *testing.T) {
-	var (
-		sample int
-		mu     sync.Mutex
-	)
 	assert := assert.New(t)
 
 	ch := make(chan struct{})
 	now := time.Now()
 
+	var value uint32
 	timer := Delay(20*time.Millisecond, func() {
-		mu.Lock()
-		sample = 1
-		mu.Unlock()
+		atomic.AddUint32(&value, 1)
 		ch <- struct{}{}
 	})
-	mu.Lock()
-	assert.Equal(0, sample)
-	mu.Unlock()
+	r1 := atomic.LoadUint32(&value)
+	assert.Equal(0, int(r1))
 	<-ch
 	if timer.Stop() {
 		<-timer.C
 	}
-	assert.Equal(1, sample)
+	r1 = atomic.LoadUint32(&value)
+	assert.Equal(1, int(r1))
 	after := time.Since(now).Milliseconds()
 	assert.LessOrEqual(int(after), 30)
 	fmt.Println()
@@ -360,12 +355,13 @@ func TestFunc_Throttle(t *testing.T) {
 	limit := 100 * time.Millisecond
 	throttle, cancel := NewThrottle(limit, true)
 
-	var count int
+	var counter uint32
 	for i := 0; i < 10; i++ {
 		// throttle should be invoked only once.
 		throttle(func() {
-			count++
-			c.Update("item", count, DefaultExpiration)
+			atomic.AddUint32(&counter, 1)
+			ct := atomic.LoadUint32(&counter)
+			c.Update("item", int(ct), DefaultExpiration)
 			time.Sleep(limit / 2)
 		})
 	}
