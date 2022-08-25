@@ -346,28 +346,61 @@ func TestFunc_Debounce(t *testing.T) {
 	assert.Equal(1, int(c3))
 }
 
-func TestFunc_Throttle(t *testing.T) {
+func TestFunc_ThrottleCache(t *testing.T) {
+	var counter uint32
+	var wg sync.WaitGroup
+
 	assert := assert.New(t)
 
 	c := NewCache[string, int](DefaultExpiration, NoExpiration)
 	c.SetDefault("item", 0)
 
 	limit := 100 * time.Millisecond
-	throttle, cancel := NewThrottle(limit, true)
+	throttle := NewThrottle(limit, true)
 
-	var counter uint32
-	for i := 0; i < 10; i++ {
-		// throttle should be invoked only once.
-		throttle(func() {
+	wg.Add(1)
+	go func() {
+		for throttle.Next() {
 			atomic.AddUint32(&counter, 1)
 			ct := atomic.LoadUint32(&counter)
 			c.Update("item", int(ct), DefaultExpiration)
-			time.Sleep(limit / 2)
-		})
+		}
+		wg.Done()
+	}()
+
+	// This function should be called only once.
+	for i := 0; i < 10; i++ {
+		throttle.Call()
 	}
 
-	time.Sleep(2 * limit)
+	time.Sleep(limit)
+	throttle.Cancel()
+
+	wg.Wait()
+
 	item, _ := c.Get("item")
 	assert.Equal(1, item.Val())
-	cancel()
+}
+
+func TestFunc_ThrottlePings(t *testing.T) {
+	var wg sync.WaitGroup
+
+	assert := assert.New(t)
+	throttle := NewThrottle(time.Millisecond, true)
+
+	count := 0
+	wg.Add(1)
+	go func() {
+		for throttle.Next() {
+			count += 1
+		}
+		wg.Done()
+	}()
+
+	time.Sleep(2 * time.Millisecond)
+	throttle.Cancel()
+
+	wg.Wait()
+
+	assert.Equal(0, count)
 }

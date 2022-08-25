@@ -145,6 +145,7 @@ func (d *debouncer) cancel() {
 	}
 }
 
+// The throttle implementation is based on this package: https://github.com/boz/go-throttle.
 type throttler struct {
 	duration time.Duration
 	cond     *sync.Cond
@@ -154,14 +155,14 @@ type throttler struct {
 	stop     bool
 }
 
-// NewThrottle creates a throttled function in order to limit the frequency rate at which the passed in function is called.
+// NewThrottle creates a throttled function in order to limit the frequency rate at which the passed in function is invoked.
 // The throttled function comes with a cancel method for canceling delayed function invocation.
 // If the trailing parameter is true, the function is invoked right after the throttled code
 // has been started, but at the trailing edge of the timeout.
 // In this case the code will be executed one more time at the beginning of the next period.
 //
 // This function is useful for rate-limiting events that occur faster than you can keep up with.
-func NewThrottle(wait time.Duration, trailing bool) (func(f func()), func()) {
+func NewThrottle(wait time.Duration, trailing bool) *throttler {
 	t := &throttler{
 		cond: &sync.Cond{
 			L: new(sync.Mutex),
@@ -169,19 +170,11 @@ func NewThrottle(wait time.Duration, trailing bool) (func(f func()), func()) {
 		duration: wait,
 		trailing: trailing,
 	}
-
-	return func(f func()) {
-		go func() {
-			for t.next() {
-				f()
-			}
-		}()
-		t.add(f)
-	}, t.cancel
+	return t
 }
 
-// add method schedules the execution of the passed in function after a predefined delay.
-func (t *throttler) add(fn func()) {
+// Call schedules the execution of the passed in function after the predefined delay.
+func (t *throttler) Call() {
 	t.cond.L.Lock()
 	defer t.cond.L.Unlock()
 
@@ -198,7 +191,7 @@ func (t *throttler) add(fn func()) {
 }
 
 // next returns true at most once per time period. It runs until the throttled function is not canceled.
-func (t *throttler) next() bool {
+func (t *throttler) Next() bool {
 	t.cond.L.Lock()
 	defer t.cond.L.Unlock()
 
@@ -215,7 +208,7 @@ func (t *throttler) next() bool {
 }
 
 // cancel the execution of a scheduled throttle function.
-func (t *throttler) cancel() {
+func (t *throttler) Cancel() {
 	t.cond.L.Lock()
 	defer t.cond.L.Unlock()
 
