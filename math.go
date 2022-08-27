@@ -35,11 +35,19 @@ func Abs[T Number](x T) T {
 }
 
 // Clamp restricts a number between two other numbers.
-func Clamp[T Number](number, lower, upper T) T {
-	if number <= lower {
-		return lower
-	} else if number >= upper {
-		return upper
+func Clamp[T Number](num, lo, up T) T {
+	if num <= lo {
+		return lo
+	} else if num >= up {
+		return up
 	}
-	return number
+	return num
+}
+
+// InRange checks if a number is inside a range.
+func InRange[T Number](num, lo, up T) bool {
+	if num >= lo && num <= up {
+		return true
+	}
+	return false
 }
