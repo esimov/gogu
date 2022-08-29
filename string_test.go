@@ -67,3 +67,11 @@ func TestString_CamelCase(t *testing.T) {
 	assert.Equal("fooBar", CamelCase("&FOO&baR "))
 	assert.Equal("fooBar", CamelCase("&&foo&&bar__"))
 }
+
+func TestString_ReverseChar(t *testing.T) {
+	assert := assert.New(t)
+
+	assert.Equal("fedcba", ReverseChar("abcdef"))
+	assert.Equal("FEDCBA", ReverseChar("ABCDEF"))
+	assert.Equal("654321", ReverseChar("123456"))
+}

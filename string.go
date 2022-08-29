@@ -117,8 +117,18 @@ func CamelCase[T ~string](str T) T {
 		}
 		sb.WriteString(Capitalize(s))
 	}
-
 	result := sb.String()
 
 	return T(result)
+}
+
+// Reverse returns a new string with the characters in reverse order.
+func ReverseChar[T ~string](str T) T {
+	r := []rune(str)
+
+	for i, j := 0, len(r)-1; i < j; i, j = i+1, j-1 {
+		r[i], r[j] = r[j], r[i]
+	}
+
+	return T(r)
 }
