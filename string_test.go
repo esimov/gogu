@@ -55,3 +55,15 @@ func TestString_Capitalize(t *testing.T) {
 	assert.Equal("Abø", Capitalize("aBø"))
 	assert.Equal("", Capitalize(""))
 }
+
+func TestString_CamelCase(t *testing.T) {
+	assert := assert.New(t)
+
+	assert.Equal("fooBar", CamelCase("Foo Bar"))
+	assert.Equal("fooBar", CamelCase("--foo-Bar--"))
+	assert.Equal("fooBar", CamelCase("__foo-_Bar__"))
+	assert.Equal("fooBar", CamelCase("__FOO BAR__"))
+	assert.Equal("fooBar", CamelCase(" FOO BAR "))
+	assert.Equal("fooBar", CamelCase("&FOO&baR "))
+	assert.Equal("fooBar", CamelCase("&&foo&&bar__"))
+}

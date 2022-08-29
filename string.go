@@ -1,6 +1,8 @@
 package gogu
 
 import (
+	"regexp"
+	"strings"
 	"unicode"
 )
 
@@ -51,6 +53,28 @@ func Substr[T ~string](str T, offset, length int) T {
 	return str[offset:end]
 }
 
+// ToLower converts a string to Lowercase.
+func ToLower[T ~string](str T) T {
+	res := make([]rune, 0, len(str))
+
+	for _, val := range str {
+		res = append(res, unicode.ToLower(rune(val)))
+	}
+
+	return T(res)
+}
+
+// ToUpper converts a string to Uppercase.
+func ToUpper[T ~string](str T) T {
+	res := make([]rune, 0, len(str))
+
+	for _, val := range str {
+		res = append(res, unicode.ToLower(rune(val)))
+	}
+
+	return T(res)
+}
+
 // Capitalize converts the first letter of the string
 // to uppercase and the remaining letters to lowercase.
 func Capitalize[T ~string](str T) T {
@@ -65,4 +89,36 @@ func Capitalize[T ~string](str T) T {
 	}
 
 	return T(res)
+}
+
+// CamelCase converts a string to camelCase.
+func CamelCase[T ~string](str T) T {
+	newstr := strings.TrimSpace(string(str))
+
+	r, _ := regexp.Compile("[-_&]+")
+	newstr = r.ReplaceAllString(newstr, " ")
+
+	var sb strings.Builder
+	sb.Grow(len(newstr))
+
+	var idx int
+	for i, s := range strings.Split(newstr, " ") {
+		r := []rune(s)
+
+		if len(r) == 0 {
+			idx++
+			continue
+		}
+
+		if i == 0 || i == idx {
+			frag := ToLower(s)
+			sb.WriteString(frag)
+			continue
+		}
+		sb.WriteString(Capitalize(s))
+	}
+
+	result := sb.String()
+
+	return T(result)
 }
