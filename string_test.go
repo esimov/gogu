@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestString(t *testing.T) {
+func TestString_Substr(t *testing.T) {
 	assert := assert.New(t)
 
 	str1 := Substr("abcdef", 0, 0)
@@ -24,6 +24,7 @@ func TestString(t *testing.T) {
 	str13 := Substr("abcdef", -1, 1)
 	str14 := Substr("abcdef", -2, -8)
 	str15 := Substr("abcdef", -4, 1)
+	str16 := Substr("abcdef", -10, -10)
 
 	assert.Empty(str1)
 	assert.Empty(str2)
@@ -40,4 +41,17 @@ func TestString(t *testing.T) {
 	assert.Equal("f", str13)
 	assert.Equal("", str14)
 	assert.Equal("c", str15)
+	assert.Equal("", str16)
+}
+
+func TestString_Capitalize(t *testing.T) {
+	assert := assert.New(t)
+
+	assert.Equal("Abc", Capitalize("Abc"))
+	assert.Equal("Abc", Capitalize("abc"))
+	assert.Equal("Abc", Capitalize("abC"))
+	assert.Equal("Abc", Capitalize("aBC"))
+	assert.Equal("Abc", Capitalize("ABC"))
+	assert.Equal("Abø", Capitalize("aBø"))
+	assert.Equal("", Capitalize(""))
 }
