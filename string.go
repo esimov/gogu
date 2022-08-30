@@ -204,23 +204,34 @@ func SplitAtIndex[T ~string](str T, index int) []T {
 }
 
 // Wrap a string with another one.
-func Wrap[T ~string](str T, wrapper string) T {
+func Wrap[T ~string](str T, token string) T {
 	var s strings.Builder
 
-	s.WriteString(wrapper)
+	s.WriteString(token)
 	s.WriteString(string(str))
-	s.WriteString(wrapper)
+	s.WriteString(token)
 
 	return T(s.String())
 }
 
-func WrapAllRune[T ~string](str T, wrapper string) T {
+func Unwrap[T ~string](str T, token string) T {
+	startToken := strings.Index(string(str), token)
+	endToken := strings.LastIndex(string(str), token)
+
+	if startToken == 0 && endToken <= len(str)-1 {
+		str = str[len(token):endToken]
+	}
+
+	return str
+}
+
+func WrapAllRune[T ~string](str T, token string) T {
 	var s strings.Builder
 
 	for _, st := range str {
-		s.WriteString(wrapper)
+		s.WriteString(token)
 		s.WriteRune(st)
-		s.WriteString(wrapper)
+		s.WriteString(token)
 	}
 
 	return T(s.String())
