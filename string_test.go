@@ -82,14 +82,6 @@ func TestString_SnakeCase(t *testing.T) {
 	assert.Equal("foo_bar", SnakeCase(" Foo_Bar "))
 }
 
-func TestString_ReverseStr(t *testing.T) {
-	assert := assert.New(t)
-
-	assert.Equal("fedcba", ReverseStr("abcdef"))
-	assert.Equal("FEDCBA", ReverseStr("ABCDEF"))
-	assert.Equal("654321", ReverseStr("123456"))
-}
-
 func TestString_SplitAtIndex(t *testing.T) {
 	assert := assert.New(t)
 
@@ -99,4 +91,31 @@ func TestString_SplitAtIndex(t *testing.T) {
 	assert.Equal([]string{"abc", "def"}, SplitAtIndex("abcdef", 2))
 	assert.Equal([]string{"abcdef", ""}, SplitAtIndex("abcdef", 5))
 	assert.Equal([]string{"abcdef", ""}, SplitAtIndex("abcdef", 6))
+}
+
+func TestString_ReverseStr(t *testing.T) {
+	assert := assert.New(t)
+
+	assert.Equal("fedcba", ReverseStr("abcdef"))
+	assert.Equal("FEDCBA", ReverseStr("ABCDEF"))
+	assert.Equal("654321", ReverseStr("123456"))
+}
+
+func TestString_Wrap(t *testing.T) {
+	assert := assert.New(t)
+
+	assert.Equal("abc", Wrap("abc", ""))
+	assert.Equal("'abc'", Wrap("abc", "'"))
+	assert.Equal("*abc*", Wrap("abc", "*"))
+	assert.Equal(`\abc\`, Wrap("abc", `\`))
+	assert.Equal(`|abc|`, Wrap("abc", `|`))
+}
+
+func TestString_WrapAllRune(t *testing.T) {
+	assert := assert.New(t)
+
+	assert.Equal("abc", WrapAllRune("abc", ""))
+	assert.Equal("'a''b''c'", WrapAllRune("abc", "'"))
+	assert.Equal("*a**b**c*", WrapAllRune("abc", "*"))
+	assert.Equal("-a--b--c-", WrapAllRune("abc", "-"))
 }

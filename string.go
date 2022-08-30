@@ -56,40 +56,40 @@ func Substr[T ~string](str T, offset, length int) T {
 
 // ToLower converts a string to Lowercase.
 func ToLower[T ~string](str T) T {
-	res := make([]rune, 0, len(str))
+	result := make([]rune, 0, len(str))
 
 	for _, val := range str {
-		res = append(res, unicode.ToLower(rune(val)))
+		result = append(result, unicode.ToLower(rune(val)))
 	}
 
-	return T(res)
+	return T(result)
 }
 
 // ToUpper converts a string to Uppercase.
 func ToUpper[T ~string](str T) T {
-	res := make([]rune, 0, len(str))
+	result := make([]rune, 0, len(str))
 
 	for _, val := range str {
-		res = append(res, unicode.ToLower(rune(val)))
+		result = append(result, unicode.ToLower(rune(val)))
 	}
 
-	return T(res)
+	return T(result)
 }
 
 // Capitalize converts the first letter of the string
 // to uppercase and the remaining letters to lowercase.
 func Capitalize[T ~string](str T) T {
-	res := make([]rune, 0, len(str))
+	result := make([]rune, 0, len(str))
 
 	for i, val := range str {
 		if i == 0 {
-			res = append(res, unicode.ToUpper(rune(val)))
+			result = append(result, unicode.ToUpper(rune(val)))
 		} else {
-			res = append(res, unicode.ToLower(rune(val)))
+			result = append(result, unicode.ToLower(rune(val)))
 		}
 	}
 
-	return T(res)
+	return T(result)
 }
 
 // CamelCase converts a string to camelCase (https://en.wikipedia.org/wiki/CamelCase).
@@ -185,7 +185,7 @@ func SnakeCase[T ~string](str T) T {
 // SplitAtIndex split the string at the specified index and
 // returns a slice with the resulted two substrings.
 func SplitAtIndex[T ~string](str T, index int) []T {
-	out := make([]T, 0, 2)
+	result := make([]T, 0, 2)
 	if index < 0 {
 		return []T{"", str}
 	}
@@ -196,20 +196,43 @@ func SplitAtIndex[T ~string](str T, index int) []T {
 
 	for idx := range str {
 		if idx == index {
-			out = append(out, append(out, str[:idx+1], str[idx+1:])...)
+			result = append(result, append(result, str[:idx+1], str[idx+1:])...)
 		}
 	}
 
-	return out
+	return result
+}
+
+// Wrap a string with another one.
+func Wrap[T ~string](str T, wrapper string) T {
+	var s strings.Builder
+
+	s.WriteString(wrapper)
+	s.WriteString(string(str))
+	s.WriteString(wrapper)
+
+	return T(s.String())
+}
+
+func WrapAllRune[T ~string](str T, wrapper string) T {
+	var s strings.Builder
+
+	for _, st := range str {
+		s.WriteString(wrapper)
+		s.WriteRune(st)
+		s.WriteString(wrapper)
+	}
+
+	return T(s.String())
 }
 
 // ReverseStr returns a new string with the characters in reverse order.
 func ReverseStr[T ~string](str T) T {
-	r := []rune(str)
+	res := []rune(str)
 
-	for i, j := 0, len(r)-1; i < j; i, j = i+1, j-1 {
-		r[i], r[j] = r[j], r[i]
+	for i, j := 0, len(res)-1; i < j; i, j = i+1, j-1 {
+		res[i], res[j] = res[j], res[i]
 	}
 
-	return T(r)
+	return T(res)
 }
