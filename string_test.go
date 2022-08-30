@@ -111,6 +111,17 @@ func TestString_Wrap(t *testing.T) {
 	assert.Equal(`|abc|`, Wrap("abc", `|`))
 }
 
+func TestString_Unwrap(t *testing.T) {
+	assert := assert.New(t)
+
+	assert.Equal("abc", Unwrap("'abc'", "'"))
+	assert.Equal("abc", Unwrap("*abc*", "*"))
+	assert.Equal("a*bc", Unwrap("*a*bc*", "*"))
+	assert.Equal("abc", Unwrap("''abc''", "''"))
+	assert.Equal("abc", Unwrap("\"abc\"", "\""))
+	assert.Equal("'", Unwrap("'''", "'"))
+}
+
 func TestString_WrapAllRune(t *testing.T) {
 	assert := assert.New(t)
 
