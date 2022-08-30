@@ -89,3 +89,14 @@ func TestString_ReverseStr(t *testing.T) {
 	assert.Equal("FEDCBA", ReverseStr("ABCDEF"))
 	assert.Equal("654321", ReverseStr("123456"))
 }
+
+func TestString_SplitAtIndex(t *testing.T) {
+	assert := assert.New(t)
+
+	assert.Equal([]string{"", "abcdef"}, SplitAtIndex("abcdef", -1))
+	assert.Equal([]string{"a", "bcdef"}, SplitAtIndex("abcdef", 0))
+	assert.Equal([]string{"ab", "cdef"}, SplitAtIndex("abcdef", 1))
+	assert.Equal([]string{"abc", "def"}, SplitAtIndex("abcdef", 2))
+	assert.Equal([]string{"abcdef", ""}, SplitAtIndex("abcdef", 5))
+	assert.Equal([]string{"abcdef", ""}, SplitAtIndex("abcdef", 6))
+}

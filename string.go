@@ -177,6 +177,7 @@ func SnakeCase[T ~string](str T) T {
 		sb.WriteString(ToLower(str))
 	}
 	result := sb.String()
+	fmt.Println("result:", result)
 
 	return T(result)
 }
@@ -185,10 +186,17 @@ func SnakeCase[T ~string](str T) T {
 // returns a slice with the resulted two substrings.
 func SplitAtIndex[T ~string](str T, index int) []T {
 	out := make([]T, 0, 2)
+	if index < 0 {
+		return []T{"", str}
+	}
+
+	if index > len(str)-1 {
+		return []T{str, ""}
+	}
 
 	for idx := range str {
 		if idx == index {
-			out = append(out, append(out, str[:idx], str[idx:])...)
+			out = append(out, append(out, str[:idx+1], str[idx+1:])...)
 		}
 	}
 
