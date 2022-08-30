@@ -68,10 +68,24 @@ func TestString_CamelCase(t *testing.T) {
 	assert.Equal("fooBar", CamelCase("&&foo&&bar__"))
 }
 
-func TestString_ReverseChar(t *testing.T) {
+func TestString_SnakeCase(t *testing.T) {
 	assert := assert.New(t)
 
-	assert.Equal("fedcba", ReverseChar("abcdef"))
-	assert.Equal("FEDCBA", ReverseChar("ABCDEF"))
-	assert.Equal("654321", ReverseChar("123456"))
+	assert.Equal("foo", SnakeCase("Foo"))
+	assert.Equal("foo_bar", SnakeCase("Foo Bar"))
+	assert.Equal("foo_bar", SnakeCase("Foo_Bar"))
+	assert.Equal("foo_bar", SnakeCase("fooBar"))
+	assert.Equal("foo_bar", SnakeCase("FooBar"))
+	assert.Equal("foo_bar", SnakeCase("foo__Bar"))
+	assert.Equal("foo_bar", SnakeCase("foo_&Bar"))
+	assert.Equal("foo_bar", SnakeCase("&Foo_&Bar"))
+	assert.Equal("foo_bar", SnakeCase(" Foo_Bar "))
+}
+
+func TestString_ReverseStr(t *testing.T) {
+	assert := assert.New(t)
+
+	assert.Equal("fedcba", ReverseStr("abcdef"))
+	assert.Equal("FEDCBA", ReverseStr("ABCDEF"))
+	assert.Equal("654321", ReverseStr("123456"))
 }

@@ -1,6 +1,7 @@
 package gogu
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 	"unicode"
@@ -91,7 +92,7 @@ func Capitalize[T ~string](str T) T {
 	return T(res)
 }
 
-// CamelCase converts a string to camelCase.
+// CamelCase converts a string to camelCase (https://en.wikipedia.org/wiki/CamelCase).
 func CamelCase[T ~string](str T) T {
 	newstr := strings.TrimSpace(string(str))
 
@@ -122,8 +123,80 @@ func CamelCase[T ~string](str T) T {
 	return T(result)
 }
 
-// Reverse returns a new string with the characters in reverse order.
-func ReverseChar[T ~string](str T) T {
+// SnakeCase converts a string to snake cased (https://en.wikipedia.org/wiki/Snake_case).
+func SnakeCase[T ~string](str T) T {
+	newstr := strings.TrimSpace(string(str))
+
+	r, _ := regexp.Compile("[-_&]+")
+	newstr = r.ReplaceAllString(newstr, " ")
+
+	var sb strings.Builder
+	sb.Grow(len(newstr))
+
+	strings := strings.Split(newstr, " ")
+	var idx int
+	for i, str := range strings {
+		r := []rune(str)
+
+		if len(r) == 0 {
+			idx++
+			continue
+		}
+
+		rx, _ := regexp.Compile("[A-ZÖ][a-zö]+")
+		pos := rx.FindStringIndex(str)
+
+		if len(strings) == 1 && pos != nil {
+			index := FindIndex(pos, func(st int) bool {
+				return st > 0
+			})
+			camelCased := SplitAtIndex(str, pos[index])
+			if len(camelCased) > 0 {
+				for idx, s := range camelCased {
+					sb.WriteString(ToLower(s))
+
+					if idx < len(camelCased)-1 {
+						sb.Grow(1)
+						sb.WriteString("_")
+					}
+				}
+				continue
+			}
+		}
+
+		if i == 0 || i == idx {
+			frag := ToLower(str)
+			sb.WriteString(frag)
+
+			if len(strings) > 1 {
+				sb.WriteString("_")
+			}
+			continue
+		}
+
+		sb.WriteString(ToLower(str))
+	}
+	result := sb.String()
+
+	return T(result)
+}
+
+// SplitAtIndex split the string at the specified index and
+// returns a slice with the resulted two substrings.
+func SplitAtIndex[T ~string](str T, index int) []T {
+	out := make([]T, 0, 2)
+
+	for idx := range str {
+		if idx == index {
+			out = append(out, append(out, str[:idx], str[idx:])...)
+		}
+	}
+
+	return out
+}
+
+// ReverseStr returns a new string with the characters in reverse order.
+func ReverseStr[T ~string](str T) T {
 	r := []rune(str)
 
 	for i, j := 0, len(r)-1; i < j; i, j = i+1, j-1 {
