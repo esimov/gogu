@@ -182,10 +182,53 @@ func SnakeCase[T ~string](str T) T {
 	return T(result)
 }
 
+// PadLeft pads string on the left side if it's shorter than length.
+// Padding characters are truncated if they exceed length.
+func PadLeft[T ~string](str T, size int, token string) T {
+	var tokenStr = token
+
+	strLen := len(str)
+	tokenLen := len(token)
+
+	if size <= strLen {
+		return T(str)
+	}
+
+	if tokenLen <= size-strLen {
+		tokenStr = strings.Repeat(token, size-strLen)
+	}
+
+	tokenStr = tokenStr[:size-strLen]
+
+	return T(tokenStr) + T(str)
+}
+
+// PadRight pads string on the right side if it's shorter than length.
+// Padding characters are truncated if they exceed length.
+func PadRight[T ~string](str T, size int, token string) T {
+	var tokenStr = token
+
+	strLen := len(str)
+	tokenLen := len(token)
+
+	if size <= strLen {
+		return T(str)
+	}
+
+	if tokenLen <= size-strLen {
+		tokenStr = strings.Repeat(token, size-strLen)
+	}
+
+	tokenStr = tokenStr[:size-strLen]
+
+	return T(str) + T(tokenStr)
+}
+
 // SplitAtIndex split the string at the specified index and
 // returns a slice with the resulted two substrings.
 func SplitAtIndex[T ~string](str T, index int) []T {
 	result := make([]T, 0, 2)
+
 	if index < 0 {
 		return []T{"", str}
 	}
@@ -203,7 +246,7 @@ func SplitAtIndex[T ~string](str T, index int) []T {
 	return result
 }
 
-// Wrap a string with another one.
+// Wrap a string with the specified token.
 func Wrap[T ~string](str T, token string) T {
 	var s strings.Builder
 
@@ -214,6 +257,7 @@ func Wrap[T ~string](str T, token string) T {
 	return T(s.String())
 }
 
+// Unwrap a string with the specified token.
 func Unwrap[T ~string](str T, token string) T {
 	startToken := strings.Index(string(str), token)
 	endToken := strings.LastIndex(string(str), token)

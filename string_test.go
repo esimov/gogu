@@ -93,6 +93,26 @@ func TestString_SplitAtIndex(t *testing.T) {
 	assert.Equal([]string{"abcdef", ""}, SplitAtIndex("abcdef", 6))
 }
 
+func TestString_Pad(t *testing.T) {
+	assert := assert.New(t)
+
+	assert.Equal("abc", PadLeft("abc", 2, "."))
+	assert.Equal("abc", PadLeft("abc", 3, "."))
+	assert.Equal("_abc", PadLeft("abc", 4, "_"))
+	assert.Equal(".....abc", PadLeft("abc", 8, "..."))
+	assert.Equal("...abc", PadLeft("abc", 6, "........"))
+	assert.Equal("_-_abc", PadLeft("abc", 6, "_-"))
+	assert.Equal("_-|_abc", PadLeft("abc", 7, "_-|"))
+
+	assert.Equal("abc", PadRight("abc", 2, "."))
+	assert.Equal("abc", PadRight("abc", 3, "."))
+	assert.Equal("abc_", PadRight("abc", 4, "_"))
+	assert.Equal("abc.....", PadRight("abc", 8, "..."))
+	assert.Equal("abc...", PadRight("abc", 6, "........"))
+	assert.Equal("abc_-_", PadRight("abc", 6, "_-"))
+	assert.Equal("abc_-|_", PadRight("abc", 7, "_-|"))
+}
+
 func TestString_ReverseStr(t *testing.T) {
 	assert := assert.New(t)
 
