@@ -2,6 +2,7 @@ package gogu
 
 import (
 	"fmt"
+	"math"
 	"regexp"
 	"strings"
 	"unicode"
@@ -222,6 +223,35 @@ func PadRight[T ~string](str T, size int, token string) T {
 	tokenStr = tokenStr[:size-strLen]
 
 	return T(str) + T(tokenStr)
+}
+
+// Pads string on the left and right sides if it's shorter than length.
+// Padding characters are truncated if they can't be evenly divided by length.
+func Pad[T ~string](str T, size int, token string) T {
+	var (
+		leftTokenStr  = token
+		rightTokenStr = token
+	)
+
+	strLen := len(str)
+	tokenLen := len(token)
+
+	if size <= strLen {
+		return T(str)
+	}
+	split := float64(size-strLen) / 2
+	left := int(math.Floor(split))
+	right := int(math.Ceil(split))
+
+	if tokenLen <= int(split) {
+		leftTokenStr = strings.Repeat(token, left)
+		rightTokenStr = strings.Repeat(token, right)
+	}
+
+	leftTokenStr = leftTokenStr[:left]
+	rightTokenStr = rightTokenStr[:right]
+
+	return T(leftTokenStr) + str + T(rightTokenStr)
 }
 
 // SplitAtIndex split the string at the specified index and

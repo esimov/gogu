@@ -111,6 +111,14 @@ func TestString_Pad(t *testing.T) {
 	assert.Equal("abc...", PadRight("abc", 6, "........"))
 	assert.Equal("abc_-_", PadRight("abc", 6, "_-"))
 	assert.Equal("abc_-|_", PadRight("abc", 7, "_-|"))
+
+	assert.Equal("abc", Pad("abc", 2, "."))
+	assert.Equal("abc", Pad("abc", 3, "."))
+	assert.Equal("abc.", Pad("abc", 4, "."))
+	assert.Equal(".abc.", Pad("abc", 5, "."))
+	assert.Equal(".abc..", Pad("abc", 6, "."))
+	assert.Equal("  abc  ", Pad("abc", 7, " "))
+	assert.Equal("_-abc_-_", Pad("abc", 8, "_-"))
 }
 
 func TestString_ReverseStr(t *testing.T) {
