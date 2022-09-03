@@ -71,15 +71,22 @@ func TestString_CamelCase(t *testing.T) {
 func TestString_SnakeCase(t *testing.T) {
 	assert := assert.New(t)
 
+	assert.Equal("f", SnakeCase("F"))
 	assert.Equal("foo", SnakeCase("Foo"))
 	assert.Equal("foo_bar", SnakeCase("Foo Bar"))
 	assert.Equal("foo_bar", SnakeCase("Foo_Bar"))
 	assert.Equal("foo_bar", SnakeCase("fooBar"))
-	assert.Equal("foo_bar", SnakeCase("FooBar"))
-	assert.Equal("foo_bar", SnakeCase("foo__Bar"))
 	assert.Equal("foo_bar", SnakeCase("foo_&Bar"))
 	assert.Equal("foo_bar", SnakeCase("&Foo_&Bar"))
 	assert.Equal("foo_bar", SnakeCase(" Foo_Bar "))
+	assert.Equal("foo_bar", SnakeCase("foo__Bar"))
+	assert.Equal("foo_bar_baz", SnakeCase("fooBarBaz"))
+	assert.Equal("foo_bar_baz", SnakeCase("Foo BarBaz"))
+	assert.Equal("foo_bar_baz", SnakeCase("Foo_Bar_Baz"))
+	assert.Equal("foo_bar_baz_qux", SnakeCase("FooBarBazQux"))
+	assert.Equal("foo_bar_baz_qux", SnakeCase("FooBarBaz_Qux"))
+	assert.Equal("foo_bar_baz_qux", SnakeCase("FooBarBaz Qux"))
+	assert.Equal("foo_bar_baz_qux", SnakeCase("Foo Bar_Baz&Qux"))
 }
 
 func TestString_SplitAtIndex(t *testing.T) {

@@ -126,56 +126,54 @@ func CamelCase[T ~string](str T) T {
 
 // SnakeCase converts a string to snake cased (https://en.wikipedia.org/wiki/Snake_case).
 func SnakeCase[T ~string](str T) T {
+	var sb strings.Builder
 	newstr := strings.TrimSpace(string(str))
 
-	r, _ := regexp.Compile("[-_&]+")
-	newstr = r.ReplaceAllString(newstr, " ")
+	rx, _ := regexp.Compile("[-_&]+")
+	newstr = rx.ReplaceAllString(newstr, " ")
 
-	var sb strings.Builder
-	sb.Grow(len(newstr))
-
-	strings := strings.Split(newstr, " ")
 	var idx int
-	for i, str := range strings {
+	chars := strings.Split(newstr, " ")
+	for i, str := range chars {
 		r := []rune(str)
 
 		if len(r) == 0 {
 			idx++
 			continue
 		}
+		rx, _ = regexp.Compile("[a-zö][A-ZÖ]+")
+		strIdx := rx.FindAllStringIndex(str, -1)
 
-		rx, _ := regexp.Compile("[A-ZÖ][a-zö]+")
-		pos := rx.FindStringIndex(str)
+		if len(strIdx) > 0 {
+			s := Substr(str, 0, strIdx[0][0]+1)
+			sb.WriteString(ToLower(s))
+			sb.WriteString("_")
 
-		if len(strings) == 1 && pos != nil {
-			index := FindIndex(pos, func(st int) bool {
-				return st > 0
-			})
-			camelCased := SplitAtIndex(str, pos[index])
-			if len(camelCased) > 0 {
-				for idx, s := range camelCased {
+			for i := 0; i < len(strIdx); i++ {
+				var s string
+				if i < len(strIdx)-1 {
+					subStrLen := strIdx[i+1][0] - strIdx[i][0]
+					s = Substr(str, strIdx[i][0]+1, subStrLen)
+
 					sb.WriteString(ToLower(s))
-
-					if idx < len(camelCased)-1 {
-						sb.Grow(1)
-						sb.WriteString("_")
-					}
+					sb.WriteString("_")
+				} else {
+					s = Substr(str, strIdx[i][0]+1, len(str)-strIdx[i][0]+1)
+					sb.WriteString(ToLower(s))
 				}
-				continue
 			}
-		}
 
-		if i == 0 || i == idx {
+			if len(chars) > 1 && i != len(chars)-1 {
+				sb.WriteString("_")
+			}
+		} else {
 			frag := ToLower(str)
 			sb.WriteString(frag)
 
-			if len(strings) > 1 {
+			if len(chars) > 1 && i != len(chars)-1 {
 				sb.WriteString("_")
 			}
-			continue
 		}
-
-		sb.WriteString(ToLower(str))
 	}
 	result := sb.String()
 	fmt.Println("result:", result)
