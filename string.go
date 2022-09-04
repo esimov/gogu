@@ -123,12 +123,12 @@ func CamelCase[T ~string](str T) T {
 	return T(result)
 }
 
-// SnakeCase converts a string to snake cased (https://en.wikipedia.org/wiki/Snake_case).
+// SnakeCase converts a string to snake_case (https://en.wikipedia.org/wiki/Snake_case).
 func SnakeCase[T ~string](str T) T {
 	return splitStringWithDelimiter(str, "_")
 }
 
-// SnakeCase converts a string to snake cased (https://en.wikipedia.org/wiki/Letter_case#Kebab_case).
+// KebabCase converts a string to kebab-case (https://en.wikipedia.org/wiki/Letter_case#Kebab_case).
 func KebabCase[T ~string](str T) T {
 	return splitStringWithDelimiter(str, "-")
 }
