@@ -89,6 +89,27 @@ func TestString_SnakeCase(t *testing.T) {
 	assert.Equal("foo_bar_baz_qux", SnakeCase("Foo Bar_Baz&Qux"))
 }
 
+func TestString_KebabCase(t *testing.T) {
+	assert := assert.New(t)
+
+	assert.Equal("f", KebabCase("F"))
+	assert.Equal("foo", KebabCase("Foo"))
+	assert.Equal("foo-bar", KebabCase("Foo Bar"))
+	assert.Equal("foo-bar", KebabCase("Foo_Bar"))
+	assert.Equal("foo-bar", KebabCase("fooBar"))
+	assert.Equal("foo-bar", KebabCase("foo_&Bar"))
+	assert.Equal("foo-bar", KebabCase("&Foo_&Bar"))
+	assert.Equal("foo-bar", KebabCase(" Foo_Bar "))
+	assert.Equal("foo-bar", KebabCase("foo__Bar"))
+	assert.Equal("foo-bar-baz", KebabCase("fooBarBaz"))
+	assert.Equal("foo-bar-baz", KebabCase("Foo BarBaz"))
+	assert.Equal("foo-bar-baz", KebabCase("Foo_Bar_Baz"))
+	assert.Equal("foo-bar-baz-qux", KebabCase("FooBarBazQux"))
+	assert.Equal("foo-bar-baz-qux", KebabCase("FooBarBaz_Qux"))
+	assert.Equal("foo-bar-baz-qux", KebabCase("FooBarBaz Qux"))
+	assert.Equal("foo-bar-baz-qux", KebabCase("Foo Bar_Baz&Qux"))
+}
+
 func TestString_SplitAtIndex(t *testing.T) {
 	assert := assert.New(t)
 

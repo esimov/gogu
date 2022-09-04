@@ -1,7 +1,6 @@
 package gogu
 
 import (
-	"fmt"
 	"math"
 	"regexp"
 	"strings"
@@ -126,6 +125,16 @@ func CamelCase[T ~string](str T) T {
 
 // SnakeCase converts a string to snake cased (https://en.wikipedia.org/wiki/Snake_case).
 func SnakeCase[T ~string](str T) T {
+	return splitStringWithDelimiter(str, "_")
+}
+
+// SnakeCase converts a string to snake cased (https://en.wikipedia.org/wiki/Letter_case#Kebab_case).
+func KebabCase[T ~string](str T) T {
+	return splitStringWithDelimiter(str, "-")
+}
+
+// splitStringWithDelimiter splits a string to lower case with the provided delimiter.
+func splitStringWithDelimiter[T ~string](str T, delimiter string) T {
 	var sb strings.Builder
 	newstr := strings.TrimSpace(string(str))
 
@@ -147,7 +156,7 @@ func SnakeCase[T ~string](str T) T {
 		if len(strIdx) > 0 {
 			s := Substr(str, 0, strIdx[0][0]+1)
 			sb.WriteString(ToLower(s))
-			sb.WriteString("_")
+			sb.WriteString(delimiter)
 
 			for i := 0; i < len(strIdx); i++ {
 				var s string
@@ -156,7 +165,7 @@ func SnakeCase[T ~string](str T) T {
 					s = Substr(str, strIdx[i][0]+1, subStrLen)
 
 					sb.WriteString(ToLower(s))
-					sb.WriteString("_")
+					sb.WriteString(delimiter)
 				} else {
 					s = Substr(str, strIdx[i][0]+1, len(str)-strIdx[i][0]+1)
 					sb.WriteString(ToLower(s))
@@ -164,19 +173,18 @@ func SnakeCase[T ~string](str T) T {
 			}
 
 			if len(chars) > 1 && i != len(chars)-1 {
-				sb.WriteString("_")
+				sb.WriteString(delimiter)
 			}
 		} else {
 			frag := ToLower(str)
 			sb.WriteString(frag)
 
 			if len(chars) > 1 && i != len(chars)-1 {
-				sb.WriteString("_")
+				sb.WriteString(delimiter)
 			}
 		}
 	}
 	result := sb.String()
-	fmt.Println("result:", result)
 
 	return T(result)
 }
