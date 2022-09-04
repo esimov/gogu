@@ -44,7 +44,6 @@ func TestFunc_Delay(t *testing.T) {
 	assert.Equal(1, int(r1))
 	after := time.Since(now).Milliseconds()
 	assert.LessOrEqual(int(after), 30)
-	fmt.Println()
 }
 
 func TestFunc_After(t *testing.T) {

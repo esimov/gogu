@@ -1,7 +1,6 @@
 package gogu
 
 import (
-	"fmt"
 	"testing"
 	"time"
 
@@ -203,6 +202,4 @@ func TestCache_ExpirationTime(t *testing.T) {
 	c2.Set("a", 1, 2*time.Millisecond)
 	<-time.After(5 * time.Millisecond)
 	assert.Equal(0, c2.Count())
-
-	fmt.Println()
 }
