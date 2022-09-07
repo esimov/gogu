@@ -96,7 +96,7 @@ func (h *Heap[T]) Delete(val T) (bool, error) {
 
 	h.swap(idx, h.Size()-1)
 	h.data = h.data[:h.Size()-1]
-	h.moveUp(0)
+	h.moveDown(0)
 
 	return true, nil
 }
@@ -177,7 +177,7 @@ func (h *Heap[T]) moveDown(i int) {
 // moveUp moves the element from index i up to its
 // correct position in the heap following the heap rules.
 func (h *Heap[T]) moveUp(i int) {
-	if h.comp(h.data[h.parent(i)], h.data[i]) {
+	if h.comp(h.data[i], h.data[h.parent(i)]) {
 		h.swap(i, h.parent(i))
 		i = h.parent(i)
 
