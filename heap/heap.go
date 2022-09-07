@@ -1,6 +1,8 @@
 package gogu
 
-type Heap[T any] struct {
+import "fmt"
+
+type Heap[T comparable] struct {
 	data []T
 	comp func(i, j T) bool
 }
@@ -8,9 +10,9 @@ type Heap[T any] struct {
 type CompFn[T any] func(i, j T) bool
 
 // NewHeap creates a new heap data structure having two components:
-// a data slice holding the concrete values and a comparator function returning a boolean value.
-// The comparision sign decides if the heap is a max heap or min heap.
-func NewHeap[T any](comp CompFn[T]) *Heap[T] {
+// a data slice holding the concrete values and a comparator function.
+// The comparison sign decides if the heap is a max heap or min heap.
+func NewHeap[T comparable](comp CompFn[T]) *Heap[T] {
 	return &Heap[T]{
 		data: make([]T, 0),
 		comp: comp,
@@ -22,7 +24,7 @@ func (h *Heap[T]) Size() int {
 	return len(h.data)
 }
 
-// IsEmpty returns true if a heap is empty, otherwise false.
+// IsEmpty returns true if the heap is empty, otherwise false.
 func (h *Heap[T]) IsEmpty() bool {
 	if h.Size() > 0 {
 		return false
@@ -38,16 +40,34 @@ func (h *Heap[T]) Clear() {
 	h.data = h.data[:0]
 }
 
-// Insert stores a new value at the end of the heap and calls the heapify algorithm to reorder
-// the existing values in ascending or descending order, depending on the comparator function.
-func (h *Heap[T]) Insert(val T) {
-	h.data = append(h.data, val)
-	h.moveUp(h.Size() - 1)
+// Peek returns the first element of the heap.
+// This can be the minimum or maximum value depending on the heap type.
+func (h *Heap[T]) Peek() T {
+	if h.Size() == 0 {
+		var t T
+		return t
+	}
+
+	return h.data[0]
 }
 
-// Delete removes the peek element from the heap and reorder the existing elements.
-// The removed element can be the minimum or maximum depending on the comparator function.
-func (h *Heap[T]) Delete() T {
+// GetValues returns the heap values.
+func (h *Heap[T]) GetValues() []T {
+	return h.data
+}
+
+// Push inserts new elements at the end of the heap and calls the heapify algorithm to reorder
+// the existing elements in ascending or descending order, depending on the heap type.
+func (h *Heap[T]) Push(val ...T) {
+	for _, v := range val {
+		h.data = append(h.data, v)
+		h.moveUp(h.Size() - 1)
+	}
+}
+
+// Pop removes the first element from the heap and reorder the existing elements.
+// The removed element can be the minimum or maximum depending on the heap type.
+func (h *Heap[T]) Pop() T {
 	var val T
 	if h.Size() == 0 {
 		return val
@@ -62,15 +82,23 @@ func (h *Heap[T]) Delete() T {
 	return val
 }
 
-// Peek returns the first element of the heap.
-// This can be the maximum or minimum depending if the heap is a min heap or max heap.
-func (h *Heap[T]) Peek() T {
+// Delete removes an element from the heap. In case the element does not exists it returns false and an error.
+// After removal it reorders the heap following the heap specific rules.
+func (h *Heap[T]) Delete(val T) (bool, error) {
 	if h.Size() == 0 {
-		var t T
-		return t
+		return false, fmt.Errorf("heap empty")
 	}
 
-	return h.data[0]
+	idx, ok := getIndex(h.data, val)
+	if !ok {
+		return false, fmt.Errorf("value not found in the heap: %v", val)
+	}
+
+	h.swap(idx, h.Size()-1)
+	h.data = h.data[:h.Size()-1]
+	h.moveUp(0)
+
+	return true, nil
 }
 
 // Convert a min heap to max heap and vice versa.
@@ -81,31 +109,43 @@ func (h *Heap[T]) Convert() {
 	}
 }
 
+// FromSlice imports the slice elements into a new heap using the comparator function.
+func FromSlice[T comparable](data []T, comp CompFn[T]) *Heap[T] {
+	h := NewHeap(comp)
+
+	for i := 0; i < len(data); i++ {
+		h.Push(data[i])
+	}
+
+	return h
+}
+
 // Merge joins two heaps into a new one preserving the original heaps.
 func (h *Heap[T]) Merge(h2 *Heap[T]) *Heap[T] {
 	newHeap := NewHeap(h.comp)
 
 	for i := 0; i < h.Size(); i++ {
-		newHeap.Insert(h.data[i])
+		newHeap.Push(h.data[i])
 	}
 
 	for i := 0; i < h2.Size(); i++ {
-		newHeap.Insert(h2.data[i])
+		newHeap.Push(h2.data[i])
 	}
 
 	return newHeap
 }
 
-// Meld merge two heaps into a new one containing all the elements of both and destroys the original heaps.
+// Meld merge two heaps into a new one containing all the
+// elements of both and destroying the original heaps.
 func (h *Heap[T]) Meld(h2 *Heap[T]) *Heap[T] {
 	newHeap := NewHeap(h.comp)
 
 	for i := 0; i < h.Size(); i++ {
-		newHeap.Insert(h.data[i])
+		newHeap.Push(h.data[i])
 	}
 
 	for i := 0; i < h2.Size(); i++ {
-		newHeap.Insert(h2.data[i])
+		newHeap.Push(h2.data[i])
 	}
 	h.data = nil
 	h2.data = nil
@@ -134,7 +174,7 @@ func (h *Heap[T]) moveDown(i int) {
 	}
 }
 
-// moveDown moves the element at the position i up to its
+// moveUp moves the element from index i up to its
 // correct position in the heap following the heap rules.
 func (h *Heap[T]) moveUp(i int) {
 	if h.comp(h.data[h.parent(i)], h.data[i]) {
@@ -163,4 +203,14 @@ func (h *Heap[T]) parent(i int) int {
 // swap swaps the position of elements at index i and j.
 func (h *Heap[T]) swap(i, j int) {
 	h.data[i], h.data[j] = h.data[j], h.data[i]
+}
+
+func getIndex[T comparable](slice []T, val T) (int, bool) {
+	for i := 0; i < len(slice); i++ {
+		if slice[i] == val {
+			return i, true
+		}
+	}
+
+	return -1, false
 }

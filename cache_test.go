@@ -75,6 +75,7 @@ func TestCache_Basic(t *testing.T) {
 
 func TestCache_PointerStruct(t *testing.T) {
 	assert := assert.New(t)
+
 	st := &SampleStruct{Id: 1}
 
 	c := NewCache[string, SampleStruct](DefaultExpiration, 1*time.Minute)
