@@ -94,7 +94,7 @@ func (h *Heap[T]) Delete(val T) (bool, error) {
 		return false, fmt.Errorf("value not found in the heap: %v", val)
 	}
 
-	h.swap(idx, h.Size()-1)
+	swap(h.data, idx, h.Size()-1)
 	h.data = h.data[:h.Size()-1]
 	h.moveDown(0)
 
@@ -111,13 +111,31 @@ func (h *Heap[T]) Convert() {
 
 // FromSlice imports the slice elements into a new heap using the comparator function.
 func FromSlice[T comparable](data []T, comp CompFn[T]) *Heap[T] {
-	h := NewHeap(comp)
+	for i := len(data)/2 - 1; i >= 0; i-- {
+		for {
+			l, r := 2*i+1, 2*i+2
+			if l >= len(data) || l < 0 {
+				break
+			}
 
-	for i := 0; i < len(data); i++ {
-		h.Push(data[i])
+			current := l
+			if r < len(data) && comp(data[r], data[l]) {
+				current = r
+			}
+
+			if !comp(data[current], data[i]) {
+				break
+			}
+
+			swap(data, i, current)
+			i = current
+		}
 	}
 
-	return h
+	return &Heap[T]{
+		data: data,
+		comp: comp,
+	}
 }
 
 // Merge joins two heaps into a new one preserving the original heaps.
@@ -169,7 +187,7 @@ func (h *Heap[T]) moveDown(i int) {
 	}
 
 	if current != i {
-		h.swap(i, current)
+		swap(h.data, i, current)
 		h.moveDown(current)
 	}
 }
@@ -178,7 +196,7 @@ func (h *Heap[T]) moveDown(i int) {
 // correct position in the heap following the heap rules.
 func (h *Heap[T]) moveUp(i int) {
 	if h.comp(h.data[i], h.data[h.parent(i)]) {
-		h.swap(i, h.parent(i))
+		swap(h.data, i, h.parent(i))
 		i = h.parent(i)
 
 		h.moveUp(i)
@@ -201,8 +219,8 @@ func (h *Heap[T]) parent(i int) int {
 }
 
 // swap swaps the position of elements at index i and j.
-func (h *Heap[T]) swap(i, j int) {
-	h.data[i], h.data[j] = h.data[j], h.data[i]
+func swap[T any](data []T, i, j int) {
+	data[i], data[j] = data[j], data[i]
 }
 
 func getIndex[T comparable](slice []T, val T) (int, bool) {
