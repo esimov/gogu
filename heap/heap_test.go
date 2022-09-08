@@ -157,3 +157,37 @@ func TestHeap_Convert(t *testing.T) {
 	heap.Convert(func(a, b int) bool { return a > b })
 	assert.Equal([]int{5, 4, 2, 1, 3}, heap.GetValues())
 }
+
+func TestHeap_Merge(t *testing.T) {
+	assert := assert.New(t)
+
+	slice1 := []int{1, 4, 2, 3, 5}
+	slice2 := []int{8, 6, 9, 10, 7}
+
+	heap1 := FromSlice(slice1, func(a, b int) bool { return a < b })
+	assert.Len(heap1.GetValues(), 5)
+	heap2 := FromSlice(slice2, func(a, b int) bool { return a < b })
+	assert.Len(heap2.GetValues(), 5)
+
+	mergedHeap := heap1.Merge(heap2)
+	assert.Len(mergedHeap.GetValues(), 10)
+	assert.Len(heap1.GetValues(), 5)
+	assert.Len(heap2.GetValues(), 5)
+}
+
+func TestHeap_Meld(t *testing.T) {
+	assert := assert.New(t)
+
+	slice1 := []int{1, 4, 2, 3, 5}
+	slice2 := []int{8, 6, 9, 10, 7}
+
+	heap1 := FromSlice(slice1, func(a, b int) bool { return a < b })
+	assert.Len(heap1.GetValues(), 5)
+	heap2 := FromSlice(slice2, func(a, b int) bool { return a < b })
+	assert.Len(heap2.GetValues(), 5)
+
+	mergedHeap := heap1.Meld(heap2)
+	assert.Len(mergedHeap.GetValues(), 10)
+	assert.Len(heap1.GetValues(), 0)
+	assert.Len(heap2.GetValues(), 0)
+}
