@@ -77,7 +77,7 @@ func (h *Heap[T]) Pop() T {
 
 	h.data[0] = h.data[h.Size()-1]
 	h.data = h.data[:h.Size()-1]
-	h.moveDown(0)
+	h.moveDown(h.Size(), 0)
 
 	return val
 }
@@ -96,7 +96,7 @@ func (h *Heap[T]) Delete(val T) (bool, error) {
 
 	swap(h.data, idx, h.Size()-1)
 	h.data = h.data[:h.Size()-1]
-	h.moveDown(0)
+	h.moveDown(h.Size(), 0)
 
 	return true, nil
 }
@@ -106,7 +106,7 @@ func (h *Heap[T]) Convert(comp CompFn[T]) {
 	h.comp = comp
 	// Start from bottom-rightmost internal mode and reorder all internal nodes.
 	for i := (h.Size() - 2) / 2; i >= 0; i-- {
-		h.moveDown(i)
+		h.moveDown(h.Size(), i)
 	}
 }
 
@@ -174,22 +174,22 @@ func (h *Heap[T]) Meld(h2 *Heap[T]) *Heap[T] {
 
 // moveDown moves the element at the position i down to its
 // correct position in the heap following the heap rules.
-func (h *Heap[T]) moveDown(i int) {
+func (h *Heap[T]) moveDown(n, i int) {
 	left := h.leftChild(i)
 	right := h.rightChild(i)
 	current := i
 
-	if left < h.Size() && h.comp(h.data[left], h.data[i]) {
+	if left < n && h.comp(h.data[left], h.data[current]) {
 		current = left
 	}
 
-	if right < h.Size() && h.comp(h.data[right], h.data[current]) {
+	if right < n && h.comp(h.data[right], h.data[current]) {
 		current = right
 	}
 
 	if current != i {
 		swap(h.data, i, current)
-		h.moveDown(current)
+		h.moveDown(n, current)
 	}
 }
 
