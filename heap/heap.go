@@ -102,7 +102,8 @@ func (h *Heap[T]) Delete(val T) (bool, error) {
 }
 
 // Convert a min heap to max heap and vice versa.
-func (h *Heap[T]) Convert() {
+func (h *Heap[T]) Convert(comp CompFn[T]) {
+	h.comp = comp
 	// Start from bottom-rightmost internal mode and reorder all internal nodes.
 	for i := (h.Size() - 2) / 2; i >= 0; i-- {
 		h.moveDown(i)

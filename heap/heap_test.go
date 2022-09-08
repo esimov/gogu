@@ -1,89 +1,159 @@
 package gogu
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func TestHeap(t *testing.T) {
+func TestHeap_MinHeap(t *testing.T) {
 	assert := assert.New(t)
 
-	// Min Heap
-	comp := func(a, b int) bool {
-		return a > b
-	}
-	h := NewHeap(comp)
-	assert.Empty(h.Size())
-	assert.True(h.IsEmpty())
-	h.Push(10)
-	assert.Equal(len(h.GetValues()), h.Size())
-	assert.Equal(1, h.Size())
-	assert.Equal(10, h.Pop())
-	assert.True(h.IsEmpty())
+	heap := NewHeap(func(a, b int) bool { return a < b })
+	assert.Empty(heap.Size())
+	assert.True(heap.IsEmpty())
 
-	values := []int{9, 3, 20, 8, 6, 5, 12, 10, 9, 18}
+	heap.Push(10)
+	assert.Equal(len(heap.GetValues()), heap.Size())
+	assert.Equal(1, heap.Size())
+	assert.Equal(10, heap.Pop())
+	assert.True(heap.IsEmpty())
+
+	values := []int{2, 5, 1, 4, 3}
 	for _, v := range values {
-		h.Push(v)
+		heap.Push(v)
 	}
-	assert.Equal([]int{3, 6, 5, 9, 8, 20, 12, 10, 9, 18}, h.GetValues())
+	assert.Equal([]int{1, 3, 2, 5, 4}, heap.GetValues())
 
-	h.Push(7)
-	assert.Equal([]int{3, 6, 5, 9, 7, 20, 12, 10, 9, 18, 8}, h.GetValues())
+	heap.Push(0)
+	assert.Equal([]int{0, 3, 1, 5, 4, 2}, heap.GetValues())
 
-	h.Clear()
-	assert.Empty(h.GetValues())
+	heap.Clear()
+	assert.Empty(heap.GetValues())
 
-	v := h.Pop()
+	v := heap.Pop()
 	assert.Equal(0, v)
 
-	h.Push(10, 4, 2, 5, 3)
-	assert.Equal([]int{2, 3, 4, 10, 5}, h.GetValues())
+	heap.Push(10, 4, 2, 5, 3)
+	expected := []int{2, 3, 4, 10, 5}
+	assert.Equal(expected, heap.GetValues())
 
-	for range h.GetValues() {
-		h.Pop()
+	for range heap.GetValues() {
+		heap.Pop()
 	}
-	assert.Empty(h.Size())
+	assert.Empty(heap.Size())
+}
 
-	// Max Heap
-	comp = func(a, b int) bool {
-		return a < b
+func TestHeap_MaxHeap(t *testing.T) {
+	assert := assert.New(t)
+
+	values := []int{9, 3, 20, 8, 6, 5, 12, 10, 9, 18}
+	heap := FromSlice(values, func(a, b int) bool { return a > b })
+
+	assert.Equal([]int{20, 18, 12, 10, 6, 5, 9, 8, 9, 3}, heap.GetValues())
+
+	ok, err := heap.Delete(12)
+	assert.True(ok)
+	assert.NoError(err)
+	assert.Len(heap.GetValues(), 9)
+	assert.Equal([]int{20, 18, 3, 10, 6, 5, 9, 8, 9}, heap.GetValues())
+
+	heap.Pop()
+	assert.Len(heap.GetValues(), 8)
+
+	heap.Clear()
+	assert.Len(heap.GetValues(), 0)
+
+	input := []int{20, 18, 10, 9, 9, 8, 6, 5, 3}
+	heap.Push(input...)
+
+	for idx := range heap.GetValues() {
+		val := heap.Pop()
+		assert.Equal(val, input[idx])
+	}
+}
+
+func TestHeap_Struct(t *testing.T) {
+	assert := assert.New(t)
+
+	type person struct {
+		name string
+		age  int
 	}
 
-	h2 := NewHeap(comp)
-
-	values = []int{9, 3, 20, 8, 6, 5, 12, 10, 9, 18}
-	for _, v := range values {
-		h2.Push(v)
+	persons := []person{
+		{name: "John", age: 23},
+		{name: "Eveline", age: 32},
+		{name: "Rick", age: 34},
+		{name: "Tommy", age: 43},
+		{name: "Jack", age: 21},
+		{name: "Kim", age: 18},
 	}
-	assert.Equal([]int{20, 18, 12, 9, 10, 5, 9, 3, 8, 6}, h2.GetValues())
 
-	// Import from Slice
-	h3 := FromSlice(values, func(a, b int) bool { return a < b })
-	assert.NotEmpty(h3.GetValues())
-	assert.Equal([]int{20, 18, 12, 9, 10, 5, 9, 3, 8, 6}, h3.GetValues())
+	comp := func(a, b person) bool { return a.age < b.age }
+	heap := NewHeap(comp)
+	for _, p := range persons {
+		heap.Push(p)
+	}
+	assert.Len(heap.GetValues(), 6)
+	first := heap.Pop()
+	assert.Equal("Kim", first.name)
 
-	// Insert
+	heap.Push(person{name: "Liza", age: 50})
+	assert.Equal("Liza", heap.GetValues()[heap.Size()-1].name)
 
-	h4 := NewHeap(comp)
-	h4.Push(3, 5, 1, 4)
-	fmt.Println(h4.GetValues())
-	ok, err := h4.Delete(10)
-	assert.Error(err)
-	assert.False(ok)
-	ok, err = h4.Delete(1)
+	pers := person{name: "John", age: 23}
+	ok, err := heap.Delete(pers)
 	assert.NoError(err)
 	assert.True(ok)
-	assert.Equal(3, h4.Size())
-	fmt.Println(h4.GetValues())
 
-	// h3 := h.Merge(h2)
-	fmt.Println("H2:", h2.data)
-	// fmt.Println("H3:", h3.data)
+	pers = person{name: "John", age: 23}
+	ok, err = heap.Delete(pers)
+	assert.Error(err)
+	assert.False(ok)
+}
 
-	// h4 := h.Meld(h2)
-	// fmt.Println("H4:", h4.data)
-	// fmt.Println("H:", h.data)
-	// fmt.Println("H2:", h2.data)
+func TestHeap_Multiple(t *testing.T) {
+	assert := assert.New(t)
+
+	testCases := []struct {
+		name   string
+		cond   func(a, b int) bool
+		actual []int
+		sorted []int
+	}{
+		{
+			name:   "MinHeap",
+			cond:   func(a, b int) bool { return a < b },
+			actual: []int{5, 3, 2, 4, 1},
+			sorted: []int{1, 2, 3, 4, 5},
+		},
+		{
+			name:   "MaxHeap",
+			cond:   func(a, b int) bool { return a > b },
+			actual: []int{5, 3, 2, 4, 1},
+			sorted: []int{5, 4, 3, 2, 1},
+		},
+	}
+
+	for _, t := range testCases {
+		heap := NewHeap(t.cond)
+		heap.Push(t.actual...)
+
+		for _, v := range t.sorted {
+			elem := heap.Pop()
+			assert.Equal(elem, v)
+		}
+	}
+}
+
+func TestHeap_Convert(t *testing.T) {
+	assert := assert.New(t)
+
+	input := []int{1, 4, 2, 3, 5}
+
+	heap := NewHeap(func(a, b int) bool { return a < b })
+	heap.Push(input...)
+	heap.Convert(func(a, b int) bool { return a > b })
+	assert.Equal([]int{5, 4, 2, 1, 3}, heap.GetValues())
 }
