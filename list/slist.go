@@ -32,8 +32,8 @@ func InitList[T comparable](data T) *SList[T] {
 	}
 }
 
-// Unshift insert a new node at the beginning of the list.
-func (l *SList[T]) Unshift(data T) {
+// Push insert a new node at the beginning of the list.
+func (l *SList[T]) Push(data T) {
 	node := newNode(data)
 
 	firstNode := l.node

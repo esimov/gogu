@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestLinkedList(t *testing.T) {
+func TestSingleLinkedList(t *testing.T) {
 	assert := assert.New(t)
 
 	list := InitList(1)
@@ -16,7 +16,7 @@ func TestLinkedList(t *testing.T) {
 	assert.NoError(err)
 	assert.Equal(2, list.node.data)
 
-	list.Unshift(1)
+	list.Push(1)
 	assert.Equal(1, list.node.data)
 
 	last := list.Append(3)
