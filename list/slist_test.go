@@ -12,12 +12,12 @@ func TestSingleLinkedList(t *testing.T) {
 	list := InitList(1)
 	assert.Equal(1, list.data)
 	list.Append(2)
-	err := list.Delete(&list.node) // delete first node
+	err := list.Delete(&list.singleNode) // delete first node
 	assert.NoError(err)
-	assert.Equal(2, list.node.data)
+	assert.Equal(2, list.singleNode.data)
 
 	list.Push(1)
-	assert.Equal(1, list.node.data)
+	assert.Equal(1, list.singleNode.data)
 
 	last := list.Append(3)
 	err = list.InsertAfter(last, 4)
@@ -54,6 +54,21 @@ func TestSingleLinkedList(t *testing.T) {
 
 	i = 0
 	expected = []int{2, 3, 4, 5, 6, 7}
+	list.Each(func(val int) {
+		assert.Equal(expected[i], val)
+		i++
+	})
+
+	item, err = list.Replace(20, 10)
+	assert.Error(err)
+	assert.Nil(item)
+
+	item, err = list.Replace(2, 1)
+	assert.NoError(err)
+	assert.Equal(1, item.data)
+
+	i = 0
+	expected = []int{1, 3, 4, 5, 6, 7}
 	list.Each(func(val int) {
 		assert.Equal(expected[i], val)
 		i++

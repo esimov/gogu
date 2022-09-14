@@ -4,21 +4,21 @@ import (
 	"fmt"
 )
 
-// node has two components: the data and a pointer to the next node of the list.
-type node[T comparable] struct {
+// singleNode has two components: the data and a pointer to the next singleNode of the list.
+type singleNode[T comparable] struct {
 	data T
-	next *node[T]
+	next *singleNode[T]
 }
 
 // SList holds the individual nodes of the list.
 type SList[T comparable] struct {
-	node[T]
+	singleNode[T]
 }
 
 // newNode creates a new node. It requires the data, but the pointer to the next node should be empty (nil)
 // This will be updated on the linked list basic operations like unshift, append and insert after.
-func newNode[T comparable](data T) *node[T] {
-	return &node[T]{
+func newNode[T comparable](data T) *singleNode[T] {
+	return &singleNode[T]{
 		data: data,
 		next: nil,
 	}
@@ -36,16 +36,16 @@ func InitList[T comparable](data T) *SList[T] {
 func (l *SList[T]) Push(data T) {
 	node := newNode(data)
 
-	firstNode := l.node
+	firstNode := l.singleNode
 	node.next = &firstNode
-	l.node = *node
+	l.singleNode = *node
 }
 
 // InsertAfter inserts a new node after the provided node.
 // In case the requested node is not in the list it returns an error.
-func (l *SList[T]) InsertAfter(prev *node[T], data T) error {
+func (l *SList[T]) InsertAfter(prev *singleNode[T], data T) error {
 	if prev == nil {
-		return fmt.Errorf("the provided node does not exists")
+		return fmt.Errorf("requested node does not exists")
 	}
 
 	node := newNode(data)
@@ -55,16 +55,58 @@ func (l *SList[T]) InsertAfter(prev *node[T], data T) error {
 	return nil
 }
 
+// Append inserts a new node at the end of the list.
+func (l *SList[T]) Append(data T) *singleNode[T] {
+	node := newNode(data)
+	lastNode := &l.singleNode
+
+	if l.singleNode.next == nil {
+		l.singleNode = *lastNode
+	}
+
+	for {
+		if lastNode.next == nil {
+			break
+		}
+		lastNode = lastNode.next
+	}
+
+	lastNode.next = node
+	node.next = nil
+
+	return node
+}
+
+// Replace changes the node old value with the new one.
+// It returns an error in case the requested value does not exists.
+func (l *SList[T]) Replace(old, new T) (*singleNode[T], error) {
+	head := &l.singleNode
+
+	// Go through the list until the requested node is reached.
+	for {
+		if head.next == nil {
+			return nil, fmt.Errorf("requested node does not exists")
+		}
+		if head.data == old {
+			head.data = new
+			break
+		}
+		head = head.next
+	}
+
+	return head, nil
+}
+
 // Delete deletes the specified node from the list.
-func (l *SList[T]) Delete(n *node[T]) error {
-	tmp := &l.node
+func (l *SList[T]) Delete(n *singleNode[T]) error {
+	tmp := &l.singleNode
 	// Check if the node we want to delete is the first one.
 	if tmp.data == n.data {
-		l.node = *tmp.next
+		l.singleNode = *tmp.next
 		return nil
 	}
 
-	prev := node[T]{}
+	prev := singleNode[T]{}
 	// Go through the list until the requested node is reached.
 	for tmp.next != nil && tmp.data != n.data {
 		prev = *tmp
@@ -82,52 +124,30 @@ func (l *SList[T]) Delete(n *node[T]) error {
 }
 
 // DeleteFirst deletes the first node from the list.
-func (l *SList[T]) DeleteFirst() *node[T] {
-	firstNode := &l.node
-	node := l.node
+func (l *SList[T]) DeleteFirst() *singleNode[T] {
+	head := &l.singleNode
+	node := l.singleNode
 
-	if firstNode.next != nil {
-		firstNode = firstNode.next
-		l.node = *firstNode
+	if head.next != nil {
+		head = head.next
+		l.singleNode = *head
 	}
 
 	return &node
 }
 
 // DeleteLast deletes the last node from the list.
-func (l *SList[T]) DeleteLast() *node[T] {
-	firstNode := l.node
-	tmp := &l.node
-	node := &node[T]{}
+func (l *SList[T]) DeleteLast() *singleNode[T] {
+	head := l.singleNode
+	tmp := &l.singleNode
 
+	node := &singleNode[T]{}
 	for tmp.next.next != nil {
 		node = tmp
 		tmp = tmp.next
 	}
 	tmp.next = nil
-	l.node = firstNode
-
-	return node
-}
-
-// Append inserts a new node at the end of the list.
-func (l *SList[T]) Append(data T) *node[T] {
-	node := newNode(data)
-	lastNode := &l.node
-
-	if l.node.next == nil {
-		l.node = *lastNode
-	}
-
-	for {
-		if lastNode.next == nil {
-			break
-		}
-		lastNode = lastNode.next
-	}
-
-	lastNode.next = node
-	node.next = nil
+	l.singleNode = head
 
 	return node
 }
@@ -135,15 +155,17 @@ func (l *SList[T]) Append(data T) *node[T] {
 // Each iterates over the elements of the linked list and invokes
 // the callback function, having as parameter the nodes data.
 func (l *SList[T]) Each(fn func(data T)) {
-	node := &l.node
-	tmp := l.node
+	node := &l.singleNode
+	tmp := l.singleNode
+
 	for {
-		fn(l.node.data)
+		fn(l.singleNode.data)
 		if node.next == nil {
 			break
 		}
-		l.node = *node.next
+		l.singleNode = *node.next
 	}
+
 	// Move the pointer back to the first node.
-	l.node = tmp
+	l.singleNode = tmp
 }
