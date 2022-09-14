@@ -63,12 +63,15 @@ func TestSingleLinkedList(t *testing.T) {
 	assert.Error(err)
 	assert.Nil(item)
 
-	item, err = list.Replace(2, 1)
+	item, err = list.Replace(7, 8)
 	assert.NoError(err)
-	assert.Equal(1, item.data)
+	assert.Equal(8, item.data)
+
+	list.Push(1)
+	list.Replace(8, 7)
 
 	i = 0
-	expected = []int{1, 3, 4, 5, 6, 7}
+	expected = []int{1, 2, 3, 4, 5, 6, 7}
 	list.Each(func(val int) {
 		assert.Equal(expected[i], val)
 		i++

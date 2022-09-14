@@ -45,7 +45,7 @@ func (l *SList[T]) Push(data T) {
 // In case the requested node is not in the list it returns an error.
 func (l *SList[T]) InsertAfter(prev *singleNode[T], data T) error {
 	if prev == nil {
-		return fmt.Errorf("requested node does not exists")
+		return fmt.Errorf("the provided node does not exists")
 	}
 
 	node := newNode(data)
@@ -60,7 +60,7 @@ func (l *SList[T]) Append(data T) *singleNode[T] {
 	node := newNode(data)
 	lastNode := &l.singleNode
 
-	if l.singleNode.next == nil {
+	if l.next == nil {
 		l.singleNode = *lastNode
 	}
 
@@ -79,22 +79,26 @@ func (l *SList[T]) Append(data T) *singleNode[T] {
 
 // Replace changes the node old value with the new one.
 // It returns an error in case the requested value does not exists.
-func (l *SList[T]) Replace(old, new T) (*singleNode[T], error) {
-	head := &l.singleNode
+func (l *SList[T]) Replace(oldVal, newVal T) (*singleNode[T], error) {
+	node := &l.singleNode
 
 	// Go through the list until the requested node is reached.
 	for {
-		if head.next == nil {
+		if node.next == nil { // if this is the last node
+			if node.data == oldVal {
+				node.data = newVal
+				break
+			}
 			return nil, fmt.Errorf("requested node does not exists")
 		}
-		if head.data == old {
-			head.data = new
+		if node.data == oldVal {
+			node.data = newVal
 			break
 		}
-		head = head.next
+		node = node.next
 	}
 
-	return head, nil
+	return node, nil
 }
 
 // Delete deletes the specified node from the list.
@@ -159,7 +163,7 @@ func (l *SList[T]) Each(fn func(data T)) {
 	tmp := l.singleNode
 
 	for {
-		fn(l.singleNode.data)
+		fn(l.data)
 		if node.next == nil {
 			break
 		}
