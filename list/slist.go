@@ -10,7 +10,7 @@ type singleNode[T comparable] struct {
 	next *singleNode[T]
 }
 
-// SList holds the individual nodes of the list.
+// SList contains the individual nodes of the list.
 type SList[T comparable] struct {
 	singleNode[T]
 }
@@ -41,6 +41,28 @@ func (l *SList[T]) Push(data T) {
 	l.singleNode = *node
 }
 
+// Append inserts a new node at the end of the list.
+func (l *SList[T]) Append(data T) *singleNode[T] {
+	node := newNode(data)
+	head := &l.singleNode
+
+	if l.next == nil {
+		l.singleNode = *head
+	}
+
+	for {
+		if head.next == nil {
+			break
+		}
+		head = head.next
+	}
+
+	head.next = node
+	node.next = nil
+
+	return node
+}
+
 // InsertAfter inserts a new node after the provided node.
 // In case the requested node is not in the list it returns an error.
 func (l *SList[T]) InsertAfter(prev *singleNode[T], data T) error {
@@ -55,29 +77,7 @@ func (l *SList[T]) InsertAfter(prev *singleNode[T], data T) error {
 	return nil
 }
 
-// Append inserts a new node at the end of the list.
-func (l *SList[T]) Append(data T) *singleNode[T] {
-	node := newNode(data)
-	lastNode := &l.singleNode
-
-	if l.next == nil {
-		l.singleNode = *lastNode
-	}
-
-	for {
-		if lastNode.next == nil {
-			break
-		}
-		lastNode = lastNode.next
-	}
-
-	lastNode.next = node
-	node.next = nil
-
-	return node
-}
-
-// Replace changes the node old value with the new one.
+// Replace replaces a node value with the new one.
 // It returns an error in case the requested value does not exists.
 func (l *SList[T]) Replace(oldVal, newVal T) (*singleNode[T], error) {
 	node := &l.singleNode
@@ -101,34 +101,34 @@ func (l *SList[T]) Replace(oldVal, newVal T) (*singleNode[T], error) {
 	return node, nil
 }
 
-// Delete deletes the specified node from the list.
+// Delete removes the specified node from the list.
 func (l *SList[T]) Delete(n *singleNode[T]) error {
-	tmp := &l.singleNode
+	head := &l.singleNode
 	// Check if the node we want to delete is the first one.
-	if tmp.data == n.data {
-		l.singleNode = *tmp.next
+	if head.data == n.data {
+		l.singleNode = *head.next
 		return nil
 	}
 
 	prev := singleNode[T]{}
 	// Go through the list until the requested node is reached.
-	for tmp.next != nil && tmp.data != n.data {
-		prev = *tmp
-		tmp = tmp.next
+	for head.next != nil && head.data != n.data {
+		prev = *head
+		head = head.next
 	}
 
 	// Check if the node we want to delete is the last one.
-	if tmp.next == nil {
-		l.DeleteLast()
+	if head.next == nil {
+		l.Pop()
 		return nil
 	}
-	*prev.next = *tmp.next
+	*prev.next = *head.next
 
 	return nil
 }
 
-// DeleteFirst deletes the first node from the list.
-func (l *SList[T]) DeleteFirst() *singleNode[T] {
+// Shift removes the first node from the list.
+func (l *SList[T]) Shift() *singleNode[T] {
 	head := &l.singleNode
 	node := l.singleNode
 
@@ -140,8 +140,8 @@ func (l *SList[T]) DeleteFirst() *singleNode[T] {
 	return &node
 }
 
-// DeleteLast deletes the last node from the list.
-func (l *SList[T]) DeleteLast() *singleNode[T] {
+// Pop removes the last node from the list.
+func (l *SList[T]) Pop() *singleNode[T] {
 	head := l.singleNode
 	tmp := &l.singleNode
 
