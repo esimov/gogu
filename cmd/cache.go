@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/esimov/gogu"
+	"github.com/esimov/gogu/cache"
 )
 
 func main() {
-	c := gogu.NewCache[string, string](1*time.Second, 1*time.Minute)
-	err := c.Set("foo", "bar", gogu.DefaultExpiration)
+	c := cache.New[string, string](1*time.Second, 1*time.Minute)
+	err := c.Set("foo", "bar", cache.DefaultExpiration)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -19,7 +19,7 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	err = c.Set("foo", "bar", gogu.DefaultExpiration)
+	err = c.Set("foo", "bar", cache.DefaultExpiration)
 	if err != nil {
 		fmt.Println(err)
 	}

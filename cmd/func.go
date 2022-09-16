@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/esimov/gogu"
+	"github.com/esimov/gogu/cache"
 	"golang.org/x/exp/constraints"
 )
 
@@ -37,7 +38,7 @@ func main() {
 
 	fmt.Println("==================Before")
 	var n int = 3
-	c1 := gogu.NewCache[string, int](gogu.DefaultExpiration, gogu.NoExpiration)
+	c1 := cache.New[string, int](cache.DefaultExpiration, cache.NoExpiration)
 	gogu.ForEach[int](sample, func(val int) {
 		fn := func() int {
 			<-time.After(10 * time.Millisecond)
@@ -48,7 +49,7 @@ func main() {
 	})
 
 	fmt.Println("==================Once")
-	c2 := gogu.NewCache[string, string](gogu.DefaultExpiration, gogu.NoExpiration)
+	c2 := cache.New[string, string](cache.DefaultExpiration, cache.NoExpiration)
 	gogu.ForEach[int](sample, func(val int) {
 		fn := func() string {
 			<-time.After(10 * time.Millisecond)

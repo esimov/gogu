@@ -1,4 +1,4 @@
-package gogu
+package heap
 
 import (
 	"testing"

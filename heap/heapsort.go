@@ -1,4 +1,4 @@
-package gogu
+package heap
 
 // HeapSort sorts the heap in ascending or descening order, depending on the heap type.
 // If the heap is a max heap, the heap is sorted in ascending order,

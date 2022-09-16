@@ -8,6 +8,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/esimov/gogu/cache"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -72,7 +73,7 @@ func TestFunc_After(t *testing.T) {
 
 func TestFunc_Before(t *testing.T) {
 	assert := assert.New(t)
-	c := NewCache[string, int](DefaultExpiration, NoExpiration)
+	c := cache.New[string, int](cache.DefaultExpiration, cache.NoExpiration)
 
 	var n = 3
 	sample := []int{1, 2, 3, 4, 5, 6}
@@ -101,7 +102,7 @@ func TestFunc_Before(t *testing.T) {
 
 func TestFunc_Once(t *testing.T) {
 	assert := assert.New(t)
-	c := NewCache[string, int](DefaultExpiration, NoExpiration)
+	c := cache.New[string, int](cache.DefaultExpiration, cache.NoExpiration)
 
 	var n int = 2
 	sample := []int{1, 2, 3, 4, 5, 6}
@@ -351,7 +352,7 @@ func TestFunc_ThrottleCache(t *testing.T) {
 
 	assert := assert.New(t)
 
-	c := NewCache[string, int](DefaultExpiration, NoExpiration)
+	c := cache.New[string, int](cache.DefaultExpiration, cache.NoExpiration)
 	c.SetDefault("item", 0)
 
 	limit := 100 * time.Millisecond
@@ -362,7 +363,7 @@ func TestFunc_ThrottleCache(t *testing.T) {
 		for throttle.Next() {
 			atomic.AddUint32(&counter, 1)
 			ct := atomic.LoadUint32(&counter)
-			c.Update("item", int(ct), DefaultExpiration)
+			c.Update("item", int(ct), cache.DefaultExpiration)
 		}
 		wg.Done()
 	}()

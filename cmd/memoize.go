@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/esimov/gogu"
+	"github.com/esimov/gogu/cache"
 )
 
 func main() {
@@ -16,14 +17,14 @@ func main() {
 
 	m := gogu.NewMemoizer[string, any](time.Second, time.Minute)
 
-	expensiveOp := func() (*gogu.Item[any], error) {
+	expensiveOp := func() (*cache.Item[any], error) {
 		// Here we are simulating an expensive operation.
 		time.Sleep(500 * time.Millisecond)
 
 		foo := gogu.FindByKey(sampleMap, func(key string) bool {
 			return key == "foo"
 		})
-		m.Cache.MapToCache(foo, gogu.DefaultExpiration)
+		m.Cache.MapToCache(foo, cache.DefaultExpiration)
 
 		item, err := m.Cache.Get("foo")
 		if err != nil {

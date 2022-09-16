@@ -5,6 +5,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/esimov/gogu/cache"
 	"golang.org/x/exp/constraints"
 )
 
@@ -34,14 +35,14 @@ func After[V constraints.Signed](n *V, fn func()) {
 // Before creates a function wrapper that memoizes its return value.
 // From the nth call onwards, the memoized result of the last invocation is returned immediately
 // instead of invoking function again. So the wrapper will invoke function at most n-1 times.
-func Before[S ~string, T any, V constraints.Signed](n *V, c *Cache[S, T], fn func() T) T {
-	var memo *Item[T]
+func Before[S ~string, T any, V constraints.Signed](n *V, c *cache.Cache[S, T], fn func() T) T {
+	var memo *cache.Item[T]
 	*n-- // decrease the n as pointer receiver
 	if *n > 0 {
 		return fn()
 	}
 	if *n == 0 {
-		c.Set("func", fn(), DefaultExpiration)
+		c.Set("func", fn(), cache.DefaultExpiration)
 	}
 	memo, _ = c.Get("func")
 
@@ -52,7 +53,7 @@ var n = 2
 
 // Once is like Before, but it's invoked only once.
 // Repeated calls to the modified function will have no effect, returning the value from the cache.
-func Once[S ~string, T any](c *Cache[S, T], fn func() T) T {
+func Once[S ~string, T any](c *cache.Cache[S, T], fn func() T) T {
 	return Before(&n, c, fn)
 }
 

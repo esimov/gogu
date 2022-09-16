@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/esimov/gogu/cache"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -19,14 +20,14 @@ func TestMemoize(t *testing.T) {
 	}
 
 	// Here we are simulating an expensive operation.
-	expensiveOp := func() (*Item[any], error) {
+	expensiveOp := func() (*cache.Item[any], error) {
 		// Here we are simulating an expensive operation.
 		time.Sleep(500 * time.Millisecond)
 
 		foo := FindByKey(sampleItem, func(key string) bool {
 			return key == "foo"
 		})
-		m.Cache.MapToCache(foo, DefaultExpiration)
+		m.Cache.MapToCache(foo, cache.DefaultExpiration)
 
 		item, err := m.Cache.Get("foo")
 		if err != nil {

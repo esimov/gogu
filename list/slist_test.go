@@ -1,4 +1,4 @@
-package gogu
+package list
 
 import (
 	"testing"
