@@ -1,4 +1,4 @@
-package gogu
+package cache
 
 import (
 	"testing"
@@ -15,7 +15,7 @@ type SampleStruct struct {
 func TestCache_Basic(t *testing.T) {
 	assert := assert.New(t)
 
-	c1 := NewCache[string, string](DefaultExpiration, 1*time.Minute)
+	c1 := New[string, string](DefaultExpiration, 1*time.Minute)
 	res1, err := c1.Get("foo")
 	assert.Error(err)
 	assert.Nil(res1)
@@ -38,7 +38,7 @@ func TestCache_Basic(t *testing.T) {
 	assert.False(c1.IsExpired("foo"))
 	assert.False(c1.IsExpired("baz"))
 
-	c2 := NewCache[string, int](DefaultExpiration, 1*time.Minute)
+	c2 := New[string, int](DefaultExpiration, 1*time.Minute)
 	err = c2.Set("foo", 1, DefaultExpiration)
 	assert.NoError(err)
 
@@ -78,7 +78,7 @@ func TestCache_PointerStruct(t *testing.T) {
 
 	st := &SampleStruct{Id: 1}
 
-	c := NewCache[string, SampleStruct](DefaultExpiration, 1*time.Minute)
+	c := New[string, SampleStruct](DefaultExpiration, 1*time.Minute)
 	c.Set("foo", *st, DefaultExpiration)
 
 	x, err := c.Get("foo")
@@ -95,7 +95,7 @@ func TestCache_PointerStruct(t *testing.T) {
 func TestCache_Update(t *testing.T) {
 	assert := assert.New(t)
 
-	c1 := NewCache[string, string](DefaultExpiration, 1*time.Minute)
+	c1 := New[string, string](DefaultExpiration, 1*time.Minute)
 	err := c1.Set("item1", "a", DefaultExpiration)
 	assert.NoError(err)
 
@@ -118,7 +118,7 @@ func TestCache_Update(t *testing.T) {
 func TestCache_Delete(t *testing.T) {
 	assert := assert.New(t)
 
-	c1 := NewCache[string, string](DefaultExpiration, 0)
+	c1 := New[string, string](DefaultExpiration, 0)
 	c1.SetDefault("item1", "a")
 	c1.SetDefault("item2", "a")
 	c1.SetDefault("item3", "a")
@@ -152,7 +152,7 @@ func TestCache_Delete(t *testing.T) {
 func TestCache_ExpirationTime(t *testing.T) {
 	assert := assert.New(t)
 
-	c1 := NewCache[string, string](NoExpiration, 0)
+	c1 := New[string, string](NoExpiration, 0)
 	c1.Set("item1", "a", DefaultExpiration)
 	res, _ := c1.Get("item1")
 	assert.Equal(int64(DefaultExpiration), res.expiration)
@@ -190,7 +190,7 @@ func TestCache_ExpirationTime(t *testing.T) {
 	assert.Nil(res)
 	assert.Error(err)
 
-	c2 := NewCache[string, int](5*time.Millisecond, 1*time.Millisecond)
+	c2 := New[string, int](5*time.Millisecond, 1*time.Millisecond)
 	c2.Set("a", 1, DefaultExpiration)
 	c2.Set("b", 2, NoExpiration)
 	c2.Set("c", 3, 5*time.Millisecond)

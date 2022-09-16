@@ -1,4 +1,4 @@
-package gogu
+package cache
 
 import (
 	"fmt"
@@ -46,11 +46,11 @@ func newCache[T ~string, V any](expTime, cleanupInt time.Duration, item map[T]*I
 	return c
 }
 
-// NewCache instantiates a cache struct which requires an expiration time and a cleanup interval.
+// New instantiates a cache struct which requires an expiration time and a cleanup interval.
 // The cache will be invalidated once the expiration time is reached.
 // If the expiration time is less than zero (or NoExpiration) the cache items will never expire and should be manually deleted.
 // A cleanup method is running in the background and removes the expired caches at a predifined interval.
-func NewCache[T ~string, V any](expTime, cleanupTime time.Duration) *Cache[T, V] {
+func New[T ~string, V any](expTime, cleanupTime time.Duration) *Cache[T, V] {
 	items := make(map[T]*Item[V])
 	c := newCache(expTime, cleanupTime, items)
 
