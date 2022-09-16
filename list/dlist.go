@@ -1,6 +1,8 @@
 package gogu
 
-import "fmt"
+import (
+	"fmt"
+)
 
 // doubleNode is a doubly linked list node which has aditional
 // pointer holding the memory address of the previous node.
@@ -49,22 +51,22 @@ func (l *DList[T]) Push(data T) *doubleNode[T] {
 // Append inserts a new node at the end of the doubly linked list.
 func (l *DList[T]) Append(data T) *doubleNode[T] {
 	node := newDNode(data)
-	lastNode := &l.doubleNode
+	head := &l.doubleNode
 
 	if l.next == nil {
-		l.doubleNode = *lastNode
+		l.doubleNode = *head
 	}
 
 	for {
-		if lastNode.next == nil {
+		if head.next == nil {
 			break
 		}
-		lastNode = lastNode.next
+		head = head.next
 	}
 
-	node.next = lastNode.next
-	lastNode.next = node
-	node.prev = lastNode
+	node.next = head.next
+	head.next = node
+	node.prev = head
 
 	return node
 }
@@ -74,6 +76,10 @@ func (l *DList[T]) Append(data T) *doubleNode[T] {
 func (l *DList[T]) InsertBefore(node *doubleNode[T], data T) error {
 	if node == nil {
 		return fmt.Errorf("the previous node does not exists")
+	}
+
+	if _, found := l.Find(node.data); !found {
+		return fmt.Errorf("the node to be deleted does not exists")
 	}
 	newNode := newDNode(data)
 
@@ -94,6 +100,10 @@ func (l *DList[T]) InsertAfter(prev *doubleNode[T], data T) error {
 		return fmt.Errorf("the previous node does not exists")
 	}
 
+	if _, found := l.Find(prev.data); !found {
+		return fmt.Errorf("the node to be deleted does not exists")
+	}
+
 	node := newDNode(data)
 	node.next = prev.next
 	prev.next = node
@@ -102,7 +112,6 @@ func (l *DList[T]) InsertAfter(prev *doubleNode[T], data T) error {
 	if node.next != nil {
 		node.next.prev = node
 	}
-	l.doubleNode = *node.prev
 
 	return nil
 }
@@ -132,27 +141,34 @@ func (l *DList[T]) Replace(oldVal, newVal T) (*doubleNode[T], error) {
 }
 
 // Delete removes the specified node from the list.
-func (l *DList[T]) Delete(n *doubleNode[T]) error {
-	tmp := &l.doubleNode
-	// Check if the node we want to delete is the first one.
-	if tmp.data == n.data {
-		l.doubleNode = *tmp.next
+func (l *DList[T]) Delete(node *doubleNode[T]) error {
+	head := &l.doubleNode
+
+	if _, found := l.Find(node.data); !found {
+		return fmt.Errorf("the node to be deleted does not exists")
+	}
+
+	if head.next == nil && head.prev == nil {
+		return fmt.Errorf("cannot delete the node if there is only one element in the list")
+	}
+
+	// Check if the node to be deleted is the head node.
+	if head.data == node.data {
+		l.doubleNode = *head.next
 		return nil
 	}
 
-	prev := doubleNode[T]{}
-	// Go through the list until the requested node is reached.
-	for tmp.next != nil && tmp.data != n.data {
-		prev = *tmp
-		tmp = tmp.next
+	// Replace the next pointer of the node to be deleted
+	// only if it's not the last element of the list.
+	if node.next != nil {
+		node.next.prev = node.prev
 	}
 
-	// Check if the node we want to delete is the last one.
-	if tmp.next == nil {
-		l.Pop()
-		return nil
+	// Replace the prev pointer of the node to be deleted
+	// only if it's not the first element of the list.
+	if node.prev != nil {
+		node.prev.next = node.next
 	}
-	*prev.next = *tmp.next
 
 	return nil
 }
@@ -184,6 +200,26 @@ func (l *DList[T]) Pop() *doubleNode[T] {
 	l.doubleNode = head
 
 	return node
+}
+
+// Find search for a node element in the linked list.
+// It returns the node in case the element is found otherwise nil.
+func (l *DList[T]) Find(val T) (*doubleNode[T], bool) {
+	var node *doubleNode[T]
+	head := l.doubleNode
+	found := false
+
+	for n := &l.doubleNode; n != nil && !found; n = n.next {
+		if n.data == val {
+			l.doubleNode = head
+			return n, true
+		}
+	}
+
+	// Move the pointer to the head of the linked list.
+	l.doubleNode = head
+
+	return node, false
 }
 
 // Each iterates over the elements of the linked list and invokes
