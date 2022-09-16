@@ -80,4 +80,12 @@ func TestSingleLinkedList(t *testing.T) {
 		assert.Equal(expected[i], val)
 		i++
 	})
+
+	item, found := list.Find(7)
+	assert.Equal(7, item.data)
+	assert.True(found)
+
+	item, found = list.Find(22)
+	assert.Nil(item)
+	assert.False(found)
 }

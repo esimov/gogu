@@ -159,6 +159,26 @@ func (l *SList[T]) Pop() *singleNode[T] {
 	return node
 }
 
+// Find search for a node element in the linked list.
+// It returns the node in case the element is found otherwise nil.
+func (l *SList[T]) Find(val T) (*singleNode[T], bool) {
+	var node *singleNode[T]
+	head := l.singleNode
+	found := false
+
+	for n := &l.singleNode; n != nil && !found; n = n.next {
+		if n.data == val {
+			l.singleNode = head
+			return n, true
+		}
+	}
+
+	// Move the pointer to the head of the linked list.
+	l.singleNode = head
+
+	return node, false
+}
+
 // Each iterates over the elements of the linked list and invokes
 // the callback function, having as parameter the nodes data.
 func (l *SList[T]) Each(fn func(data T)) {
