@@ -70,6 +70,10 @@ func (l *SList[T]) InsertAfter(prev *singleNode[T], data T) error {
 		return fmt.Errorf("the provided node does not exists")
 	}
 
+	if _, found := l.Find(prev.data); !found {
+		return fmt.Errorf("the node to be deleted does not exists")
+	}
+
 	node := newNode(data)
 	node.next = prev.next
 	prev.next = node
@@ -102,10 +106,15 @@ func (l *SList[T]) Replace(oldVal, newVal T) (*singleNode[T], error) {
 }
 
 // Delete removes the specified node from the list.
-func (l *SList[T]) Delete(n *singleNode[T]) error {
+func (l *SList[T]) Delete(node *singleNode[T]) error {
 	head := &l.singleNode
+
+	if _, found := l.Find(node.data); !found {
+		return fmt.Errorf("the node to be deleted does not exists")
+	}
+
 	// Check if the node we want to delete is the first one.
-	if head.data == n.data {
+	if head.data == node.data {
 		if head.next == nil {
 			return fmt.Errorf("cannot delete the node if there is only one element in the list")
 		}
@@ -115,7 +124,7 @@ func (l *SList[T]) Delete(n *singleNode[T]) error {
 
 	prev := singleNode[T]{}
 	// Go through the list until the requested node is reached.
-	for head.next != nil && head.data != n.data {
+	for head.next != nil && head.data != node.data {
 		prev = *head
 		head = head.next
 	}
