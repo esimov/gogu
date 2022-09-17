@@ -1,4 +1,7 @@
-// Doubly linked list implementation.
+// Package list implements a linked list data structure.
+// This is the doubly Linked list implementation,
+// which compared to the singly linked list variant has
+// an additional previous pointer to the node before.
 package list
 
 import (

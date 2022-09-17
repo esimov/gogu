@@ -1,7 +1,7 @@
-// Package list implements a linked list data structure. It's comming in two variants:
-// Singly Linked list, which has only one pointer, pointing to the next element in the list.
-// Doubly linked list, which has an additional prev pointer, pointing to the previous element in the list.
-// This is the singly linked list implementation.
+// Package list implements a linked list data structure.
+// This is the singly Linked list implementation, which has
+// a data element storing the node value
+// and a pointer to the next element of the list.
 package list
 
 import (
