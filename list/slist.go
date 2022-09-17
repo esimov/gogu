@@ -118,7 +118,7 @@ func (l *SList[T]) Delete(node *singleNode[T]) error {
 	}
 
 	// Check if the node we want to delete is the first one.
-	if head.data == node.data {
+	if head == node {
 		if head.next == nil {
 			return fmt.Errorf("cannot delete the node if there is only one element in the list")
 		}
@@ -128,7 +128,7 @@ func (l *SList[T]) Delete(node *singleNode[T]) error {
 
 	prev := singleNode[T]{}
 	// Go through the list until the requested node is reached.
-	for head.next != nil && head.data != node.data {
+	for head.next != nil && head != node {
 		prev = *head
 		head = head.next
 	}

@@ -3,9 +3,8 @@
 // of the subtree satisfies the heap property: each node of the subtree
 // is greather or equal then the parent node in case of min heap,
 // and less or equal than the parent node in case of max heap.
-// The heap package implements each type.
-
-// The conditional function of the constructor defines the heap type.
+// The heap package implements each type, where
+// the conditional function of the constructor defines the heap type.
 package heap
 
 import "fmt"
