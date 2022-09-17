@@ -1,3 +1,4 @@
+// Doubly linked list implementation.
 package list
 
 import (
