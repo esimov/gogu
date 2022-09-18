@@ -1,3 +1,10 @@
+// Package cache implements a basic in memory key-value
+// storage system using map as storing mechanism.
+// The cache and the cache items also have an expiration time.
+// The cache will be invalidated once the expiration time is reached.
+// On cache initialization a cleanup interval is also required.
+// The scope of the cleanup method is to run at a predefined
+// interval and remove all the expired cache items.
 package cache
 
 import (
