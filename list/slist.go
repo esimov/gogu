@@ -28,9 +28,9 @@ func newNode[T comparable](data T) *singleNode[T] {
 	}
 }
 
-// InitList initializes a new single linked list with one node.
+// Init initializes a new singly linked list with one node.
 // Because this is the only node currently existing in the list its next pointer will be nil.
-func InitList[T comparable](data T) *SList[T] {
+func Init[T comparable](data T) *SList[T] {
 	return &SList[T]{
 		*newNode(data),
 	}
@@ -120,7 +120,7 @@ func (l *SList[T]) Delete(node *singleNode[T]) error {
 	// Check if the node we want to delete is the first one.
 	if head == node {
 		if head.next == nil {
-			return fmt.Errorf("cannot delete the node if there is only one element in the list")
+			return fmt.Errorf("cannot remove the node if there is only one element in the list")
 		}
 		l.singleNode = *head.next
 		return nil
@@ -157,11 +157,15 @@ func (l *SList[T]) Shift() *singleNode[T] {
 }
 
 // Pop removes the last node from the list.
-func (l *SList[T]) Pop() *singleNode[T] {
+func (l *SList[T]) Pop() (*singleNode[T], error) {
 	head := l.singleNode
-	tmp := &l.singleNode
-
 	node := &singleNode[T]{}
+
+	tmp := &l.singleNode
+	if tmp.next == nil {
+		return nil, fmt.Errorf("cannot remove the node if there is only one element in the list")
+	}
+
 	for tmp.next.next != nil {
 		node = tmp
 		tmp = tmp.next
@@ -169,7 +173,7 @@ func (l *SList[T]) Pop() *singleNode[T] {
 	tmp.next = nil
 	l.singleNode = head
 
-	return node
+	return node, nil
 }
 
 // Find search for a node element in the linked list.

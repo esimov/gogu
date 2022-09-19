@@ -6,13 +6,16 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestDoubleLinkedList(t *testing.T) {
+func TestDoublyLinkedList(t *testing.T) {
 	assert := assert.New(t)
 
-	list := InitDoubleList(1)
+	list := InitDoubly(1)
 	assert.Equal(1, list.data)
 
 	err := list.Delete(&list.doubleNode)
+	assert.Error(err)
+
+	_, err = list.Pop()
 	assert.Error(err)
 
 	node := list.Push(2)
@@ -80,7 +83,7 @@ func TestDoubleLinkedList(t *testing.T) {
 	})
 
 	err = list.Delete(node)
-	assert.NoError(err)
+	assert.Error(err)
 
 	// node with value 4 has been already removed from the list
 	err = list.Delete(node)

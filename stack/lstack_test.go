@@ -6,22 +6,22 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestStack(t *testing.T) {
+func TestLinkedStack(t *testing.T) {
 	assert := assert.New(t)
 
-	s := New[int]()
-	s.Push(1)
+	s := NewLinked(1)
 	assert.Equal(1, s.Peek())
 	s.Push(2)
 	assert.Equal(2, s.Peek())
 	s.Pop()
 	assert.Equal(1, s.Peek())
 	assert.True(s.Search(1))
-	s.Pop()
-	assert.False(s.Search(1))
-	assert.Empty(s.Size())
+	_, err := s.Pop()
+	assert.Error(err)
 
 	s.Push(1)
-	s.Pop()
-	assert.False(s.Search(1))
+	s.Push(2)
+	_, err = s.Pop()
+	assert.NoError(err)
+	assert.True(s.Search(1))
 }

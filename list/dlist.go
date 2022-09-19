@@ -30,9 +30,9 @@ func newDNode[T comparable](data T) *doubleNode[T] {
 	}
 }
 
-// InitDoubleList initializes a doubly linked list with one node.
+// InitDoubly initializes a doubly linked list with one node.
 // Because this is the only node curently existing in the list its next and prev pointers are nil.
-func InitDoubleList[T comparable](data T) *DList[T] {
+func InitDoubly[T comparable](data T) *DList[T] {
 	return &DList[T]{
 		*newDNode(data),
 	}
@@ -191,19 +191,23 @@ func (l *DList[T]) Shift() *doubleNode[T] {
 }
 
 // Pop removes the last node from the list.
-func (l *DList[T]) Pop() *doubleNode[T] {
+func (l *DList[T]) Pop() (*doubleNode[T], error) {
 	head := l.doubleNode
-	tmp := &l.doubleNode
-
 	node := &doubleNode[T]{}
+
+	tmp := &l.doubleNode
+	if tmp.next == nil {
+		return nil, fmt.Errorf("cannot remove the node if there is only one element in the list")
+	}
+
 	for tmp.next.next != nil {
 		node = tmp
 		tmp = tmp.next
 	}
-	tmp.next = nil
+	head.next = nil
 	l.doubleNode = head
 
-	return node
+	return node, nil
 }
 
 // Find search for a node element in the linked list.
@@ -226,6 +230,23 @@ func (l *DList[T]) Find(val T) (*doubleNode[T], bool) {
 	return node, false
 }
 
+func (l *DList[T]) Last() T {
+	head := l.doubleNode
+	var data T
+	for {
+		if l.doubleNode.next == nil {
+			break
+		}
+		l.doubleNode = *l.doubleNode.next
+	}
+	data = l.doubleNode.data
+
+	// Move the pointer to the head of the linked list.
+	l.doubleNode = head
+
+	return data
+}
+
 // Each iterates over the elements of the linked list and invokes
 // the callback function, having as parameter the nodes data.
 func (l *DList[T]) Each(fn func(data T)) {
@@ -240,4 +261,9 @@ func (l *DList[T]) Each(fn func(data T)) {
 	}
 	// Move the pointer back to the first node.
 	l.doubleNode = tmp
+}
+
+// Data retrieves the node value.
+func (l *DList[T]) Data(node *doubleNode[T]) T {
+	return node.data
 }

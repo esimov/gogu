@@ -5,17 +5,17 @@ package stack
 
 // Stack implements the LIFO stack.
 type Stack[T comparable] struct {
-	Items []T
+	items []T
 }
 
-// NewStack creates a new LIFO stack where the items are stored in a plain slice.
-func NewStack[T comparable]() *Stack[T] {
+// New creates a new LIFO stack where the items are stored in a plain slice.
+func New[T comparable]() *Stack[T] {
 	return &Stack[T]{}
 }
 
 // Push appends a new element at the end of the stack.
 func (s *Stack[T]) Push(item T) {
-	s.Items = append(s.Items, item)
+	s.items = append(s.items, item)
 }
 
 // Pop pull out the last element added to the stack.
@@ -24,24 +24,24 @@ func (s *Stack[T]) Pop() (item T) {
 		return
 	}
 
-	item = s.Items[s.Size()-1]
-	s.Items = s.Items[:s.Size()-1]
+	item = s.items[s.Size()-1]
+	s.items = s.items[:s.Size()-1]
 
 	return
 }
 
-// Peek returns the last element of the stack. It does not remove it.
+// Peek returns the last element of the stack without removing it.
 func (s *Stack[T]) Peek() (item T) {
 	if s.Size() == 0 {
 		return
 	}
-	return s.Items[s.Size()-1]
+	return s.items[s.Size()-1]
 }
 
 // Search searches for an element in the stack.
 func (s *Stack[T]) Search(item T) bool {
 	for i := 0; i < s.Size(); i++ {
-		if s.Items[i] == item {
+		if s.items[i] == item {
 			return true
 		}
 	}
@@ -51,5 +51,5 @@ func (s *Stack[T]) Search(item T) bool {
 
 // Size returns the LIFO stack size.
 func (s *Stack[T]) Size() int {
-	return len(s.Items)
+	return len(s.items)
 }

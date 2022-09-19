@@ -6,13 +6,15 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestSingleLinkedList(t *testing.T) {
+func TestSinglyLinkedList(t *testing.T) {
 	assert := assert.New(t)
 
-	list := InitList(1)
+	list := Init(1)
 	assert.Equal(1, list.data)
 	// cannot delete the first node if there is only one item in the list.
-	err := list.Delete(&list.singleNode)
+	_, err := list.Pop()
+	assert.Error(err)
+	err = list.Delete(&list.singleNode)
 	assert.Error(err)
 
 	list.Append(2)
@@ -43,7 +45,8 @@ func TestSingleLinkedList(t *testing.T) {
 		i++
 	})
 
-	item := list.Pop()
+	item, err := list.Pop()
+	assert.NoError(err)
 	assert.Equal(6, item.data)
 
 	i = 0
