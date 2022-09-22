@@ -1,7 +1,7 @@
 package btree
 
 import (
-	"fmt"
+	"math/rand"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -10,31 +10,34 @@ import (
 func TestBTree(t *testing.T) {
 	assert := assert.New(t)
 
-	btree := New[int]()
-	// btree.Put(30)
-	// btree.Put(50)
-	// btree.Put(10)
-	// btree.Put(20)
-	// btree.Put(40)
-	// btree.Put(2)
-	// btree.Put(9)
+	btree := New[int, int]()
+	assert.True(btree.IsEmpty())
 
-	for i := 0; i < 100; i++ {
-		btree.Put(i)
+	n := 100
+	tmp := make(map[int]int, 0)
+
+	for i := 0; i < n; i++ {
+		key := i
+		val := rand.Int()
+		btree.Put(key, val)
+		tmp[key] = val
+	}
+	assert.False(btree.IsEmpty())
+	assert.Equal(100, btree.Size())
+
+	btree.Traverse(func(key, val int) {
+		assert.Equal(tmp[key], val)
+	})
+
+	for key, val := range tmp {
+		v, found := btree.Get(key)
+		assert.True(found)
+		assert.Equal(v, val)
+
+		btree.Remove(key)
+		delete(tmp, key)
 	}
 
-	fmt.Println(btree.Size())
-	fmt.Println(btree.Get(4))
-
-	assert.Equal(1, 1)
-
-	fmt.Println("===============")
-
-	btree.Remove(40)
-	btree.Remove(9)
-	btree.Traverse(func(data int) {
-		fmt.Println(data)
-	})
-	fmt.Println(btree.Height())
-	fmt.Println(btree.Size())
+	assert.Equal(0, btree.Size())
+	assert.True(btree.IsEmpty())
 }
