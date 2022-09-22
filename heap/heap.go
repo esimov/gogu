@@ -7,19 +7,20 @@
 // the conditional function of the constructor defines the heap type.
 package heap
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/esimov/gogu"
+)
 
 type Heap[T comparable] struct {
 	data []T
-	comp func(i, j T) bool
+	comp gogu.CompFn[T]
 }
-
-type CompFn[T any] func(i, j T) bool
 
 // NewHeap creates a new heap data structure having two components:
 // a data slice holding the concrete values and a comparator function.
 // The comparison sign decides if the heap is a max heap or min heap.
-func NewHeap[T comparable](comp CompFn[T]) *Heap[T] {
+func NewHeap[T comparable](comp gogu.CompFn[T]) *Heap[T] {
 	return &Heap[T]{
 		data: make([]T, 0),
 		comp: comp,
@@ -33,10 +34,7 @@ func (h *Heap[T]) Size() int {
 
 // IsEmpty returns true if the heap is empty, otherwise false.
 func (h *Heap[T]) IsEmpty() bool {
-	if h.Size() > 0 {
-		return false
-	}
-	return true
+	return h.Size() == 0
 }
 
 // Clear removes all the elements from the heap.
@@ -109,7 +107,7 @@ func (h *Heap[T]) Delete(val T) (bool, error) {
 }
 
 // Convert a min heap to max heap and vice versa.
-func (h *Heap[T]) Convert(comp CompFn[T]) {
+func (h *Heap[T]) Convert(comp gogu.CompFn[T]) {
 	h.comp = comp
 	// Start from bottom-rightmost internal mode and reorder all internal nodes.
 	for i := (h.Size() - 2) / 2; i >= 0; i-- {
@@ -118,7 +116,7 @@ func (h *Heap[T]) Convert(comp CompFn[T]) {
 }
 
 // FromSlice imports the slice elements into a new heap using the comparator function.
-func FromSlice[T comparable](data []T, comp CompFn[T]) *Heap[T] {
+func FromSlice[T comparable](data []T, comp gogu.CompFn[T]) *Heap[T] {
 	for i := len(data)/2 - 1; i >= 0; i-- {
 		for {
 			l, r := 2*i+1, 2*i+2
