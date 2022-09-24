@@ -9,10 +9,13 @@ package heap
 
 import (
 	"fmt"
+	"sync"
+
 	"github.com/esimov/gogu"
 )
 
 type Heap[T comparable] struct {
+	mu   *sync.RWMutex
 	data []T
 	comp gogu.CompFn[T]
 }
@@ -22,6 +25,7 @@ type Heap[T comparable] struct {
 // The comparison sign decides if the heap is a max heap or min heap.
 func NewHeap[T comparable](comp gogu.CompFn[T]) *Heap[T] {
 	return &Heap[T]{
+		mu:   new(sync.RWMutex),
 		data: make([]T, 0),
 		comp: comp,
 	}
@@ -29,11 +33,17 @@ func NewHeap[T comparable](comp gogu.CompFn[T]) *Heap[T] {
 
 // Size returns the heap size.
 func (h *Heap[T]) Size() int {
+	h.mu.RLock()
+	defer h.mu.RUnlock()
+
 	return len(h.data)
 }
 
 // IsEmpty returns true if the heap is empty, otherwise false.
 func (h *Heap[T]) IsEmpty() bool {
+	h.mu.RLock()
+	defer h.mu.RUnlock()
+
 	return h.Size() == 0
 }
 
@@ -42,13 +52,20 @@ func (h *Heap[T]) Clear() {
 	if h.Size() == 0 {
 		return
 	}
+
+	h.mu.Lock()
 	h.data = h.data[:0]
+	h.mu.Unlock()
 }
 
 // Peek returns the first element of the heap.
 // This can be the minimum or maximum value depending on the heap type.
 func (h *Heap[T]) Peek() T {
+	h.mu.RLock()
+	defer h.mu.RUnlock()
+
 	if h.Size() == 0 {
+		defer h.mu.RLock()
 		var t T
 		return t
 	}
@@ -58,6 +75,9 @@ func (h *Heap[T]) Peek() T {
 
 // GetValues returns the heap values.
 func (h *Heap[T]) GetValues() []T {
+	h.mu.RLock()
+	defer h.mu.RUnlock()
+
 	return h.data
 }
 
@@ -65,7 +85,10 @@ func (h *Heap[T]) GetValues() []T {
 // the existing elements in ascending or descending order, depending on the heap type.
 func (h *Heap[T]) Push(val ...T) {
 	for _, v := range val {
+		h.mu.Lock()
 		h.data = append(h.data, v)
+		h.mu.Unlock()
+
 		h.moveUp(h.Size() - 1)
 	}
 }
@@ -74,14 +97,17 @@ func (h *Heap[T]) Push(val ...T) {
 // The removed element can be the minimum or maximum depending on the heap type.
 func (h *Heap[T]) Pop() T {
 	var val T
+	len := h.Size()
 	if h.Size() == 0 {
 		return val
 	}
-
 	val = h.Peek()
 
-	h.data[0] = h.data[h.Size()-1]
-	h.data = h.data[:h.Size()-1]
+	h.mu.Lock()
+	h.data[0] = h.data[len-1]
+	h.data = h.data[:len-1]
+	h.mu.Unlock()
+
 	h.moveDown(h.Size(), 0)
 
 	return val
@@ -90,25 +116,29 @@ func (h *Heap[T]) Pop() T {
 // Delete removes an element from the heap. In case the element does not exists it returns false and an error.
 // After removal it reorders the heap following the heap specific rules.
 func (h *Heap[T]) Delete(val T) (bool, error) {
-	if h.Size() == 0 {
+	len := h.Size()
+	if len == 0 {
 		return false, fmt.Errorf("heap empty")
 	}
 
-	idx, ok := getIndex(h.data, val)
+	idx, ok := h.getIndex(h.data, val)
 	if !ok {
 		return false, fmt.Errorf("value not found in the heap: %v", val)
 	}
 
-	swap(h.data, idx, h.Size()-1)
-	h.data = h.data[:h.Size()-1]
-	h.moveDown(h.Size(), 0)
+	swap(h.mu, h.data, idx, len-1)
+	h.data = h.data[:len-1]
+	h.moveDown(len, 0)
 
 	return true, nil
 }
 
 // Convert a min heap to max heap and vice versa.
 func (h *Heap[T]) Convert(comp gogu.CompFn[T]) {
+	h.mu.Lock()
 	h.comp = comp
+	h.mu.Unlock()
+
 	// Start from bottom-rightmost internal mode and reorder all internal nodes.
 	for i := (h.Size() - 2) / 2; i >= 0; i-- {
 		h.moveDown(h.Size(), i)
@@ -116,7 +146,7 @@ func (h *Heap[T]) Convert(comp gogu.CompFn[T]) {
 }
 
 // FromSlice imports the slice elements into a new heap using the comparator function.
-func FromSlice[T comparable](data []T, comp gogu.CompFn[T]) *Heap[T] {
+func FromSlice[T comparable](mu *sync.RWMutex, data []T, comp gogu.CompFn[T]) *Heap[T] {
 	for i := len(data)/2 - 1; i >= 0; i-- {
 		for {
 			l, r := 2*i+1, 2*i+2
@@ -133,12 +163,13 @@ func FromSlice[T comparable](data []T, comp gogu.CompFn[T]) *Heap[T] {
 				break
 			}
 
-			swap(data, i, current)
+			swap(mu, data, i, current)
 			i = current
 		}
 	}
 
 	return &Heap[T]{
+		mu:   mu,
 		data: data,
 		comp: comp,
 	}
@@ -180,6 +211,8 @@ func (h *Heap[T]) Meld(h2 *Heap[T]) *Heap[T] {
 // moveDown moves the element at the position i down to its
 // correct position in the heap following the heap rules.
 func (h *Heap[T]) moveDown(n, i int) {
+	h.mu.RLock()
+
 	left := h.leftChild(i)
 	right := h.rightChild(i)
 	current := i
@@ -193,20 +226,30 @@ func (h *Heap[T]) moveDown(n, i int) {
 	}
 
 	if current != i {
-		swap(h.data, i, current)
+		h.mu.RUnlock()
+		swap(h.mu, h.data, i, current)
 		h.moveDown(n, current)
+		return
 	}
+	h.mu.RUnlock()
 }
 
 // moveUp moves the element from index i up to its
 // correct position in the heap following the heap rules.
 func (h *Heap[T]) moveUp(i int) {
+	h.mu.RLock()
 	if h.comp(h.data[i], h.data[h.parent(i)]) {
-		swap(h.data, i, h.parent(i))
+		h.mu.RUnlock()
+		swap(h.mu, h.data, i, h.parent(i))
+
+		h.mu.RLock()
 		i = h.parent(i)
+		h.mu.RUnlock()
 
 		h.moveUp(i)
+		return
 	}
+	h.mu.RUnlock()
 }
 
 // leftChild returns the index of the left child of node at index i.
@@ -225,11 +268,16 @@ func (h *Heap[T]) parent(i int) int {
 }
 
 // swap swaps the position of elements at index i and j.
-func swap[T any](data []T, i, j int) {
+func swap[T any](mu *sync.RWMutex, data []T, i, j int) {
+	mu.Lock()
 	data[i], data[j] = data[j], data[i]
+	mu.Unlock()
 }
 
-func getIndex[T comparable](slice []T, val T) (int, bool) {
+func (h *Heap[T]) getIndex(slice []T, val T) (int, bool) {
+	h.mu.RLock()
+	defer h.mu.RUnlock()
+
 	for i := 0; i < len(slice); i++ {
 		if slice[i] == val {
 			return i, true

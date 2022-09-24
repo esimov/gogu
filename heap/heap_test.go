@@ -1,6 +1,7 @@
 package heap
 
 import (
+	"sync"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -48,7 +49,8 @@ func TestHeap_MaxHeap(t *testing.T) {
 	assert := assert.New(t)
 
 	values := []int{9, 3, 20, 8, 6, 5, 12, 10, 9, 18}
-	heap := FromSlice(values, func(a, b int) bool { return a > b })
+	mu := &sync.RWMutex{}
+	heap := FromSlice(mu, values, func(a, b int) bool { return a > b })
 
 	assert.Equal([]int{20, 18, 12, 10, 6, 5, 9, 8, 9, 3}, heap.GetValues())
 
@@ -160,13 +162,14 @@ func TestHeap_Convert(t *testing.T) {
 
 func TestHeap_Merge(t *testing.T) {
 	assert := assert.New(t)
+	mu := &sync.RWMutex{}
 
 	slice1 := []int{1, 4, 2, 3, 5}
 	slice2 := []int{8, 6, 9, 10, 7}
 
-	heap1 := FromSlice(slice1, func(a, b int) bool { return a < b })
+	heap1 := FromSlice(mu, slice1, func(a, b int) bool { return a < b })
 	assert.Len(heap1.GetValues(), 5)
-	heap2 := FromSlice(slice2, func(a, b int) bool { return a < b })
+	heap2 := FromSlice(mu, slice2, func(a, b int) bool { return a < b })
 	assert.Len(heap2.GetValues(), 5)
 
 	mergedHeap := heap1.Merge(heap2)
@@ -177,13 +180,14 @@ func TestHeap_Merge(t *testing.T) {
 
 func TestHeap_Meld(t *testing.T) {
 	assert := assert.New(t)
+	mu := &sync.RWMutex{}
 
 	slice1 := []int{1, 4, 2, 3, 5}
 	slice2 := []int{8, 6, 9, 10, 7}
 
-	heap1 := FromSlice(slice1, func(a, b int) bool { return a < b })
+	heap1 := FromSlice(mu, slice1, func(a, b int) bool { return a < b })
 	assert.Len(heap1.GetValues(), 5)
-	heap2 := FromSlice(slice2, func(a, b int) bool { return a < b })
+	heap2 := FromSlice(mu, slice2, func(a, b int) bool { return a < b })
 	assert.Len(heap2.GetValues(), 5)
 
 	mergedHeap := heap1.Meld(heap2)
