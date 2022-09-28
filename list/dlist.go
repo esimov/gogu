@@ -178,16 +178,18 @@ func (l *DList[T]) Delete(node *doubleNode[T]) error {
 }
 
 // Shift removes the first node from the list.
-func (l *DList[T]) Shift() *doubleNode[T] {
+func (l *DList[T]) Shift() (*doubleNode[T], error) {
 	head := &l.doubleNode
 	node := l.doubleNode
 
-	if head.next != nil {
+	if head.next == nil {
+		return nil, fmt.Errorf("cannot remove the node if there is only one element in the list")
+	} else {
 		head = head.next
 		l.doubleNode = *head
 	}
 
-	return &node
+	return &node, nil
 }
 
 // Pop removes the last node from the list.
@@ -230,6 +232,14 @@ func (l *DList[T]) Find(val T) (*doubleNode[T], bool) {
 	return node, false
 }
 
+// First retrieves the first element of the double linked list.
+func (l *DList[T]) First() T {
+	head := l.doubleNode
+
+	return head.data
+}
+
+// Last retrieves the last element of the double linked list.
 func (l *DList[T]) Last() T {
 	head := l.doubleNode
 	var data T
