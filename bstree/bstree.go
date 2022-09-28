@@ -1,3 +1,7 @@
+// Package bstree provides an implementation of the Binary Search Tree (BST)
+// data structure algorithm, where each node has at most two child nodes and
+// the key of its internal node is greater than all the keys in the respective
+// node's left subtree and less than the ones in the right subtree.
 package bstree
 
 import (
@@ -10,17 +14,21 @@ import (
 
 var ErrorNotFound = fmt.Errorf("node not found")
 
+// Item contains the node data as a key-value pair.
 type Item[K constraints.Ordered, V any] struct {
 	key K
 	val V
 }
 
+// node represents the BST internal node, having as components the node item defined
+// as a key-value pair and two separate pointers to the left and right child nodes.
 type node[K constraints.Ordered, V any] struct {
 	left  *node[K, V]
 	right *node[K, V]
 	Item[K, V]
 }
 
+// newNode creates a new node.
 func newNode[K constraints.Ordered, V any](key K, val V) *node[K, V] {
 	return &node[K, V]{
 		Item: Item[K, V]{
@@ -30,6 +38,9 @@ func newNode[K constraints.Ordered, V any](key K, val V) *node[K, V] {
 	}
 }
 
+// bsTree is the basic component for the BST data structure initialization.
+// It incorporates a concurrent safe mechanism using sync.Mutex to guarantee
+// the data consistency on concurrent read and write access.
 type bsTree[K constraints.Ordered, V any] struct {
 	mu   *sync.RWMutex
 	comp gogu.CompFn[K]
@@ -37,6 +48,8 @@ type bsTree[K constraints.Ordered, V any] struct {
 	size int
 }
 
+// New initializes a new BST data structure together with a comparison operator.
+// Depending on the comparator it sorts the tree in ascending or descending order.
 func New[K constraints.Ordered, V any](comp gogu.CompFn[K]) *bsTree[K, V] {
 	return &bsTree[K, V]{
 		mu:   &sync.RWMutex{},
@@ -44,6 +57,7 @@ func New[K constraints.Ordered, V any](comp gogu.CompFn[K]) *bsTree[K, V] {
 	}
 }
 
+// Size returns the size of the tree.
 func (b *bsTree[K, V]) Size() int {
 	b.mu.RLock()
 	defer b.mu.RUnlock()
@@ -51,6 +65,7 @@ func (b *bsTree[K, V]) Size() int {
 	return b.size
 }
 
+// Get retrieves the node item and an error in case the requested node does not exists.
 func (b *bsTree[K, V]) Get(key K) (Item[K, V], error) {
 	b.mu.RLock()
 	defer b.mu.RUnlock()
@@ -73,7 +88,8 @@ func (n *node[K, V]) get(b *bsTree[K, V], key K) (Item[K, V], error) {
 	return n.Item, nil
 }
 
-func (b *bsTree[K, V]) Insert(key K, val V) {
+// Upsert insert a new node, or update an existing node in case the key is found in the tree list.
+func (b *bsTree[K, V]) Upsert(key K, val V) {
 	b.mu.Lock()
 	defer b.mu.Unlock()
 
@@ -106,24 +122,30 @@ func (n *node[K, V]) insert(b *bsTree[K, V], key K, val V) {
 	}
 }
 
+// isLeaf checks if a node is a leaf node.
 func (n *node[K, V]) isLeaf() bool {
 	return !n.hasLeft() && !n.hasRight()
 }
 
+// hasLeft checks if a node has children on left branch.
 func (n *node[K, V]) hasLeft() bool {
 	return n.left != nil
 }
 
+// hasRight checks if a node has children on right branch.
 func (n *node[K, V]) hasRight() bool {
 	return n.right != nil
 }
 
+// min searches for the latest node on the left branch, but considering that BST
+// is an ordered tree structure it happens that it contains also the smallest value.
 func (n *node[K, V]) min() *node[K, V] {
 	for ; n.left != nil; n = n.left {
 	}
 	return n
 }
 
+// Delete removes a node defined by the key.
 func (b *bsTree[K, V]) Delete(key K) error {
 	var err error
 	b.mu.RLock()
@@ -173,19 +195,9 @@ func (n *node[K, V]) delete(b *bsTree[K, V], key K) (*node[K, V], error) {
 	}
 }
 
-func (n *node[K, V]) traverse(b *bsTree[K, V], ch chan<- Item[K, V]) {
-	if n == nil {
-		return
-	}
-	n.left.traverse(b, ch)
-	ch <- Item[K, V]{
-		key: n.key,
-		val: n.val,
-	}
-	n.right.traverse(b, ch)
-}
-
-func (b *bsTree[K, V]) Traverse(fn func(Item[K, V])) chan Item[K, V] {
+// Traverse iterates over the tree structure and invokes
+// the callback function provided as a parameter.
+func (b *bsTree[K, V]) Traverse(fn func(Item[K, V])) {
 	ch := make(chan Item[K, V])
 	n := b.root
 	go func() {
@@ -199,6 +211,16 @@ func (b *bsTree[K, V]) Traverse(fn func(Item[K, V])) chan Item[K, V] {
 	for item := range ch {
 		fn(item)
 	}
+}
 
-	return ch
+func (n *node[K, V]) traverse(b *bsTree[K, V], ch chan<- Item[K, V]) {
+	if n == nil {
+		return
+	}
+	n.left.traverse(b, ch)
+	ch <- Item[K, V]{
+		key: n.key,
+		val: n.val,
+	}
+	n.right.traverse(b, ch)
 }

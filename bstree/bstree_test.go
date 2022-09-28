@@ -1,8 +1,6 @@
 package bstree
 
 import (
-	//"fmt"
-
 	"math/rand"
 	"testing"
 
@@ -21,7 +19,7 @@ func TestBSTree(t *testing.T) {
 	for i := 0; i < n; i++ {
 		key := rand.Intn(n)
 		val := rand.Int()
-		bst.Insert(key, val)
+		bst.Upsert(key, val)
 		tmp[key] = val
 	}
 
