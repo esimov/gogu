@@ -5,27 +5,28 @@ import (
 	"github.com/esimov/gogu/list"
 )
 
-// Stack implements the LIFO stack.
-type LinkedStack[T comparable] struct {
+// LStack implements the linked-list version of the LIFO stack.
+type LStack[T comparable] struct {
 	items *list.DList[T]
 }
 
-// NewStack creates a new LIFO stack where the items are stored in a plain slice.
-func NewLinked[T comparable](t T) *LinkedStack[T] {
+// NewLinked creates a new LIFO stack where the items are stored in a linked-list.
+func NewLinked[T comparable](t T) *LStack[T] {
 	list := list.InitDoubly(t)
 
-	return &LinkedStack[T]{
+	return &LStack[T]{
 		items: list,
 	}
 }
 
-// Push appends a new element at the end of the stack.
-func (s *LinkedStack[T]) Push(item T) {
+// Push inserts a new element at the end of the stack.
+func (s *LStack[T]) Push(item T) {
 	s.items.Append(item)
 }
 
-// Pop pull out the last element added to the stack.
-func (s *LinkedStack[T]) Pop() (item T, err error) {
+// Pop retrieves and removes the last element pushed into the stack.
+// The stack size will be decreased by one.
+func (s *LStack[T]) Pop() (item T, err error) {
 	var t T
 	node, err := s.items.Pop()
 	if err != nil {
@@ -35,12 +36,12 @@ func (s *LinkedStack[T]) Pop() (item T, err error) {
 }
 
 // Peek returns the last element of the stack. It does not remove it.
-func (s *LinkedStack[T]) Peek() T {
+func (s *LStack[T]) Peek() T {
 	return s.items.Last()
 }
 
 // Search searches for an element in the stack.
-func (s *LinkedStack[T]) Search(item T) bool {
+func (s *LStack[T]) Search(item T) bool {
 	if _, ok := s.items.Find(item); ok {
 		return true
 	}

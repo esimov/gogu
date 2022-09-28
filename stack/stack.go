@@ -18,14 +18,15 @@ func New[T comparable]() *Stack[T] {
 	}
 }
 
-// Push appends a new element at the end of the stack.
+// Push inserts a new element at the end of the stack.
 func (s *Stack[T]) Push(item T) {
 	s.mu.Lock()
 	s.items = append(s.items, item)
 	s.mu.Unlock()
 }
 
-// Pop pull out the last element added to the stack.
+// Pop retrieves and removes the last element pushed into the stack.
+// The stack size will be decreased by one.
 func (s *Stack[T]) Pop() (item T) {
 	if s.Size() == 0 {
 		return
