@@ -97,25 +97,25 @@ func (b *bsTree[K, V]) Upsert(key K, val V) {
 		b.root = newNode(key, val)
 		b.size++
 	} else {
-		b.root.insert(b, key, val)
+		b.root.upsert(b, key, val)
 	}
 
 }
 
-func (n *node[K, V]) insert(b *bsTree[K, V], key K, val V) {
+func (n *node[K, V]) upsert(b *bsTree[K, V], key K, val V) {
 	if gogu.Compare(key, n.key, b.comp) == 1 {
 		if n.left == nil {
 			n.left = newNode(key, val)
 			b.size++
 		} else {
-			n.left.insert(b, key, val)
+			n.left.upsert(b, key, val)
 		}
 	} else if gogu.Compare(key, n.key, b.comp) == -1 {
 		if n.right == nil {
 			n.right = newNode(key, val)
 			b.size++
 		} else {
-			n.right.insert(b, key, val)
+			n.right.upsert(b, key, val)
 		}
 	} else {
 		n.val = val
