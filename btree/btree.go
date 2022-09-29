@@ -15,7 +15,7 @@ import (
 const maxChildren = 4
 
 // entry is the inner component of a node, which holds the node value and a pointer to the next node.
-type entry[K, V any] struct {
+type entry[K constraints.Ordered, V any] struct {
 	key       K
 	value     V
 	isRemoved bool
@@ -23,13 +23,13 @@ type entry[K, V any] struct {
 }
 
 // node is a data structure which defines how many children (leaves) each node has.
-type node[K, V any] struct {
+type node[K constraints.Ordered, V any] struct {
 	m        int // number of children
 	children [maxChildren]entry[K, V]
 }
 
 // newNode instantiates a new node with no leaves.
-func newNode[K, V any](m int) *node[K, V] {
+func newNode[K constraints.Ordered, V any](m int) *node[K, V] {
 	return &node[K, V]{
 		m: m,
 	}
@@ -38,7 +38,7 @@ func newNode[K, V any](m int) *node[K, V] {
 // BTree is the main component of the B-tree which starts only with one node, which is the root.
 type BTree[K constraints.Ordered, V any] struct {
 	n      int // the size of the tree (the number of nodes)
-	heigth int // the height of the tree
+	height int // the height of the tree
 	root   *node[K, V]
 }
 
@@ -61,17 +61,17 @@ func (t *BTree[K, V]) IsEmpty() bool {
 
 // Height returns the B-tree size (how many levels it has).
 func (t *BTree[K, V]) Height() int {
-	return t.heigth
+	return t.height
 }
 
 // Get searches for a value in the tree and if it's found it returns the value
 // together with a boolean value signalig if it's found or not.
 func (t *BTree[K, V]) Get(key K) (V, bool) {
-	return t.search(t.root, key, t.heigth)
+	return t.root.search(t, key, t.height)
 }
 
 // search is a private method which is invoked by the Get method.
-func (t *BTree[K, V]) search(n *node[K, V], key K, height int) (V, bool) {
+func (n *node[K, V]) search(t *BTree[K, V], key K, height int) (V, bool) {
 	// external node
 	if height == 0 {
 		for i := 0; i < n.m; i++ {
@@ -83,7 +83,7 @@ func (t *BTree[K, V]) search(n *node[K, V], key K, height int) (V, bool) {
 		// internal node
 		for i := 0; i < n.m; i++ {
 			if i+1 == n.m || gogu.Less(key, n.children[i+1].key) {
-				return t.search(n.children[i].next, key, height-1)
+				return n.children[i].next.search(t, key, height-1)
 			}
 		}
 	}
@@ -95,7 +95,7 @@ func (t *BTree[K, V]) search(n *node[K, V], key K, height int) (V, bool) {
 // Put inserts a new value into the B-tree.
 // If val is nil, this effectively deletes the value from the tree.
 func (t *BTree[K, V]) Put(key K, val V) {
-	u := t.insert(t.root, key, val, t.heigth, false)
+	u := t.root.insert(t, key, val, t.height, false)
 	t.n++
 	if u == nil {
 		return
@@ -112,11 +112,11 @@ func (t *BTree[K, V]) Put(key K, val V) {
 	}
 
 	t.root = n
-	t.heigth++
+	t.height++
 }
 
 // insert is a private method which is invoked by the Put method.
-func (t *BTree[K, V]) insert(n *node[K, V], key K, val V, height int, isRemoved bool) *node[K, V] {
+func (n *node[K, V]) insert(t *BTree[K, V], key K, val V, height int, isRemoved bool) *node[K, V] {
 	entry := entry[K, V]{
 		key:   key,
 		value: val,
@@ -140,7 +140,7 @@ func (t *BTree[K, V]) insert(n *node[K, V], key K, val V, height int, isRemoved 
 		// internal node
 		for j = 0; j < n.m; j++ {
 			if j+1 == n.m || gogu.Less(key, n.children[j+1].key) {
-				node := t.insert(n.children[j].next, key, val, height-1, isRemoved)
+				node := n.children[j].next.insert(t, key, val, height-1, isRemoved)
 				if node == nil {
 					return nil
 				}
@@ -181,13 +181,13 @@ func (t *BTree[K, V]) Remove(key K) {
 		return
 	}
 	t.n--
-	t.insert(t.root, key, val, t.heigth, true)
+	t.root.insert(t, key, val, t.height, true)
 }
 
 // Traverse iterates over the values of the tree and invokes
 // the callback function provided as argument over the node elements.
 func (t *BTree[K, V]) Traverse(fn func(key K, val V)) {
-	t.traverse(t.root, t.heigth, fn)
+	t.traverse(t.root, t.height, fn)
 }
 
 func (t *BTree[K, V]) traverse(n *node[K, V], depth int, fn func(K, V)) {

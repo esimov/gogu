@@ -1,8 +1,8 @@
 package btree
 
 import (
-	"fmt"
 	"math/rand"
+	"sync"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -11,39 +11,42 @@ import (
 func TestBTree(t *testing.T) {
 	assert := assert.New(t)
 
+	wg := &sync.WaitGroup{}
+	mu := &sync.Mutex{}
+
 	btree := New[int, int]()
 	assert.True(btree.IsEmpty())
 
-	n := 10
+	n := 100
 	tmp := make(map[int]int, 0)
 
+	wg.Add(n)
 	for i := 0; i < n; i++ {
-		key := i
-		val := rand.Int()
-		//fmt.Println(val)
-		btree.Put(key, val)
-		tmp[key] = val
+		go func(i int) {
+			key := i
+			val := rand.Int()
+
+			mu.Lock()
+			btree.Put(key, val)
+			tmp[key] = val
+			mu.Unlock()
+
+			wg.Done()
+		}(i)
 	}
-	fmt.Println(tmp)
-	assert.False(btree.IsEmpty())
-	//assert.Equal(10, btree.Size())
+	wg.Wait()
+
+	assert.Equal(n, btree.Size())
 
 	btree.Traverse(func(key, val int) {
-		fmt.Println(key, val)
-		//assert.Equal(tmp[key], val)
+		v, found := btree.Get(key)
+		assert.True(found)
+		assert.Equal(v, val)
+
+		btree.Remove(key)
+		delete(tmp, key)
 	})
 
-	// fmt.Println(tmp)
-	// for key, val := range tmp {
-	// 	//fmt.Println("Key:", key, "val:", val)
-	// 	v, found := btree.Get(key)
-	// 	assert.True(found)
-	// 	assert.Equal(v, val)
-
-	// 	btree.Remove(key)
-	// 	delete(tmp, key)
-	// }
-
-	// assert.Equal(0, btree.Size())
-	//assert.True(btree.IsEmpty())
+	assert.Empty(btree.Size())
+	assert.True(btree.IsEmpty())
 }
