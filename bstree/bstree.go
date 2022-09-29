@@ -122,21 +122,6 @@ func (n *node[K, V]) upsert(b *bsTree[K, V], key K, val V) {
 	}
 }
 
-// isLeaf checks if a node is a leaf node.
-func (n *node[K, V]) isLeaf() bool {
-	return !n.hasLeft() && !n.hasRight()
-}
-
-// hasLeft checks if a node has children on left branch.
-func (n *node[K, V]) hasLeft() bool {
-	return n.left != nil
-}
-
-// hasRight checks if a node has children on right branch.
-func (n *node[K, V]) hasRight() bool {
-	return n.right != nil
-}
-
 // min searches for the latest node on the left branch, but considering that BST
 // is an ordered tree structure it happens that it contains also the smallest value.
 func (n *node[K, V]) min() *node[K, V] {
@@ -169,17 +154,16 @@ func (n *node[K, V]) delete(b *bsTree[K, V], key K) (*node[K, V], error) {
 		n.right, err = n.right.delete(b, key)
 		return n, err
 	} else {
-
 		// case 1: node has no child
-		if n.isLeaf() {
+		if n.left == nil && n.right == nil {
 			return nil, nil
 		}
 		// case 2a: node has left child only
-		if n.hasLeft() && !n.hasRight() {
+		if n.left != nil && n.right == nil {
 			return n.left, nil
 		}
 		// case 2b: node has right child only
-		if !n.hasLeft() && n.hasRight() {
+		if n.left == nil && n.right != nil {
 			return n.right, nil
 		}
 		// case 3: node with two children
