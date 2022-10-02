@@ -2,8 +2,7 @@
 // which is a self-balancing tree data structure maintaining its values
 // in sorted order and allowing each node to have more than two children,
 // compared to the standard BST where each node has only two leaves.
-// The implementation is a simplified version of
-// https://algs4.cs.princeton.edu/62btree/BTree.java.
+// The implementation is an adapted version of https://algs4.cs.princeton.edu/62btree/BTree.java.
 package btree
 
 import (
