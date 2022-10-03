@@ -34,43 +34,43 @@ func newNode[K constraints.Ordered, V any](m int) *node[K, V] {
 	}
 }
 
-// BTree is the main component of the B-tree which starts only with one node, which is the root.
-type BTree[K constraints.Ordered, V any] struct {
+// bTree is the main component of the B-tree which starts only with one node, which is the root.
+type bTree[K constraints.Ordered, V any] struct {
 	n      int // the size of the tree (the number of nodes)
 	height int // the height of the tree
 	root   *node[K, V]
 }
 
 // New creates a new B-tree.
-func New[K constraints.Ordered, V any]() *BTree[K, V] {
-	return &BTree[K, V]{
+func New[K constraints.Ordered, V any]() *bTree[K, V] {
+	return &bTree[K, V]{
 		root: newNode[K, V](0),
 	}
 }
 
 // Size returns the B-tree size (the number of elements).
-func (t *BTree[K, V]) Size() int {
+func (t *bTree[K, V]) Size() int {
 	return t.n
 }
 
 // IsEmpty checks if a B-tree is empty or not.
-func (t *BTree[K, V]) IsEmpty() bool {
+func (t *bTree[K, V]) IsEmpty() bool {
 	return t.Size() == 0
 }
 
 // Height returns the B-tree size (how many levels it has).
-func (t *BTree[K, V]) Height() int {
+func (t *bTree[K, V]) Height() int {
 	return t.height
 }
 
 // Get searches for a value in the tree and if it's found it returns the value
 // together with a boolean value signalig if it's found or not.
-func (t *BTree[K, V]) Get(key K) (V, bool) {
+func (t *bTree[K, V]) Get(key K) (V, bool) {
 	return t.root.search(t, key, t.height)
 }
 
 // search is a private method which is invoked by the Get method.
-func (n *node[K, V]) search(t *BTree[K, V], key K, height int) (V, bool) {
+func (n *node[K, V]) search(t *bTree[K, V], key K, height int) (V, bool) {
 	// external node
 	if height == 0 {
 		for i := 0; i < n.m; i++ {
@@ -93,7 +93,7 @@ func (n *node[K, V]) search(t *BTree[K, V], key K, height int) (V, bool) {
 
 // Put inserts a new value into the B-tree.
 // If val is nil, this effectively deletes the value from the tree.
-func (t *BTree[K, V]) Put(key K, val V) {
+func (t *bTree[K, V]) Put(key K, val V) {
 	u := t.root.insert(t, key, val, t.height, false)
 	t.n++
 	if u == nil {
@@ -115,7 +115,7 @@ func (t *BTree[K, V]) Put(key K, val V) {
 }
 
 // insert is a private method which is invoked by the Put method.
-func (n *node[K, V]) insert(t *BTree[K, V], key K, val V, height int, isRemoved bool) *node[K, V] {
+func (n *node[K, V]) insert(t *bTree[K, V], key K, val V, height int, isRemoved bool) *node[K, V] {
 	entry := entry[K, V]{
 		key:   key,
 		value: val,
@@ -163,7 +163,7 @@ func (n *node[K, V]) insert(t *BTree[K, V], key K, val V, height int, isRemoved 
 	}
 }
 
-func (t *BTree[K, V]) split(n *node[K, V]) *node[K, V] {
+func (t *bTree[K, V]) split(n *node[K, V]) *node[K, V] {
 	h := newNode[K, V](maxChildren / 2)
 	n.m = maxChildren / 2
 
@@ -174,7 +174,7 @@ func (t *BTree[K, V]) split(n *node[K, V]) *node[K, V] {
 }
 
 // Remove deletes an element from the B-tree.
-func (t *BTree[K, V]) Remove(key K) {
+func (t *bTree[K, V]) Remove(key K) {
 	val, ok := t.Get(key)
 	if !ok {
 		return
@@ -185,11 +185,11 @@ func (t *BTree[K, V]) Remove(key K) {
 
 // Traverse iterates over the values of the tree and invokes
 // the callback function provided as argument over the node elements.
-func (t *BTree[K, V]) Traverse(fn func(key K, val V)) {
+func (t *bTree[K, V]) Traverse(fn func(key K, val V)) {
 	t.traverse(t.root, t.height, fn)
 }
 
-func (t *BTree[K, V]) traverse(n *node[K, V], depth int, fn func(K, V)) {
+func (t *bTree[K, V]) traverse(n *node[K, V], depth int, fn func(K, V)) {
 	// extenernal node
 	if depth == 0 {
 		for i := 0; i < n.m; i++ {
