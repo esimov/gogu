@@ -12,7 +12,7 @@ import (
 	"golang.org/x/exp/constraints"
 )
 
-var ErrorNotFound = fmt.Errorf("node not found")
+var ErrorNotFound = fmt.Errorf("BST node not found")
 
 // Item contains the node data as a key-value pair.
 type Item[K constraints.Ordered, V any] struct {
