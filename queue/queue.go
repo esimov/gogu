@@ -3,7 +3,10 @@
 // where the first element added to the queue is processed first.
 package queue
 
-import "sync"
+import (
+	"fmt"
+	"sync"
+)
 
 // Queue implements a FIFO Queue data structure.
 type Queue[T comparable] struct {
@@ -27,9 +30,9 @@ func (q *Queue[T]) Enqueue(item T) {
 
 // Dequeue retrieves and removes the first element from the queue.
 // The queue size will be decreased by one.
-func (q *Queue[T]) Dequeue() (item T) {
+func (q *Queue[T]) Dequeue() (item T, err error) {
 	if q.Size() == 0 {
-		return
+		return item, fmt.Errorf("queue is empty")
 	}
 
 	q.mu.Lock()

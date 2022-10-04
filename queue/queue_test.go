@@ -47,6 +47,8 @@ func TestQueue_Concurrency(t *testing.T) {
 	}()
 
 	for i := range ch {
-		assert.Equal(i, q.Dequeue())
+		item, err := q.Dequeue()
+		assert.NoError(err)
+		assert.Equal(i, item)
 	}
 }
