@@ -26,24 +26,38 @@ func TestLinkedQueue(t *testing.T) {
 func TestLinkedQueue_Concurrency(t *testing.T) {
 	assert := assert.New(t)
 	wg := &sync.WaitGroup{}
+	mu := &sync.Mutex{}
 
-	s := New[int]()
-	ch := make(chan int)
+	n := 10
+	ls := NewLinked(0)
+	tmp := make([]int, n)
+	tmp[0] = 0
 
-	for i := 0; i < 100; i++ {
+	for i := 1; i < n; i++ {
 		wg.Add(1)
 		go func(i int) {
-			s.Enqueue(i)
-			ch <- i
+			ls.Enqueue(i)
+
+			mu.Lock()
+			tmp[i] = i
+			mu.Unlock()
+
 			wg.Done()
 		}(i)
 	}
-	go func() {
-		wg.Wait()
-		close(ch)
-	}()
+	wg.Wait()
 
-	for i := range ch {
-		assert.Equal(i, s.Dequeue())
+	assert.Equal(0, ls.Peek())
+
+	item, err := ls.Dequeue()
+	assert.NoError(err)
+	assert.Equal(0, item)
+	for {
+		item, err := ls.Dequeue()
+		assert.Equal(tmp[item], item)
+		if err != nil {
+			break
+		}
 	}
+	assert.Equal(tmp[n-1], ls.Peek())
 }
