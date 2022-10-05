@@ -10,16 +10,16 @@ import (
 func TestLinkedQueue(t *testing.T) {
 	assert := assert.New(t)
 
-	ls := NewLinked(1)
-	ls.Enqueue(2)
-	ls.Enqueue(3)
-	assert.Equal(1, ls.Peek())
-	ls.Dequeue()
-	assert.Equal(2, ls.Peek())
-	ls.Dequeue()
-	assert.Equal(3, ls.Peek())
-	assert.True(ls.Search(3))
-	_, err := ls.Dequeue()
+	q := NewLinked(1)
+	q.Enqueue(2)
+	q.Enqueue(3)
+	assert.Equal(1, q.Peek())
+	q.Dequeue()
+	assert.Equal(2, q.Peek())
+	q.Dequeue()
+	assert.Equal(3, q.Peek())
+	assert.True(q.Search(3))
+	_, err := q.Dequeue()
 	assert.Error(err)
 }
 
@@ -28,15 +28,15 @@ func TestLinkedQueue_Concurrency(t *testing.T) {
 	wg := &sync.WaitGroup{}
 	mu := &sync.Mutex{}
 
-	n := 10
-	ls := NewLinked(0)
+	n := 100
+	q := NewLinked(0)
 	tmp := make([]int, n)
 	tmp[0] = 0
 
 	for i := 1; i < n; i++ {
 		wg.Add(1)
 		go func(i int) {
-			ls.Enqueue(i)
+			q.Enqueue(i)
 
 			mu.Lock()
 			tmp[i] = i
@@ -47,17 +47,17 @@ func TestLinkedQueue_Concurrency(t *testing.T) {
 	}
 	wg.Wait()
 
-	assert.Equal(0, ls.Peek())
+	assert.Equal(0, q.Peek())
 
-	item, err := ls.Dequeue()
+	item, err := q.Dequeue()
 	assert.NoError(err)
 	assert.Equal(0, item)
 	for {
-		item, err := ls.Dequeue()
+		item, err := q.Dequeue()
 		assert.Equal(tmp[item], item)
 		if err != nil {
 			break
 		}
 	}
-	assert.Equal(tmp[n-1], ls.Peek())
+	assert.Equal(tmp[n-1], q.Peek())
 }
