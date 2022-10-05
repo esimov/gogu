@@ -22,7 +22,7 @@ func TestSinglyLinkedList(t *testing.T) {
 	assert.NoError(err)
 	assert.Equal(2, list.singleNode.data)
 
-	list.Push(1)
+	list.Unshift(1)
 	assert.Equal(1, list.singleNode.data)
 
 	last := list.Append(3)
@@ -74,7 +74,7 @@ func TestSinglyLinkedList(t *testing.T) {
 	assert.NoError(err)
 	assert.Equal(8, item.data)
 
-	list.Push(1)
+	list.Unshift(1)
 	list.Replace(8, 7)
 
 	i = 0

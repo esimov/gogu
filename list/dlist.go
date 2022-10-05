@@ -1,5 +1,5 @@
-// Package list implements a linked list data structure.
-// This is the doubly Linked list implementation, which compared to the
+// Package list provides an implementation of the linked list data structure.
+// This is the doubly linked list version, which compared to the
 // singly linked list variant has an additional pointer to the previous node.
 package list
 
@@ -29,7 +29,7 @@ func newDNode[T comparable](data T) *doubleNode[T] {
 }
 
 // InitDoubly initializes a doubly linked list with one node.
-// Because this is the only node curently existing in the list its next and prev pointers are nil.
+// Because this is the only node curently existing in the list, its next and prev pointers are nil.
 func InitDoubly[T comparable](data T) *DList[T] {
 	return &DList[T]{
 		*newDNode(data),
@@ -118,7 +118,7 @@ func (l *DList[T]) InsertAfter(prev *doubleNode[T], data T) error {
 	return nil
 }
 
-// Replace replaces a node's value with the new one.
+// Replace replaces a node's value with a new one.
 // It returns an error in case the requested node does not exists.
 func (l *DList[T]) Replace(oldVal, newVal T) (*doubleNode[T], error) {
 	head := &l.doubleNode
@@ -261,7 +261,7 @@ func (l *DList[T]) Last() T {
 // the callback function, having as parameter the nodes data.
 func (l *DList[T]) Each(fn func(data T)) {
 	head := &l.doubleNode
-	tmp := l.doubleNode
+	node := l.doubleNode
 	for {
 		fn(l.data)
 		if head.next == nil {
@@ -270,7 +270,7 @@ func (l *DList[T]) Each(fn func(data T)) {
 		l.doubleNode = *head.next
 	}
 	// Move the pointer back to the first node.
-	l.doubleNode = tmp
+	l.doubleNode = node
 }
 
 // Data retrieves the node value.
