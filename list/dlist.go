@@ -1,15 +1,13 @@
 // Package list implements a linked list data structure.
-// This is the doubly Linked list implementation,
-// which compared to the singly linked list variant has
-// an additional previous pointer to the node before.
+// This is the doubly Linked list implementation, which compared to the
+// singly linked list variant has an additional pointer to the previous node.
 package list
 
 import (
 	"fmt"
 )
 
-// doubleNode is a doubly linked list node which has aditional
-// pointer holding the memory address of the previous node.
+// doubleNode holds an additional prev pointer to the node before.
 type doubleNode[T comparable] struct {
 	data T
 	next *doubleNode[T]
@@ -38,23 +36,23 @@ func InitDoubly[T comparable](data T) *DList[T] {
 	}
 }
 
-// Append inserts a new node at the beginning of the doubly linked list.
-func (l *DList[T]) Push(data T) *doubleNode[T] {
-	node := newDNode(data)
+// Unshift inserts a new node at the beginning of the doubly linked list.
+func (l *DList[T]) Unshift(data T) *doubleNode[T] {
+	newNode := newDNode(data)
+	head := l.doubleNode
 
-	firstNode := l.doubleNode
-	node.next = &firstNode
-	l.prev = node
+	newNode.next = &head
+	l.prev = newNode
 
 	// Move the pointer to the new node.
-	l.doubleNode = *node
+	l.doubleNode = *newNode
 
-	return node
+	return newNode
 }
 
 // Append inserts a new node at the end of the doubly linked list.
 func (l *DList[T]) Append(data T) *doubleNode[T] {
-	node := newDNode(data)
+	newNode := newDNode(data)
 	head := &l.doubleNode
 
 	if l.next == nil {
@@ -68,14 +66,14 @@ func (l *DList[T]) Append(data T) *doubleNode[T] {
 		head = head.next
 	}
 
-	node.next = head.next
-	head.next = node
-	node.prev = head
+	newNode.next = head.next
+	head.next = newNode
+	newNode.prev = head
 
-	return node
+	return newNode
 }
 
-// InsertBefore inserts a new node before the provided node in the doubly linked list.
+// InsertBefore inserts a new node before the current node.
 // In case the requested node is not in the list it returns an error.
 func (l *DList[T]) InsertBefore(node *doubleNode[T], data T) error {
 	if node == nil {
@@ -97,7 +95,7 @@ func (l *DList[T]) InsertBefore(node *doubleNode[T], data T) error {
 	return nil
 }
 
-// InsertAfter inserts a new node after the provided node in the doubly linked list.
+// InsertAfter inserts a new node after the existing node.
 // In case the requested node is not in the list it returns an error.
 func (l *DList[T]) InsertAfter(prev *doubleNode[T], data T) error {
 	if prev == nil {
@@ -108,40 +106,40 @@ func (l *DList[T]) InsertAfter(prev *doubleNode[T], data T) error {
 		return fmt.Errorf("the node to be deleted does not exists")
 	}
 
-	node := newDNode(data)
-	node.next = prev.next
-	prev.next = node
-	node.prev = prev
+	newNode := newDNode(data)
+	newNode.next = prev.next
+	prev.next = newNode
+	newNode.prev = prev
 
-	if node.next != nil {
-		node.next.prev = node
+	if newNode.next != nil {
+		newNode.next.prev = newNode
 	}
 
 	return nil
 }
 
 // Replace replaces a node's value with the new one.
-// It returns an error in case the requested value does not exists.
+// It returns an error in case the requested node does not exists.
 func (l *DList[T]) Replace(oldVal, newVal T) (*doubleNode[T], error) {
-	node := &l.doubleNode
+	head := &l.doubleNode
 
 	// Go through the list until the requested node is reached.
 	for {
-		if node.next == nil {
-			if node.data == oldVal {
-				node.data = newVal
+		if head.next == nil {
+			if head.data == oldVal {
+				head.data = newVal
 				break
 			}
 			return nil, fmt.Errorf("requested node does not exists")
 		}
-		if node.data == oldVal {
-			node.data = newVal
+		if head.data == oldVal {
+			head.data = newVal
 			break
 		}
-		node = node.next
+		head = head.next
 	}
 
-	return node, nil
+	return head, nil
 }
 
 // Delete removes the specified node from the list.
@@ -194,20 +192,18 @@ func (l *DList[T]) Shift() (*doubleNode[T], error) {
 
 // Pop removes the last node from the list.
 func (l *DList[T]) Pop() (*doubleNode[T], error) {
-	head := l.doubleNode
+	head := &l.doubleNode
 	node := &doubleNode[T]{}
 
-	tmp := &l.doubleNode
-	if tmp.next == nil {
+	if head.next == nil {
 		return nil, fmt.Errorf("cannot remove the node if there is only one element in the list")
+	} else {
+		tmp := head
+		for tmp.next.next != nil {
+			tmp = tmp.next
+		}
+		tmp.next = nil
 	}
-
-	for tmp.next.next != nil {
-		node = tmp
-		tmp = tmp.next
-	}
-	head.next = nil
-	l.doubleNode = head
 
 	return node, nil
 }
@@ -215,13 +211,17 @@ func (l *DList[T]) Pop() (*doubleNode[T], error) {
 // Find search for a node element in the linked list.
 // It returns the node in case the element is found otherwise nil.
 func (l *DList[T]) Find(val T) (*doubleNode[T], bool) {
-	var node *doubleNode[T]
 	head := l.doubleNode
-	found := false
+	var found bool
 
-	for n := &l.doubleNode; n != nil && !found; n = n.next {
+	for n := &l.doubleNode; n != nil; n = n.next {
+		if found {
+			break
+		}
 		if n.data == val {
 			l.doubleNode = head
+			found = true
+
 			return n, true
 		}
 	}
@@ -229,7 +229,7 @@ func (l *DList[T]) Find(val T) (*doubleNode[T], bool) {
 	// Move the pointer to the head of the linked list.
 	l.doubleNode = head
 
-	return node, false
+	return nil, false
 }
 
 // First retrieves the first element of the double linked list.
@@ -260,14 +260,14 @@ func (l *DList[T]) Last() T {
 // Each iterates over the elements of the linked list and invokes
 // the callback function, having as parameter the nodes data.
 func (l *DList[T]) Each(fn func(data T)) {
-	node := &l.doubleNode
+	head := &l.doubleNode
 	tmp := l.doubleNode
 	for {
 		fn(l.data)
-		if node.next == nil {
+		if head.next == nil {
 			break
 		}
-		l.doubleNode = *node.next
+		l.doubleNode = *head.next
 	}
 	// Move the pointer back to the first node.
 	l.doubleNode = tmp
