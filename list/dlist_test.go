@@ -9,16 +9,14 @@ import (
 func TestDoublyLinkedList(t *testing.T) {
 	assert := assert.New(t)
 
-	list := InitDoubly(1)
+	list := InitDList(1)
 	assert.Equal(1, list.data)
 
 	// Removal of the first node is not permitted.
 	err := list.Delete(&list.doubleNode)
 	assert.Error(err)
 
-	_, err = list.Pop()
-	assert.Error(err)
-
+	list.Pop()
 	node := list.Unshift(2)
 	list.InsertBefore(node, 3)
 
@@ -109,6 +107,10 @@ func TestDoublyLinkedList(t *testing.T) {
 		assert.Equal(i, list.Last())
 	}
 	list.Pop()
-	assert.Equal(8, list.Last())
+	list.Pop()
+	last, err := list.Pop()
+	assert.NoError(err)
+	assert.Equal(6, last.data)
+	assert.Equal(6, list.Last())
 	assert.Equal(0, list.First())
 }

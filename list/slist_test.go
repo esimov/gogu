@@ -47,7 +47,7 @@ func TestSinglyLinkedList(t *testing.T) {
 
 	item, err := list.Pop()
 	assert.NoError(err)
-	assert.Equal(6, item.data)
+	assert.Equal(7, item.data)
 
 	i = 0
 	expected = []int{1, 2, 3, 4, 5, 6, 7}

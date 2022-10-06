@@ -53,10 +53,7 @@ func (l *SList[T]) Append(data T) *singleNode[T] {
 		l.singleNode = *head
 	}
 
-	for {
-		if head.next == nil {
-			break
-		}
+	for head.next != nil {
 		head = head.next
 	}
 
@@ -157,22 +154,21 @@ func (l *SList[T]) Shift() *singleNode[T] {
 
 // Pop removes the last node from the list.
 func (l *SList[T]) Pop() (*singleNode[T], error) {
-	head := l.singleNode
-	node := &singleNode[T]{}
+	head := &l.singleNode
+	node := singleNode[T]{}
 
-	tmp := &l.singleNode
-	if tmp.next == nil {
-		return nil, fmt.Errorf("cannot remove the node if there is only one element in the list")
+	if head.next == nil {
+		head = nil
+		return nil, fmt.Errorf("cannot remove the SLL node if there is only one element in the list")
+	} else {
+		tmp := head
+		for tmp.next.next != nil {
+			tmp = tmp.next
+			node = *tmp
+		}
+		tmp.next = nil
 	}
-
-	for tmp.next.next != nil {
-		node = tmp
-		tmp = tmp.next
-	}
-	tmp.next = nil
-	l.singleNode = head
-
-	return node, nil
+	return &node, nil
 }
 
 // Find search for a node element in the linked list.
