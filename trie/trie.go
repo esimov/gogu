@@ -2,6 +2,7 @@ package trie
 
 import (
 	"fmt"
+	"sync"
 )
 
 var ErrorNotFound = fmt.Errorf("trie node not found")
@@ -38,17 +39,26 @@ func newNode[K ~string, V any](key K, val V) *node[K, V] {
 type Trie[K ~string, V any] struct {
 	n    int
 	root *node[K, V]
+	mu   *sync.RWMutex
 }
 
 func New[K ~string, V any]() *Trie[K, V] {
-	return &Trie[K, V]{}
+	return &Trie[K, V]{
+		mu: &sync.RWMutex{},
+	}
 }
 
 func (t *Trie[K, V]) Size() int {
+	t.mu.RLock()
+	defer t.mu.RUnlock()
+
 	return t.n
 }
 
 func (t *Trie[K, V]) Contains(key K) bool {
+	t.mu.RLock()
+	defer t.mu.RUnlock()
+
 	if len(key) == 0 {
 		return false
 	}
@@ -58,12 +68,16 @@ func (t *Trie[K, V]) Contains(key K) bool {
 
 func (t *Trie[K, V]) Put(key K, val V) {
 	if !t.Contains(key) {
+		t.mu.Lock()
 		t.n++
+		t.mu.Unlock()
 	}
-	t.root = t.root.put(key, val, 0, true)
+	t.mu.Lock()
+	t.root = t.root.put(t, key, val, 0, true)
+	t.mu.Unlock()
 }
 
-func (n *node[K, V]) put(key K, val V, d int, isValid bool) *node[K, V] {
+func (n *node[K, V]) put(t *Trie[K, V], key K, val V, d int, isValid bool) *node[K, V] {
 	c := key[d]
 	if n == nil {
 		n = newNode(key, val)
@@ -71,11 +85,11 @@ func (n *node[K, V]) put(key K, val V, d int, isValid bool) *node[K, V] {
 	}
 
 	if c < n.c {
-		n.left = n.left.put(key, val, d, isValid)
+		n.left = n.left.put(t, key, val, d, isValid)
 	} else if c > n.c {
-		n.right = n.right.put(key, val, d, isValid)
+		n.right = n.right.put(t, key, val, d, isValid)
 	} else if d < len(key)-1 {
-		n.mid = n.mid.put(key, val, d+1, isValid)
+		n.mid = n.mid.put(t, key, val, d+1, isValid)
 	} else {
 		n.isValid = isValid
 		n.val = val
@@ -84,6 +98,9 @@ func (n *node[K, V]) put(key K, val V, d int, isValid bool) *node[K, V] {
 }
 
 func (t *Trie[K, V]) Get(key K) (v V, ok bool) {
+	t.mu.RLock()
+	defer t.mu.RUnlock()
+
 	if len(key) == 0 {
 		return v, false
 	}
@@ -115,6 +132,9 @@ func (n *node[K, V]) get(key K, d int) (*node[K, V], error) {
 }
 
 func (t *Trie[K, V]) LongestPrefix(query K) (K, error) {
+	t.mu.RLock()
+	defer t.mu.RUnlock()
+
 	if len(query) == 0 {
 		var k K
 		return k, fmt.Errorf("query for the LongestPrefix() method should not be empty")
@@ -140,14 +160,11 @@ func (t *Trie[K, V]) LongestPrefix(query K) (K, error) {
 	return query[:length], nil
 }
 
-func (t *Trie[K, V]) Keys(q Queuer[K]) (Queuer[K], error) {
-	q, err := t.root.collect(q, "")
-	fmt.Println(q, err)
-	return q, err
-}
-
 // Returns all of the keys in the set that start with prefix.
 func (t *Trie[K, V]) StartsWith(q Queuer[K], prefix K) (Queuer[K], error) {
+	t.mu.RLock()
+	defer t.mu.RUnlock()
+
 	if len(prefix) == 0 {
 		var q Queuer[K]
 		return q, fmt.Errorf("prefix for the StartsWith() method should not be empty")
@@ -165,12 +182,20 @@ func (t *Trie[K, V]) StartsWith(q Queuer[K], prefix K) (Queuer[K], error) {
 	return q, nil
 }
 
+func (t *Trie[K, V]) Keys(q Queuer[K]) (Queuer[K], error) {
+	t.mu.RLock()
+	defer t.mu.RUnlock()
+
+	var err error
+	t.root.collect(q, "")
+	return q, err
+}
+
 func (n *node[K, V]) collect(q Queuer[K], prefix K) (Queuer[K], error) {
 	if n == nil {
 		var q Queuer[K]
 		return q, ErrorNotFound
 	}
-	fmt.Println("n:", n)
 
 	n.left.collect(q, prefix)
 	if n.isValid {
