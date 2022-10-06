@@ -28,8 +28,9 @@ func TestLinkedQueue_Concurrency(t *testing.T) {
 	wg := &sync.WaitGroup{}
 	mu := &sync.Mutex{}
 
-	n := 100
 	q := NewLinked(0)
+
+	n := 100
 	tmp := make([]int, n)
 	tmp[0] = 0
 
@@ -46,6 +47,7 @@ func TestLinkedQueue_Concurrency(t *testing.T) {
 		}(i)
 	}
 	wg.Wait()
+	assert.Equal(n, q.Size())
 
 	assert.Equal(0, q.Peek())
 
