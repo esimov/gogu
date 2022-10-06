@@ -1,3 +1,7 @@
+// Package trie provides an implementation of the ternary search tree data structure.
+// Trie is similar to binary search tree, but it has up to three children rather than two as of BST.
+// Tries are used for locating specific keys from within a set or
+// for quick lookup searches within a text like auto completion or spell checking.
 package trie
 
 import (
@@ -7,6 +11,11 @@ import (
 
 var ErrorNotFound = fmt.Errorf("trie node not found")
 
+// Queuer exposes the basic interface methods for querying the trie data structure
+// both for searching and for retrieving the existing keys. These are generic methods
+// having the same signature as the correspondig concrete methods from the queue package.
+// Because both the plain array and the linked listed version of the queue package
+// has the same method signature, each of them could be plugged in.
 type Queuer[K ~string] interface {
 	Enqueue(K)
 	Dequeue() (K, error)
@@ -22,11 +31,13 @@ type node[K ~string, V any] struct {
 	Item[K, V]
 }
 
+// Item is a key-value struct pair used for storing the node values.
 type Item[K ~string, V any] struct {
 	key K
 	val V
 }
 
+// newNode creates a new node.
 func newNode[K ~string, V any](key K, val V) *node[K, V] {
 	return &node[K, V]{
 		Item: Item[K, V]{
@@ -36,18 +47,22 @@ func newNode[K ~string, V any](key K, val V) *node[K, V] {
 	}
 }
 
+// Trie is a lock-free tree data structure having the root as the first node.
+// It's guarded with a mutex for concurrent data access.
 type Trie[K ~string, V any] struct {
 	n    int
 	root *node[K, V]
 	mu   *sync.RWMutex
 }
 
+// New initializes a new Trie data structure.
 func New[K ~string, V any]() *Trie[K, V] {
 	return &Trie[K, V]{
 		mu: &sync.RWMutex{},
 	}
 }
 
+// Size returns the trie size.
 func (t *Trie[K, V]) Size() int {
 	t.mu.RLock()
 	defer t.mu.RUnlock()
@@ -55,6 +70,7 @@ func (t *Trie[K, V]) Size() int {
 	return t.n
 }
 
+// Contains checks if a key exists in the symbol table.
 func (t *Trie[K, V]) Contains(key K) bool {
 	t.mu.RLock()
 	defer t.mu.RUnlock()
@@ -66,6 +82,8 @@ func (t *Trie[K, V]) Contains(key K) bool {
 	return ok
 }
 
+// Put inserts a new node into the symbol table, overwriting the old value
+// with the new value if the key is already in the symbol table.
 func (t *Trie[K, V]) Put(key K, val V) {
 	if !t.Contains(key) {
 		t.mu.Lock()
@@ -97,6 +115,8 @@ func (n *node[K, V]) put(t *Trie[K, V], key K, val V, d int, isValid bool) *node
 	return n
 }
 
+// Get retrieves a node's value based on the key.
+// If the key does not exists it returns false.
 func (t *Trie[K, V]) Get(key K) (v V, ok bool) {
 	t.mu.RLock()
 	defer t.mu.RUnlock()
@@ -131,6 +151,8 @@ func (n *node[K, V]) get(key K, d int) (*node[K, V], error) {
 	return n, nil
 }
 
+// LongestPrefix returns the string in the symbol table that is the
+// longest prefix of query, or empty if such string does not exists.
 func (t *Trie[K, V]) LongestPrefix(query K) (K, error) {
 	t.mu.RLock()
 	defer t.mu.RUnlock()
@@ -160,7 +182,7 @@ func (t *Trie[K, V]) LongestPrefix(query K) (K, error) {
 	return query[:length], nil
 }
 
-// Returns all of the keys in the set that start with prefix.
+// StartsWith returns all of the keys in the set that start with prefix.
 func (t *Trie[K, V]) StartsWith(q Queuer[K], prefix K) (Queuer[K], error) {
 	t.mu.RLock()
 	defer t.mu.RUnlock()
@@ -182,6 +204,7 @@ func (t *Trie[K, V]) StartsWith(q Queuer[K], prefix K) (Queuer[K], error) {
 	return q, nil
 }
 
+// Keys collects all the existing keys in the set.
 func (t *Trie[K, V]) Keys(q Queuer[K]) (Queuer[K], error) {
 	t.mu.RLock()
 	defer t.mu.RUnlock()
