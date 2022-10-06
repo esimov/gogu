@@ -8,7 +8,8 @@ var ErrorNotFound = fmt.Errorf("trie node not found")
 
 type Queuer[K ~string] interface {
 	Enqueue(K)
-	Dequeue() K
+	Dequeue() (K, error)
+	Size() int
 }
 
 type node[K ~string, V any] struct {
@@ -140,7 +141,9 @@ func (t *Trie[K, V]) LongestPrefix(query K) (K, error) {
 }
 
 func (t *Trie[K, V]) Keys(q Queuer[K]) (Queuer[K], error) {
-	return t.root.collect(q, "")
+	q, err := t.root.collect(q, "")
+	fmt.Println(q, err)
+	return q, err
 }
 
 // Returns all of the keys in the set that start with prefix.
@@ -167,6 +170,7 @@ func (n *node[K, V]) collect(q Queuer[K], prefix K) (Queuer[K], error) {
 		var q Queuer[K]
 		return q, ErrorNotFound
 	}
+	fmt.Println("n:", n)
 
 	n.left.collect(q, prefix)
 	if n.isValid {
