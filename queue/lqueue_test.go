@@ -60,5 +60,5 @@ func TestLinkedQueue_Concurrency(t *testing.T) {
 			break
 		}
 	}
-	assert.Equal(tmp[n-1], q.Peek())
+	assert.Equal(1, q.Size())
 }

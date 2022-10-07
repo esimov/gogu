@@ -176,11 +176,11 @@ func TestCache_ExpirationTime(t *testing.T) {
 	assert.Len(c1.List(), 0)
 
 	c1.Set("item1", "b", 1*time.Millisecond)
-	c1.Set("item2", "b", 3*time.Millisecond)
+	c1.Set("item2", "b", 4*time.Millisecond)
 	<-time.After(2 * time.Millisecond)
 	c1.DeleteExpired()
 	assert.Len(c1.List(), 1)
-	<-time.After(1 * time.Millisecond)
+	<-time.After(3 * time.Millisecond)
 	c1.DeleteExpired()
 	assert.Empty(c1.List())
 
