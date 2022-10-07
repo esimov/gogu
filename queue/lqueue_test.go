@@ -48,7 +48,6 @@ func TestLinkedQueue_Concurrency(t *testing.T) {
 	}
 	wg.Wait()
 	assert.Equal(n, q.Size())
-
 	assert.Equal(0, q.Peek())
 
 	item, err := q.Dequeue()
