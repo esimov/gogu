@@ -273,3 +273,10 @@ func (l *DList[T]) Each(fn func(data T)) {
 func (l *DList[T]) Data(node *doubleNode[T]) T {
 	return node.data
 }
+
+// Clear deletes all the nodes from the list.
+func (l *DList[T]) Clear() {
+	head := &l.doubleNode
+	head.next = nil
+	head.prev = nil
+}

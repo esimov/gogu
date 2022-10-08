@@ -20,6 +20,7 @@ type Queuer[K ~string] interface {
 	Enqueue(K)
 	Dequeue() (K, error)
 	Size() int
+	Clear()
 }
 
 type node[K ~string, V any] struct {
@@ -53,12 +54,14 @@ type Trie[K ~string, V any] struct {
 	n    int
 	root *node[K, V]
 	mu   *sync.RWMutex
+	q    Queuer[K]
 }
 
 // New initializes a new Trie data structure.
-func New[K ~string, V any]() *Trie[K, V] {
+func New[K ~string, V any](q Queuer[K]) *Trie[K, V] {
 	return &Trie[K, V]{
 		mu: &sync.RWMutex{},
+		q:  q,
 	}
 }
 
@@ -183,48 +186,50 @@ func (t *Trie[K, V]) LongestPrefix(query K) (K, error) {
 }
 
 // StartsWith returns all of the keys in the set that start with prefix.
-func (t *Trie[K, V]) StartsWith(q Queuer[K], prefix K) (Queuer[K], error) {
+func (t *Trie[K, V]) StartsWith(prefix K) (Queuer[K], error) {
 	t.mu.RLock()
 	defer t.mu.RUnlock()
 
+	t.q.Clear()
+
 	if len(prefix) == 0 {
-		var q Queuer[K]
-		return q, fmt.Errorf("prefix for the StartsWith() method should not be empty")
+		return t.q, fmt.Errorf("prefix for the StartsWith() method should not be empty")
 	}
 
 	x, err := t.root.get(prefix, 0)
 	if x == nil || err != nil {
-		return q, nil
+		return t.q, nil
 	}
 	if x.isValid {
-		q.Enqueue(prefix)
+		t.q.Enqueue(prefix)
 	}
-	x.mid.collect(q, prefix)
+	x.mid.collect(t, prefix)
 
-	return q, nil
+	return t.q, nil
 }
 
 // Keys collects all the existing keys in the set.
-func (t *Trie[K, V]) Keys(q Queuer[K]) (Queuer[K], error) {
+func (t *Trie[K, V]) Keys() (Queuer[K], error) {
 	t.mu.RLock()
 	defer t.mu.RUnlock()
 
+	t.q.Clear()
+
 	var err error
-	t.root.collect(q, "")
-	return q, err
+	t.root.collect(t, "")
+	return t.q, err
 }
 
-func (n *node[K, V]) collect(q Queuer[K], prefix K) (Queuer[K], error) {
+func (n *node[K, V]) collect(t *Trie[K, V], prefix K) (Queuer[K], error) {
 	if n == nil {
-		var q Queuer[K]
-		return q, ErrorNotFound
+		return t.q, ErrorNotFound
 	}
 
-	n.left.collect(q, prefix)
+	n.left.collect(t, prefix)
 	if n.isValid {
-		q.Enqueue(prefix + K(n.c))
+		t.q.Enqueue(prefix + K(n.c))
 	}
-	n.mid.collect(q, prefix+K(n.c))
+	n.mid.collect(t, prefix+K(n.c))
 
-	return n.right.collect(q, prefix)
+	return n.right.collect(t, prefix)
 }

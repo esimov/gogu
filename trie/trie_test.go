@@ -1,7 +1,6 @@
 package trie
 
 import (
-	"fmt"
 	"sort"
 	"strconv"
 	"sync"
@@ -14,7 +13,8 @@ import (
 func TestTrie(t *testing.T) {
 	assert := assert.New(t)
 
-	trie := New[string, int]()
+	q := queue.New[string]()
+	trie := New[string, int](q)
 	input := []string{"cats", "cape", "captain", "foes",
 		"apple", "she", "root", "shells", "the", "thermos", "foo"}
 
@@ -39,11 +39,10 @@ func TestTrie(t *testing.T) {
 	assert.NoError(err)
 	assert.Equal("cape", str)
 
-	q := queue.New[string]()
-	_, err = trie.StartsWith(q, "")
+	_, err = trie.StartsWith("")
 	assert.Error(err)
 
-	q1, err := trie.StartsWith(q, "ca")
+	q1, err := trie.StartsWith("ca")
 	assert.NoError(err)
 	assert.Equal(3, q1.Size())
 
@@ -60,7 +59,7 @@ func TestTrie(t *testing.T) {
 
 	// Testing if the trie is sorted.
 	sort.Strings(input)
-	q2, _ := trie.Keys(q)
+	q2, _ := trie.Keys()
 
 	for i := 0; i < len(input); i++ {
 		val, err := q2.Dequeue()
@@ -78,30 +77,30 @@ func TestTrie_Concurrency(t *testing.T) {
 	assert := assert.New(t)
 	wg := &sync.WaitGroup{}
 
-	trie := New[string, int]()
-	n := 10
-
 	q := queue.New[string]()
+	trie := New[string, int](q)
+	n := 100
 
 	wg.Add(n)
 	go func() {
 		for i := 0; i < n; i++ {
 			str := strconv.Itoa(i)
-			trie.Put("test"+str, i)
-			trie.Get("test" + str)
+			trie.Put(str, i)
 			wg.Done()
 		}
 	}()
 	wg.Wait()
 
-	keys, err := trie.Keys(q)
-	fmt.Println(keys, err)
+	assert.Equal(100, trie.Size())
+	keys, err := trie.Keys()
+	assert.NoError(err)
+	assert.Equal(100, keys.Size())
 
-	res, _ := trie.LongestPrefix("te")
-	trie.StartsWith(q, "ca")
-	fmt.Println(res)
+	qs, err := trie.StartsWith("")
+	assert.Error(err)
+	assert.Equal(0, qs.Size())
 
-	fmt.Println("Size:", trie.Size())
-
-	assert.Equal(1, 1)
+	qs2, err := trie.StartsWith("2")
+	assert.NoError(err)
+	assert.Equal(11, qs2.Size())
 }

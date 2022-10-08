@@ -74,3 +74,11 @@ func (l *LQueue[T]) Size() int {
 
 	return l.n
 }
+
+// Clear erase all the items from the queue.
+func (l *LQueue[T]) Clear() {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
+	l.list.Clear()
+}

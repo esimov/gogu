@@ -79,3 +79,11 @@ func (q *Queue[T]) Size() int {
 
 	return len(q.items)
 }
+
+// Clear erase all the items from the queue.
+func (q *Queue[T]) Clear() {
+	q.mu.Lock()
+	defer q.mu.Unlock()
+
+	q.items = nil
+}
