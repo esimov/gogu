@@ -1,6 +1,7 @@
 package stack
 
 import (
+	"sync"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -24,4 +25,27 @@ func TestStack(t *testing.T) {
 	s.Push(1)
 	s.Pop()
 	assert.False(s.Search(1))
+}
+
+func TestStack_Concurrency(t *testing.T) {
+	assert := assert.New(t)
+	wg := &sync.WaitGroup{}
+
+	s := New[int]()
+	n := 100
+
+	for i := 0; i < n; i++ {
+		wg.Add(1)
+		go func(i int) {
+			s.Push(i)
+			wg.Done()
+		}(i)
+		wg.Wait()
+	}
+
+	assert.Equal(n, s.Size())
+	for i := s.Size() - 1; i > 0; i-- {
+		item := s.Pop()
+		assert.Equal(i, item)
+	}
 }

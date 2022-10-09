@@ -113,4 +113,8 @@ func TestDoublyLinkedList(t *testing.T) {
 	assert.Equal(6, last.data)
 	assert.Equal(6, list.Last())
 	assert.Equal(0, list.First())
+
+	list.Clear()
+	assert.Equal(0, list.First())
+	assert.Equal(0, list.Last())
 }
