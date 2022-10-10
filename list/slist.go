@@ -153,22 +153,22 @@ func (l *SList[T]) Shift() *singleNode[T] {
 }
 
 // Pop removes the last node from the list.
-func (l *SList[T]) Pop() (*singleNode[T], error) {
+func (l *SList[T]) Pop() *singleNode[T] {
 	head := &l.singleNode
 	node := singleNode[T]{}
 
 	if head.next == nil {
 		head = nil
-		return nil, fmt.Errorf("cannot remove the SLL node if there is only one element in the list")
 	} else {
 		tmp := head
+		node = *tmp
 		for tmp.next.next != nil {
 			tmp = tmp.next
 			node = *tmp
 		}
 		tmp.next = nil
 	}
-	return &node, nil
+	return &node
 }
 
 // Find search for a node element in the linked list.

@@ -34,17 +34,13 @@ func (l *LQueue[T]) Enqueue(item T) {
 
 // Dequeue retrieves and removes the first element from the queue.
 // The queue size will be decreased by one.
-func (l *LQueue[T]) Dequeue() (item T, err error) {
+func (l *LQueue[T]) Dequeue() (item T) {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 
-	var t T
-	node, err := l.list.Shift()
-	if err != nil {
-		return t, err
-	}
+	node := l.list.Shift()
 	l.n--
-	return l.list.Data(node), nil
+	return l.list.Data(node)
 }
 
 // Peek returns the first element of the queue. It does not remove it.
@@ -80,5 +76,6 @@ func (l *LQueue[T]) Clear() {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 
+	l.n = 0
 	l.list.Clear()
 }

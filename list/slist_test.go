@@ -12,9 +12,8 @@ func TestSinglyLinkedList(t *testing.T) {
 	list := Init(1)
 	assert.Equal(1, list.data)
 	// cannot delete the first node if there is only one item in the list.
-	_, err := list.Pop()
-	assert.Error(err)
-	err = list.Delete(&list.singleNode)
+	list.Pop()
+	err := list.Delete(&list.singleNode)
 	assert.Error(err)
 
 	list.Append(2)
@@ -45,8 +44,7 @@ func TestSinglyLinkedList(t *testing.T) {
 		i++
 	})
 
-	item, err := list.Pop()
-	assert.NoError(err)
+	item := list.Pop()
 	assert.Equal(7, item.data)
 
 	i = 0

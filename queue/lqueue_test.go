@@ -19,8 +19,13 @@ func TestLinkedQueue(t *testing.T) {
 	q.Dequeue()
 	assert.Equal(3, q.Peek())
 	assert.True(q.Search(3))
-	_, err := q.Dequeue()
-	assert.Error(err)
+	q.Dequeue()
+	//assert.Error(err)
+
+	q.Enqueue(10)
+	assert.Equal(1, q.Size())
+	q.Clear()
+	assert.Equal(0, q.Size())
 }
 
 func TestLinkedQueue_Concurrency(t *testing.T) {
@@ -50,15 +55,11 @@ func TestLinkedQueue_Concurrency(t *testing.T) {
 	assert.Equal(n, q.Size())
 	assert.Equal(0, q.Peek())
 
-	item, err := q.Dequeue()
-	assert.NoError(err)
+	item := q.Dequeue()
 	assert.Equal(0, item)
-	for {
-		item, err := q.Dequeue()
+	for q.Size() > 0 {
+		item := q.Dequeue()
 		assert.Equal(tmp[item], item)
-		if err != nil {
-			break
-		}
 	}
-	assert.Equal(1, q.Size())
+	assert.Equal(0, q.Size())
 }

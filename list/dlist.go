@@ -173,37 +173,42 @@ func (l *DList[T]) Delete(node *doubleNode[T]) error {
 }
 
 // Shift removes the first node from the list.
-func (l *DList[T]) Shift() (*doubleNode[T], error) {
+func (l *DList[T]) Shift() *doubleNode[T] {
 	head := &l.doubleNode
 	node := l.doubleNode
 
 	if head.next == nil {
-		return nil, fmt.Errorf("cannot remove the node if there is only one element in the list")
+		var data T
+		head.next = nil
+		head.prev = nil
+		head.data = data
+
+		l.doubleNode = *head
 	} else {
 		head = head.next
 		l.doubleNode = *head
 	}
 
-	return &node, nil
+	return &node
 }
 
 // Pop removes the last node from the list.
-func (l *DList[T]) Pop() (*doubleNode[T], error) {
+func (l *DList[T]) Pop() *doubleNode[T] {
 	head := &l.doubleNode
 	node := doubleNode[T]{}
 
 	if head.next == nil {
 		head = nil
-		return nil, fmt.Errorf("cannot remove the DLL node if there is only one element in the list")
 	} else {
 		tmp := head
+		node = *tmp
 		for tmp.next.next != nil {
 			tmp = tmp.next
 			node = *tmp
 		}
 		tmp.next = nil
 	}
-	return &node, nil
+	return &node
 }
 
 // Find search for a node element in the linked list.

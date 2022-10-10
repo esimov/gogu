@@ -108,8 +108,7 @@ func TestDoublyLinkedList(t *testing.T) {
 	}
 	list.Pop()
 	list.Pop()
-	last, err := list.Pop()
-	assert.NoError(err)
+	last := list.Pop()
 	assert.Equal(6, last.data)
 	assert.Equal(6, list.Last())
 	assert.Equal(0, list.First())

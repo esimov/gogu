@@ -34,18 +34,16 @@ func (s *LStack[T]) Push(item T) {
 
 // Pop retrieves and removes the last element pushed into the stack.
 // The stack size will be decreased by one.
-func (s *LStack[T]) Pop() (item T, err error) {
+func (s *LStack[T]) Pop() (item T) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	var t T
-	node, err := s.list.Pop()
-	if err != nil {
-		return t, err
+	node := s.list.Pop()
+	if s.n > 0 {
+		s.n--
 	}
-	s.n--
 
-	return s.list.Data(node), nil
+	return s.list.Data(node)
 }
 
 // Peek returns the last element of the stack. It does not remove it.

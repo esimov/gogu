@@ -23,19 +23,15 @@ func TestLinkedStack(t *testing.T) {
 	assert.Equal(1, l.Peek())
 	assert.True(l.Search(1))
 
-	_, err := l.Pop()
-	assert.Error(err)
-
+	l.Pop()
 	l.Push(1)
 	l.Push(2)
-	_, err = l.Pop()
-	assert.NoError(err)
+	l.Pop()
 	assert.True(l.Search(1))
 
 	l.Pop()
 	l.Pop()
-	// the stack cannot be cleared out totally, it should have at least one element
-	assert.Equal(1, l.Size())
+	assert.Equal(0, l.Size())
 }
 
 func TestLinkedStack_Concurrency(t *testing.T) {
@@ -64,11 +60,8 @@ func TestLinkedStack_Concurrency(t *testing.T) {
 	wg.Wait()
 	assert.Equal(n, l.Size())
 
-	for {
-		item, err := l.Pop()
+	for l.Size() > 0 {
+		item := l.Pop()
 		assert.Equal(tmp[item], item)
-		if err != nil {
-			break
-		}
 	}
 }
