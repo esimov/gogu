@@ -129,7 +129,10 @@ func (h *Heap[T]) Delete(val T) (bool, error) {
 		return false, fmt.Errorf("value not found in the heap: %v", val)
 	}
 
-	swap(h.mu, h.data, idx, len-1)
+	h.mu.Lock()
+	swap(h.data, idx, len-1)
+	h.mu.Unlock()
+
 	h.data = h.data[:len-1]
 	h.moveDown(len, 0)
 
@@ -149,7 +152,8 @@ func (h *Heap[T]) Convert(comp gogu.CompFn[T]) {
 }
 
 // FromSlice imports the slice elements into a new heap using the comparator function.
-func FromSlice[T comparable](mu *sync.RWMutex, data []T, comp gogu.CompFn[T]) *Heap[T] {
+func FromSlice[T comparable](data []T, comp gogu.CompFn[T]) *Heap[T] {
+	mu := &sync.RWMutex{}
 	for i := len(data)/2 - 1; i >= 0; i-- {
 		for {
 			l, r := 2*i+1, 2*i+2
@@ -166,7 +170,10 @@ func FromSlice[T comparable](mu *sync.RWMutex, data []T, comp gogu.CompFn[T]) *H
 				break
 			}
 
-			swap(mu, data, i, current)
+			mu.Lock()
+			swap(data, i, current)
+			mu.Unlock()
+
 			i = current
 		}
 	}
@@ -230,7 +237,10 @@ func (h *Heap[T]) moveDown(n, i int) {
 
 	if current != i {
 		h.mu.RUnlock()
-		swap(h.mu, h.data, i, current)
+		h.mu.Lock()
+		swap(h.data, i, current)
+		h.mu.Unlock()
+
 		h.moveDown(n, current)
 		return
 	}
@@ -243,7 +253,10 @@ func (h *Heap[T]) moveUp(i int) {
 	h.mu.RLock()
 	if h.comp(h.data[i], h.data[h.parent(i)]) {
 		h.mu.RUnlock()
-		swap(h.mu, h.data, i, h.parent(i))
+
+		h.mu.Lock()
+		swap(h.data, i, h.parent(i))
+		h.mu.Unlock()
 
 		h.mu.RLock()
 		i = h.parent(i)
@@ -271,10 +284,8 @@ func (h *Heap[T]) parent(i int) int {
 }
 
 // swap swaps the position of elements at index i and j.
-func swap[T any](mu *sync.RWMutex, data []T, i, j int) {
-	mu.Lock()
+func swap[T any](data []T, i, j int) {
 	data[i], data[j] = data[j], data[i]
-	mu.Unlock()
 }
 
 func (h *Heap[T]) getIndex(slice []T, val T) (int, bool) {
