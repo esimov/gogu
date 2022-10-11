@@ -14,7 +14,7 @@ import (
 
 var ErrorNotFound = fmt.Errorf("BST node not found")
 
-// Item contains the node data as a key-value pair.
+// Item contains the node's data as a key-value pair data structure.
 type Item[K constraints.Ordered, V any] struct {
 	key K
 	val V
@@ -39,8 +39,8 @@ func newNode[K constraints.Ordered, V any](key K, val V) *node[K, V] {
 }
 
 // bsTree is the basic component for the BST data structure initialization.
-// It incorporates a concurrent safe mechanism using sync.Mutex to guarantee
-// the data consistency on concurrent read and write access.
+// It incorporates a thread safe mechanism using the sync.Mutex to guarantee
+// the data consistency on concurrent read and write operation.
 type bsTree[K constraints.Ordered, V any] struct {
 	mu   *sync.RWMutex
 	comp gogu.CompFn[K]
@@ -123,14 +123,14 @@ func (n *node[K, V]) upsert(b *bsTree[K, V], key K, val V) {
 }
 
 // min searches for the latest node on the left branch, but considering that BST
-// is an ordered tree structure it happens that it contains also the smallest value.
+// is an ordered tree data structure it happens that it holds also the smallest value.
 func (n *node[K, V]) min() *node[K, V] {
 	for ; n.left != nil; n = n.left {
 	}
 	return n
 }
 
-// Delete removes a node defined by the key.
+// Delete removes a node defined by its key from the tree structure.
 func (b *bsTree[K, V]) Delete(key K) error {
 	var err error
 	b.mu.RLock()
@@ -179,8 +179,7 @@ func (n *node[K, V]) delete(b *bsTree[K, V], key K) (*node[K, V], error) {
 	}
 }
 
-// Traverse iterates over the tree structure and invokes
-// the callback function provided as a parameter.
+// Traverse iterates over the tree structure and invokes the callback function provided as a parameter.
 func (b *bsTree[K, V]) Traverse(fn func(Item[K, V])) {
 	ch := make(chan Item[K, V])
 	n := b.root

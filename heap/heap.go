@@ -3,8 +3,11 @@
 // of the subtree satisfies the heap property: each node of the subtree
 // is greather or equal then the parent node in case of min heap,
 // and less or equal than the parent node in case of max heap.
-// The heap package implements each type, where
-// the conditional function of the constructor defines the heap type.
+// The heap package implements each of them, where the conditional
+// function of the constructor defines the heap type.
+
+// This package is thread-safe.
+
 package heap
 
 import (
@@ -21,8 +24,8 @@ type Heap[T comparable] struct {
 }
 
 // NewHeap creates a new heap data structure having two components:
-// a data slice holding the concrete values and a comparator function.
-// The comparison sign decides if the heap is a max heap or min heap.
+// a data slice holding the concrete values and a comparision function.
+// The comparator sign decides if the heap is a max heap or min heap.
 func NewHeap[T comparable](comp gogu.CompFn[T]) *Heap[T] {
 	return &Heap[T]{
 		mu:   new(sync.RWMutex),
@@ -39,7 +42,7 @@ func (h *Heap[T]) Size() int {
 	return len(h.data)
 }
 
-// IsEmpty returns true if the heap is empty, otherwise false.
+// IsEmpty checks if the heap is empty or not.
 func (h *Heap[T]) IsEmpty() bool {
 	h.mu.RLock()
 	defer h.mu.RUnlock()
@@ -94,7 +97,7 @@ func (h *Heap[T]) Push(val ...T) {
 }
 
 // Pop removes the first element from the heap and reorder the existing elements.
-// The removed element can be the minimum or maximum depending on the heap type.
+// The removed element is the minimum or maximum depending on the heap type.
 func (h *Heap[T]) Pop() T {
 	var val T
 	len := h.Size()
@@ -113,8 +116,8 @@ func (h *Heap[T]) Pop() T {
 	return val
 }
 
-// Delete removes an element from the heap. In case the element does not exists it returns false and an error.
-// After removal it reorders the heap following the heap specific rules.
+// Delete removes an element from the heap. It returns false in case the element does not exists.
+// After removal it reorders the heap based on the heap specific rules.
 func (h *Heap[T]) Delete(val T) (bool, error) {
 	len := h.Size()
 	if len == 0 {
@@ -175,7 +178,7 @@ func FromSlice[T comparable](mu *sync.RWMutex, data []T, comp gogu.CompFn[T]) *H
 	}
 }
 
-// Merge joins two heaps into a new one preserving the original heaps.
+// Merge joins two heaps into a new one preserving the original ones.
 func (h *Heap[T]) Merge(h2 *Heap[T]) *Heap[T] {
 	newHeap := NewHeap(h.comp)
 
@@ -191,7 +194,7 @@ func (h *Heap[T]) Merge(h2 *Heap[T]) *Heap[T] {
 }
 
 // Meld merge two heaps into a new one containing all the
-// elements of both and destroying the original heaps.
+// elements of both and destroying the original ones.
 func (h *Heap[T]) Meld(h2 *Heap[T]) *Heap[T] {
 	newHeap := NewHeap(h.comp)
 

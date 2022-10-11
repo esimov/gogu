@@ -33,12 +33,12 @@ type cache[T ~string, V any] struct {
 	done       chan struct{}
 }
 
-// Exported cache struct.
+// Cache incorporates the local scope cache struct type.
 type Cache[T ~string, V any] struct {
 	*cache[T, V]
 }
 
-// newCache has a local scope only. NewCache will be used for the cache instantiation outside of this package.
+// newCache has a local scope only. `New` will be used for the cache instantiation outside of this package.
 func newCache[T ~string, V any](expTime, cleanupInt time.Duration, item map[T]*Item[V]) *cache[T, V] {
 	c := &cache[T, V]{
 		mu:         &sync.RWMutex{},
@@ -60,8 +60,7 @@ func New[T ~string, V any](expTime, cleanupTime time.Duration) *Cache[T, V] {
 
 	if cleanupTime > 0 {
 		go c.cleanup()
-		// In case no human interaction is happening in the background, we need to make sure
-		// that the goroutine responsible for the cache purge stops after the cleanup.
+		// We need to make sure that the goroutine responsible for the cache purge stops after the cleanup.
 		// This is the reason why runtime.SetFinalizer is used.
 		// This method is invoked when the garbage collector finds an unreachable block ready to be collected.
 		runtime.SetFinalizer(c, stopCleanup[T, V])
@@ -70,7 +69,8 @@ func New[T ~string, V any](expTime, cleanupTime time.Duration) *Cache[T, V] {
 	return &Cache[T, V]{c}
 }
 
-// Set add a new item to the cache, but first verifies if an item with the same key already exists in the cache.
+// Set inserts a new item into the cache, but first verifies if an item with the same key already exists in the cache.
+// In case an item with the specified key already exists in the cache it will return an error.
 func (c *cache[T, V]) Set(key T, val V, d time.Duration) error {
 	item, err := c.Get(key)
 	if item != nil && err == nil {
@@ -86,10 +86,9 @@ func (c *cache[T, V]) SetDefault(key T, val V) error {
 	return c.Set(key, val, DefaultExpiration)
 }
 
-// add place a new item into the cache. This method is not exported.
-// It puts the item into the cache together with the expiration time.
+// add inserts a new item into the cache together with an expiration time.
 // If the duration is 0 (or DefaultExpiration) the cache default expiration time is used.
-// If the duration is < 0 (or NoExpiration), the item never expires and should be manually deleted.
+// If the duration is < 0 (or NoExpiration), the item never expires and should be removed manually.
 func (c *cache[T, V]) add(key T, val V, d time.Duration) error {
 	var exp int64
 
@@ -122,8 +121,7 @@ func (c *cache[T, V]) add(key T, val V, d time.Duration) error {
 	return nil
 }
 
-// Get returns the item from the cache identifiable by its key.
-// If an item expiration time is reached an error is returned instead of the item itself.
+// Get returns the cache item by its key. If the item is expired an error is returned.
 // Every time the item will be purged by the cleanup method at the predifined interval.
 func (c *cache[T, V]) Get(key T) (*Item[V], error) {
 	c.mu.RLock()
@@ -151,7 +149,7 @@ func (it *Item[V]) Val() V {
 	return v
 }
 
-// Update replaces an item from the cache with the new values.
+// Update replaces a cache item with the new value.
 func (c *cache[T, V]) Update(key T, val V, d time.Duration) error {
 	item, err := c.Get(key)
 	if item != nil && err != nil {
@@ -216,7 +214,7 @@ func (c *cache[T, V]) List() map[T]*Item[V] {
 	return c.items
 }
 
-// Count the number of items existing in the cache.
+// Count returns the number of items existing in the cache.
 func (c *cache[T, V]) Count() int {
 	c.mu.RLock()
 	n := len(c.items)
@@ -237,7 +235,7 @@ func (c *cache[T, V]) MapToCache(m map[T]V, d time.Duration) error {
 	return multierr.Combine(err)
 }
 
-// IsExpired checks if an item is expired or not.
+// IsExpired checks if a cache item is expired.
 func (c *cache[T, V]) IsExpired(key T) bool {
 	item, err := c.Get(key)
 	if item != nil && err != nil {

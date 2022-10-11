@@ -3,6 +3,8 @@
 // in sorted order and allowing each node to have more than two children,
 // compared to the standard BST where each node has only two leaves.
 // The implementation is an adapted version of https://algs4.cs.princeton.edu/62btree/BTree.java.
+// This package is not thread-safe and for data consistency some sort of concurrency safe
+// mechanism should be implemented on the client side.
 package btree
 
 import (
@@ -10,7 +12,7 @@ import (
 	"golang.org/x/exp/constraints"
 )
 
-// Max children per binary tree must be even or greater than 2.
+// Max children per binary tree. Must be even or greater than 2.
 const maxChildren = 4
 
 // entry is the inner component of a node, which holds the node value and a pointer to the next node.
@@ -34,7 +36,7 @@ func newNode[K constraints.Ordered, V any](m int) *node[K, V] {
 	}
 }
 
-// BTree is the main component of the B-tree which starts only with one node, which is the root.
+// BTree defines a data structure with one node, which is the root node.
 type BTree[K constraints.Ordered, V any] struct {
 	n      int // the size of the tree (the number of nodes)
 	height int // the height of the tree
@@ -92,7 +94,6 @@ func (n *node[K, V]) search(t *BTree[K, V], key K, height int) (V, bool) {
 }
 
 // Put inserts a new value into the B-tree.
-// If val is nil, this effectively deletes the value from the tree.
 func (t *BTree[K, V]) Put(key K, val V) {
 	u := t.root.insert(t, key, val, t.height, false)
 	t.n++
@@ -129,6 +130,7 @@ func (n *node[K, V]) insert(t *BTree[K, V], key K, val V, height int, isRemoved 
 			// If the value already exists in the B-tree this will be overwritten.
 			if gogu.Equal(key, n.children[j].key) {
 				n.children[j].value = val
+				// This signals that we are invoking the Put or Remove method.
 				n.children[j].isRemoved = isRemoved
 				return nil
 			} else if gogu.Less(key, n.children[j].key) {
@@ -173,7 +175,7 @@ func (t *BTree[K, V]) split(n *node[K, V]) *node[K, V] {
 	return h
 }
 
-// Remove deletes an element from the B-tree.
+// Remove deletes a node from the B-tree.
 func (t *BTree[K, V]) Remove(key K) {
 	val, ok := t.Get(key)
 	if !ok {
@@ -183,8 +185,7 @@ func (t *BTree[K, V]) Remove(key K) {
 	t.root.insert(t, key, val, t.height, true)
 }
 
-// Traverse iterates over the values of the tree and invokes
-// the callback function provided as argument over the node elements.
+// Traverse iterates over the tree nodes and invokes the callback function.
 func (t *BTree[K, V]) Traverse(fn func(key K, val V)) {
 	t.traverse(t.root, t.height, fn)
 }
