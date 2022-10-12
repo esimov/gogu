@@ -1,4 +1,4 @@
-// Linked-list implementation of the stack (LIFO) data structure.
+// Linked-list implementation of the LIFO stack.
 package stack
 
 import (

@@ -1,4 +1,4 @@
-// Package queue implements a basic FIFO (First-In-First-Out)
+// Package queue implements a concurrent safe FIFO (First-In-First-Out)
 // data structure using as storage a resizing array,
 // where the first element added to the queue is processed first.
 package queue

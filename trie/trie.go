@@ -1,4 +1,4 @@
-// Package trie provides an implementation of the ternary search tree data structure.
+// Package trie provides a concurrent safe implementation of the ternary search tree data structure.
 // Trie is similar to binary search tree, but it has up to three children rather than two as of BST.
 // Tries are used for locating specific keys from within a set or
 // for quick lookup searches within a text like auto completion or spell checking.

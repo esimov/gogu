@@ -1,4 +1,4 @@
-// Package stack implements a basic LIFO (Last-In-First-Out)
+// Package stack implements a concurrent safe LIFO (Last-In-First-Out)
 // data structure using as storage a resizing array,
 // where the last element added to the stack is processed first.
 package stack
