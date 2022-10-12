@@ -4,21 +4,21 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/esimov/gogu"
-	"github.com/esimov/gogu/cache"
+	"github.com/esimov/torx"
+	"github.com/esimov/torx/cache"
 	"golang.org/x/exp/constraints"
 )
 
 func main() {
 	fmt.Println("==================Flip")
-	flipped := gogu.Flip[int](func(args ...int) []int {
-		return gogu.ToSlice[int](args...)
+	flipped := torx.Flip[int](func(args ...int) []int {
+		return torx.ToSlice[int](args...)
 	})
 	fmt.Println(flipped(1, 2, 3))
 
 	fmt.Println("==================Delay")
 	ch := make(chan struct{})
-	t := gogu.Delay(time.Millisecond*500, func() {
+	t := torx.Delay(time.Millisecond*500, func() {
 		fmt.Println("Function executed after 0.5 second.")
 		ch <- struct{}{}
 	})
@@ -28,9 +28,9 @@ func main() {
 	fmt.Println("==================After")
 	sample := []int{1, 2, 3, 4, 5, 6}
 	length := len(sample) - 1
-	gogu.ForEach[int](sample, func(val int) {
+	torx.ForEach[int](sample, func(val int) {
 		fmt.Printf("Printing value... %d\n", val)
-		gogu.After(&length, func() {
+		torx.After(&length, func() {
 			time.Sleep(time.Millisecond * 100)
 			fmt.Println("save after")
 		})
@@ -39,30 +39,30 @@ func main() {
 	fmt.Println("==================Before")
 	var n int = 3
 	c1 := cache.New[string, int](cache.DefaultExpiration, cache.NoExpiration)
-	gogu.ForEach[int](sample, func(val int) {
+	torx.ForEach[int](sample, func(val int) {
 		fn := func() int {
 			<-time.After(10 * time.Millisecond)
 			return n
 		}
-		res := gogu.Before[string, int](&n, c1, fn)
+		res := torx.Before[string, int](&n, c1, fn)
 		fmt.Printf("Printing value... %d %v\n", val, res)
 	})
 
 	fmt.Println("==================Once")
 	c2 := cache.New[string, string](cache.DefaultExpiration, cache.NoExpiration)
-	gogu.ForEach[int](sample, func(val int) {
+	torx.ForEach[int](sample, func(val int) {
 		fn := func() string {
 			<-time.After(10 * time.Millisecond)
 			return "memoized"
 		}
-		res := gogu.Once(c2, fn)
+		res := torx.Once(c2, fn)
 		fmt.Printf("Printing value... %d %v\n", val, res)
 	})
 
 	fmt.Println("==================Retry")
 	n = 4
-	gogu.ForEach[string]([]string{"one", "two", "three"}, func(val string) {
-		rt := gogu.RType[string]{Input: val}
+	torx.ForEach[string]([]string{"one", "two", "three"}, func(val string) {
+		rt := torx.RType[string]{Input: val}
 		r, e := rt.Retry(n, func(elem string) (err error) {
 			if len(elem)%3 != 0 {
 				err = fmt.Errorf("retry failed: number of %d attempts exceeded", n)
@@ -73,8 +73,8 @@ func main() {
 	})
 
 	fmt.Println("==================RetryWithDelay")
-	gogu.ForEach[string]([]string{"one", "two", "three"}, func(val string) {
-		rt := gogu.RType[string]{Input: val}
+	torx.ForEach[string]([]string{"one", "two", "three"}, func(val string) {
+		rt := torx.RType[string]{Input: val}
 		duration, r, e := rt.RetryWithDelay(n, time.Second, func(d time.Duration, elem string) (err error) {
 			if len(elem)%3 != 0 {
 				err = fmt.Errorf("retry failed: number of %d attempts exceeded", n)
@@ -108,7 +108,7 @@ func main() {
 			Service: srv.service,
 			Time:    srv.time,
 		}
-		rtyp := gogu.RType[Service[string, int]]{
+		rtyp := torx.RType[Service[string, int]]{
 			Input: service,
 		}
 
@@ -126,7 +126,7 @@ func main() {
 		fmt.Println("DEBOUNCING - might be doing a time consuming operation...")
 	}
 
-	debounce, cancel := gogu.NewDebounce(500 * time.Millisecond)
+	debounce, cancel := torx.NewDebounce(500 * time.Millisecond)
 	for i := 0; i < 2; i++ {
 		debounce(f)
 		time.Sleep(time.Second)

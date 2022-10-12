@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/esimov/gogu"
+	"github.com/esimov/torx"
 	"golang.org/x/exp/constraints"
 )
 
@@ -43,14 +43,14 @@ func newNode[K constraints.Ordered, V any](key K, val V) *node[K, V] {
 // the data consistency on concurrent read and write operation.
 type bsTree[K constraints.Ordered, V any] struct {
 	mu   *sync.RWMutex
-	comp gogu.CompFn[K]
+	comp torx.CompFn[K]
 	root *node[K, V]
 	size int
 }
 
 // New initializes a new BST data structure together with a comparison operator.
 // Depending on the comparator it sorts the tree in ascending or descending order.
-func New[K constraints.Ordered, V any](comp gogu.CompFn[K]) *bsTree[K, V] {
+func New[K constraints.Ordered, V any](comp torx.CompFn[K]) *bsTree[K, V] {
 	return &bsTree[K, V]{
 		mu:   &sync.RWMutex{},
 		comp: comp,
@@ -79,9 +79,9 @@ func (n *node[K, V]) get(b *bsTree[K, V], key K) (Item[K, V], error) {
 		return it, ErrorNotFound
 	}
 
-	if gogu.Compare(key, n.key, b.comp) == 1 {
+	if torx.Compare(key, n.key, b.comp) == 1 {
 		return n.left.get(b, key)
-	} else if gogu.Compare(key, n.key, b.comp) == -1 {
+	} else if torx.Compare(key, n.key, b.comp) == -1 {
 		return n.right.get(b, key)
 	}
 
@@ -103,14 +103,14 @@ func (b *bsTree[K, V]) Upsert(key K, val V) {
 }
 
 func (n *node[K, V]) upsert(b *bsTree[K, V], key K, val V) {
-	if gogu.Compare(key, n.key, b.comp) == 1 {
+	if torx.Compare(key, n.key, b.comp) == 1 {
 		if n.left == nil {
 			n.left = newNode(key, val)
 			b.size++
 		} else {
 			n.left.upsert(b, key, val)
 		}
-	} else if gogu.Compare(key, n.key, b.comp) == -1 {
+	} else if torx.Compare(key, n.key, b.comp) == -1 {
 		if n.right == nil {
 			n.right = newNode(key, val)
 			b.size++
@@ -147,10 +147,10 @@ func (n *node[K, V]) delete(b *bsTree[K, V], key K) (*node[K, V], error) {
 		return nil, ErrorNotFound
 	}
 
-	if gogu.Compare(key, n.key, b.comp) == 1 {
+	if torx.Compare(key, n.key, b.comp) == 1 {
 		n.left, err = n.left.delete(b, key)
 		return n, err
-	} else if gogu.Compare(key, n.key, b.comp) == -1 {
+	} else if torx.Compare(key, n.key, b.comp) == -1 {
 		n.right, err = n.right.delete(b, key)
 		return n, err
 	} else {

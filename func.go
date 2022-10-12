@@ -1,11 +1,11 @@
-package gogu
+package torx
 
 import (
 	"fmt"
 	"sync"
 	"time"
 
-	"github.com/esimov/gogu/cache"
+	"github.com/esimov/torx/cache"
 	"golang.org/x/exp/constraints"
 )
 

@@ -1,4 +1,4 @@
-package gogu
+package torx
 
 // Filter returns all the elements from the collection which satisfies the conditional logic of the callback function.
 func Filter[T any](slice []T, fn func(T) bool) []T {

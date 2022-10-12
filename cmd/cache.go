@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/esimov/gogu/cache"
+	"github.com/esimov/torx/cache"
 )
 
 func main() {

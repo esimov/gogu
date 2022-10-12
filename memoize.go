@@ -1,9 +1,9 @@
-package gogu
+package torx
 
 import (
 	"time"
 
-	"github.com/esimov/gogu/cache"
+	"github.com/esimov/torx/cache"
 	"golang.org/x/sync/singleflight"
 )
 

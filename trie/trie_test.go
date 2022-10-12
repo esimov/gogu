@@ -6,7 +6,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/esimov/gogu/queue"
+	"github.com/esimov/torx/queue"
 	"github.com/stretchr/testify/assert"
 )
 

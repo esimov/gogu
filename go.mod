@@ -1,4 +1,4 @@
-module github.com/esimov/gogu
+module github.com/esimov/torx
 
 go 1.18
 

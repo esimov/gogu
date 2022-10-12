@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/esimov/gogu"
-	"github.com/esimov/gogu/cache"
+	"github.com/esimov/torx"
+	"github.com/esimov/torx/cache"
 )
 
 func main() {
@@ -15,13 +15,13 @@ func main() {
 		"baz": "three",
 	}
 
-	m := gogu.NewMemoizer[string, any](time.Second, time.Minute)
+	m := torx.NewMemoizer[string, any](time.Second, time.Minute)
 
 	expensiveOp := func() (*cache.Item[any], error) {
 		// Here we are simulating an expensive operation.
 		time.Sleep(500 * time.Millisecond)
 
-		foo := gogu.FindByKey(sampleMap, func(key string) bool {
+		foo := torx.FindByKey(sampleMap, func(key string) bool {
 			return key == "foo"
 		})
 		m.Cache.MapToCache(foo, cache.DefaultExpiration)

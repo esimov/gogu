@@ -14,19 +14,19 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/esimov/gogu"
+	"github.com/esimov/torx"
 )
 
 type Heap[T comparable] struct {
 	mu   *sync.RWMutex
 	data []T
-	comp gogu.CompFn[T]
+	comp torx.CompFn[T]
 }
 
 // NewHeap creates a new heap data structure having two components:
 // a data slice holding the concrete values and a comparision function.
 // The comparator sign decides if the heap is a max heap or min heap.
-func NewHeap[T comparable](comp gogu.CompFn[T]) *Heap[T] {
+func NewHeap[T comparable](comp torx.CompFn[T]) *Heap[T] {
 	return &Heap[T]{
 		mu:   new(sync.RWMutex),
 		data: make([]T, 0),
@@ -140,7 +140,7 @@ func (h *Heap[T]) Delete(val T) (bool, error) {
 }
 
 // Convert a min heap to max heap and vice versa.
-func (h *Heap[T]) Convert(comp gogu.CompFn[T]) {
+func (h *Heap[T]) Convert(comp torx.CompFn[T]) {
 	h.mu.Lock()
 	h.comp = comp
 	h.mu.Unlock()
@@ -152,7 +152,7 @@ func (h *Heap[T]) Convert(comp gogu.CompFn[T]) {
 }
 
 // FromSlice imports the slice elements into a new heap using the comparator function.
-func FromSlice[T comparable](data []T, comp gogu.CompFn[T]) *Heap[T] {
+func FromSlice[T comparable](data []T, comp torx.CompFn[T]) *Heap[T] {
 	mu := &sync.RWMutex{}
 	for i := len(data)/2 - 1; i >= 0; i-- {
 		for {

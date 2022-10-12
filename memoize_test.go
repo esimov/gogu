@@ -1,10 +1,10 @@
-package gogu
+package torx
 
 import (
 	"testing"
 	"time"
 
-	"github.com/esimov/gogu/cache"
+	"github.com/esimov/torx/cache"
 	"github.com/stretchr/testify/assert"
 )
 
