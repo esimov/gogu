@@ -68,7 +68,7 @@ func (h *Heap[T]) Peek() T {
 	defer h.mu.RUnlock()
 
 	if h.Size() == 0 {
-		defer h.mu.RLock()
+		h.mu.RUnlock()
 		var t T
 		return t
 	}
@@ -131,9 +131,9 @@ func (h *Heap[T]) Delete(val T) (bool, error) {
 
 	h.mu.Lock()
 	swap(h.data, idx, len-1)
+	h.data = h.data[:len-1]
 	h.mu.Unlock()
 
-	h.data = h.data[:len-1]
 	h.moveDown(len, 0)
 
 	return true, nil
@@ -221,10 +221,10 @@ func (h *Heap[T]) Meld(h2 *Heap[T]) *Heap[T] {
 // moveDown moves the element at the position i down to its
 // correct position in the heap following the heap rules.
 func (h *Heap[T]) moveDown(n, i int) {
-	h.mu.RLock()
-
 	left := h.leftChild(i)
 	right := h.rightChild(i)
+
+	h.mu.Lock()
 	current := i
 
 	if left < n && h.comp(h.data[left], h.data[current]) {
@@ -236,50 +236,52 @@ func (h *Heap[T]) moveDown(n, i int) {
 	}
 
 	if current != i {
-		h.mu.RUnlock()
-		h.mu.Lock()
 		swap(h.data, i, current)
 		h.mu.Unlock()
 
 		h.moveDown(n, current)
 		return
 	}
-	h.mu.RUnlock()
+	h.mu.Unlock()
 }
 
 // moveUp moves the element from index i up to its
 // correct position in the heap following the heap rules.
 func (h *Heap[T]) moveUp(i int) {
-	h.mu.RLock()
-	if h.comp(h.data[i], h.data[h.parent(i)]) {
-		h.mu.RUnlock()
-
-		h.mu.Lock()
-		swap(h.data, i, h.parent(i))
-		h.mu.Unlock()
-
+	for {
 		h.mu.RLock()
-		i = h.parent(i)
+		if !h.comp(h.data[i], h.data[h.parent(i)]) {
+			h.mu.RUnlock()
+			break
+		}
 		h.mu.RUnlock()
 
-		h.moveUp(i)
-		return
+		swap(h.data, i, h.parent(i))
+		i = h.parent(i)
 	}
-	h.mu.RUnlock()
 }
 
 // leftChild returns the index of the left child of node at index i.
 func (h *Heap[T]) leftChild(i int) int {
+	h.mu.RLock()
+	defer h.mu.RUnlock()
+
 	return 2*i + 1
 }
 
 // rightChild returns the index of the right child of node at index i.
 func (h *Heap[T]) rightChild(i int) int {
+	h.mu.RLock()
+	defer h.mu.RUnlock()
+
 	return 2*i + 2
 }
 
 // parent returns the index of the child node parent at index i.
 func (h *Heap[T]) parent(i int) int {
+	h.mu.RLock()
+	defer h.mu.RUnlock()
+
 	return (i - 1) / 2
 }
 

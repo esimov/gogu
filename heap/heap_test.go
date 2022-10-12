@@ -49,8 +49,7 @@ func TestHeap_MaxHeap(t *testing.T) {
 	assert := assert.New(t)
 
 	values := []int{9, 3, 20, 8, 6, 5, 12, 10, 9, 18}
-	mu := &sync.RWMutex{}
-	heap := FromSlice(mu, values, func(a, b int) bool { return a > b })
+	heap := FromSlice(values, func(a, b int) bool { return a > b })
 
 	assert.Equal([]int{20, 18, 12, 10, 6, 5, 9, 8, 9, 3}, heap.GetValues())
 
@@ -162,14 +161,13 @@ func TestHeap_Convert(t *testing.T) {
 
 func TestHeap_Merge(t *testing.T) {
 	assert := assert.New(t)
-	mu := &sync.RWMutex{}
 
 	slice1 := []int{1, 4, 2, 3, 5}
 	slice2 := []int{8, 6, 9, 10, 7}
 
-	heap1 := FromSlice(mu, slice1, func(a, b int) bool { return a < b })
+	heap1 := FromSlice(slice1, func(a, b int) bool { return a < b })
 	assert.Len(heap1.GetValues(), 5)
-	heap2 := FromSlice(mu, slice2, func(a, b int) bool { return a < b })
+	heap2 := FromSlice(slice2, func(a, b int) bool { return a < b })
 	assert.Len(heap2.GetValues(), 5)
 
 	mergedHeap := heap1.Merge(heap2)
@@ -180,18 +178,48 @@ func TestHeap_Merge(t *testing.T) {
 
 func TestHeap_Meld(t *testing.T) {
 	assert := assert.New(t)
-	mu := &sync.RWMutex{}
 
 	slice1 := []int{1, 4, 2, 3, 5}
 	slice2 := []int{8, 6, 9, 10, 7}
 
-	heap1 := FromSlice(mu, slice1, func(a, b int) bool { return a < b })
+	heap1 := FromSlice(slice1, func(a, b int) bool { return a < b })
 	assert.Len(heap1.GetValues(), 5)
-	heap2 := FromSlice(mu, slice2, func(a, b int) bool { return a < b })
+	heap2 := FromSlice(slice2, func(a, b int) bool { return a < b })
 	assert.Len(heap2.GetValues(), 5)
 
 	mergedHeap := heap1.Meld(heap2)
 	assert.Len(mergedHeap.GetValues(), 10)
 	assert.Len(heap1.GetValues(), 0)
 	assert.Len(heap2.GetValues(), 0)
+}
+
+func TestHeap_Concurrency(t *testing.T) {
+	assert := assert.New(t)
+	wg := &sync.WaitGroup{}
+	mu := &sync.Mutex{}
+
+	heap := NewHeap(func(a, b int) bool { return a < b })
+
+	slice := []int{1, 4, 2, 3, 5}
+	for i := 0; i < len(slice); i++ {
+		wg.Add(1)
+		go func(i int) {
+			mu.Lock()
+			heap.Push(slice[i])
+			mu.Unlock()
+
+			wg.Done()
+		}(i)
+	}
+	wg.Wait()
+
+	assert.Equal(1, heap.Peek())
+	assert.Equal(5, heap.Size())
+
+	heap.Pop()
+	assert.Equal(2, heap.Peek())
+	assert.Equal(4, heap.Size())
+
+	heap.Clear()
+	assert.Empty(heap.Size())
 }
