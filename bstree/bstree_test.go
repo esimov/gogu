@@ -29,11 +29,11 @@ func TestBSTree(t *testing.T) {
 	for key, val := range tmp {
 		node, err := bst.Get(key)
 		assert.NoError(err)
-		assert.Equal(node.val, val)
+		assert.Equal(node.Val, val)
 	}
 
 	bst.Traverse(func(item Item[int, int]) {
-		assert.Equal(item.val, tmp[item.key])
+		assert.Equal(item.Val, tmp[item.Key])
 	})
 
 	for key := range tmp {
@@ -76,7 +76,7 @@ func TestBSTree_Concurrency(t *testing.T) {
 		go func(key, val int) {
 			node, err := bst.Get(key)
 			assert.NoError(err)
-			assert.Equal(node.val, val)
+			assert.Equal(node.Val, val)
 
 			wg.Done()
 		}(key, val)
@@ -84,7 +84,7 @@ func TestBSTree_Concurrency(t *testing.T) {
 	wg.Wait()
 
 	bst.Traverse(func(item Item[int, int]) {
-		assert.Equal(item.val, tmp[item.key])
+		assert.Equal(item.Val, tmp[item.Key])
 	})
 
 	for key := range tmp {
