@@ -8,6 +8,47 @@ import "github.com/esimov/torx/trie"
 
 Package trie provides a concurrent safe implementation of the ternary search tree data structure. Trie is similar to binary search tree, but it has up to three children rather than two as of BST. Tries are used for locating specific keys from within a set or for quick lookup searches within a text like auto completion or spell checking.
 
+<details><summary>Example</summary>
+<p>
+
+```go
+{
+	q := queue.New[string]()
+	trie := New[string, int](q)
+	input := []string{"cats", "cape", "captain", "foes",
+		"apple", "she", "root", "shells", "the", "thermos", "foo"}
+
+	for idx, v := range input {
+		trie.Put(v, idx)
+	}
+
+	longestPref, _ := trie.LongestPrefix("capetown")
+	q1, _ := trie.StartsWith("ca")
+
+	result := []string{}
+	for q1.Size() > 0 {
+		val, _ := q1.Dequeue()
+		result = append(result, val)
+	}
+
+	fmt.Println(trie.Size())
+	fmt.Println(longestPref)
+	fmt.Println(result)
+
+}
+```
+
+#### Output
+
+```
+11
+cape
+[cape captain cats]
+```
+
+</p>
+</details>
+
 ## Index
 
 - [Variables](<#variables>)

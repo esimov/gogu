@@ -10,6 +10,71 @@ Linked\-list implementation of the LIFO stack.
 
 Package stack implements a concurrent safe LIFO \(Last\-In\-First\-Out\) data structure using as storage a resizing array, where the last element added to the stack is processed first.
 
+<details><summary>Example</summary>
+<p>
+
+```go
+{
+	l := New[string]()
+
+	l.Push("foo")
+	fmt.Println(l.Size())
+	fmt.Println(l.Peek())
+	l.Push("bar")
+
+	fmt.Println(l.Pop())
+	fmt.Println(l.Search("foo"))
+	fmt.Println(l.Peek())
+
+}
+```
+
+#### Output
+
+```
+1
+foo
+bar
+true
+foo
+```
+
+</p>
+</details>
+
+<details><summary>Example (,inked List)</summary>
+<p>
+
+```go
+{
+	l := NewLinked("foo")
+	fmt.Println(l.Size())
+	fmt.Println(l.Peek())
+
+	l.Push("bar")
+	fmt.Println(l.Peek())
+
+	fmt.Println(l.Pop())
+	fmt.Println(l.Peek())
+	fmt.Println(l.Search("foo"))
+
+}
+```
+
+#### Output
+
+```
+1
+foo
+bar
+foo
+foo
+true
+```
+
+</p>
+</details>
+
 ## Index
 
 - [type LStack](<#type-lstack>)

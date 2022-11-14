@@ -106,7 +106,7 @@ func TestTrie_Concurrency(t *testing.T) {
 	assert.Equal(11, qs2.Size())
 }
 
-func ExampleTestTrie() {
+func Example() {
 	q := queue.New[string]()
 	trie := New[string, int](q)
 	input := []string{"cats", "cape", "captain", "foes",

@@ -67,7 +67,7 @@ func TestLinkedStack_Concurrency(t *testing.T) {
 	}
 }
 
-func ExampleTestLinkedStack() {
+func Example_LinkedList() {
 	l := NewLinked("foo")
 	fmt.Println(l.Size())
 	fmt.Println(l.Peek())
