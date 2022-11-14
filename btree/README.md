@@ -10,6 +10,7 @@ This package is NOT thread\-safe. For data consistency some sort of concurrency 
 
 ## Index
 
+- [Constants](<#constants>)
 - [type BTree](<#type-btree>)
   - [func New[K constraints.Ordered, V any]() *BTree[K, V]](<#func-new>)
   - [func (t *BTree[K, V]) Get(key K) (V, bool)](<#func-btreek-v-get>)
@@ -19,7 +20,22 @@ This package is NOT thread\-safe. For data consistency some sort of concurrency 
   - [func (t *BTree[K, V]) Remove(key K)](<#func-btreek-v-remove>)
   - [func (t *BTree[K, V]) Size() int](<#func-btreek-v-size>)
   - [func (t *BTree[K, V]) Traverse(fn func(key K, val V))](<#func-btreek-v-traverse>)
+  - [func (t *BTree[K, V]) split(n *node[K, V]) *node[K, V]](<#func-btreek-v-split>)
+  - [func (t *BTree[K, V]) traverse(n *node[K, V], depth int, fn func(K, V))](<#func-btreek-v-traverse>)
+- [type entry](<#type-entry>)
+- [type node](<#type-node>)
+  - [func newNode[K constraints.Ordered, V any](m int) *node[K, V]](<#func-newnode>)
+  - [func (n *node[K, V]) insert(t *BTree[K, V], key K, val V, height int, isRemoved bool) *node[K, V]](<#func-nodek-v-insert>)
+  - [func (n *node[K, V]) search(t *BTree[K, V], key K, height int) (V, bool)](<#func-nodek-v-search>)
 
+
+## Constants
+
+Max children per binary tree. Must be even or greater than 2.
+
+```go
+const maxChildren = 4
+```
 
 ## type BTree
 
@@ -27,7 +43,9 @@ BTree defines a data structure with one node, which is the root node.
 
 ```go
 type BTree[K constraints.Ordered, V any] struct {
-    // contains filtered or unexported fields
+    n      int // the size of the tree (the number of nodes)
+    height int // the height of the tree
+    root   *node[K, V]
 }
 ```
 
@@ -94,6 +112,66 @@ func (t *BTree[K, V]) Traverse(fn func(key K, val V))
 ```
 
 Traverse iterates over the tree nodes and invokes the callback function.
+
+### func \(\*BTree\[K, V\]\) split
+
+```go
+func (t *BTree[K, V]) split(n *node[K, V]) *node[K, V]
+```
+
+### func \(\*BTree\[K, V\]\) traverse
+
+```go
+func (t *BTree[K, V]) traverse(n *node[K, V], depth int, fn func(K, V))
+```
+
+## type entry
+
+entry is the inner component of a node, which holds the node value and a pointer to the next node.
+
+```go
+type entry[K constraints.Ordered, V any] struct {
+    key       K
+    value     V
+    isRemoved bool
+    next      *node[K, V]
+}
+```
+
+## type node
+
+node is a data structure which defines how many children \(leaves\) each node has.
+
+```go
+type node[K constraints.Ordered, V any] struct {
+    m        int // number of children
+    children [maxChildren]entry[K, V]
+}
+```
+
+### func newNode
+
+```go
+func newNode[K constraints.Ordered, V any](m int) *node[K, V]
+```
+
+newNode instantiates a new node with no leaves.
+
+### func \(\*node\[K, V\]\) insert
+
+```go
+func (n *node[K, V]) insert(t *BTree[K, V], key K, val V, height int, isRemoved bool) *node[K, V]
+```
+
+insert is a private method which is invoked by the Put method.
+
+### func \(\*node\[K, V\]\) search
+
+```go
+func (n *node[K, V]) search(t *BTree[K, V], key K, height int) (V, bool)
+```
+
+search is a private method which is invoked by the Get method.
 
 
 

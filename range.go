@@ -13,7 +13,6 @@ import (
 // [start=0]: The start of the range. If ommited it defaults to 0.
 // [step=1]: The value to increment or decrement by.
 // end: The end of the range.
-
 // In case you'd like negative values, use a negative step.
 func Range[T Number](args ...T) ([]T, error) {
 	var result []T

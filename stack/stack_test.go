@@ -1,6 +1,7 @@
 package stack
 
 import (
+	"fmt"
 	"sync"
 	"testing"
 
@@ -48,4 +49,24 @@ func TestStack_Concurrency(t *testing.T) {
 		item := s.Pop()
 		assert.Equal(i, item)
 	}
+}
+
+func ExampleTestStack() {
+	l := New[string]()
+
+	l.Push("foo")
+	fmt.Println(l.Size())
+	fmt.Println(l.Peek())
+	l.Push("bar")
+
+	fmt.Println(l.Pop())
+	fmt.Println(l.Search("foo"))
+	fmt.Println(l.Peek())
+
+	// Output:
+	// 1
+	// foo
+	// bar
+	// true
+	// foo
 }

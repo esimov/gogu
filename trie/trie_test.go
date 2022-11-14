@@ -1,6 +1,7 @@
 package trie
 
 import (
+	"fmt"
 	"sort"
 	"strconv"
 	"sync"
@@ -103,4 +104,33 @@ func TestTrie_Concurrency(t *testing.T) {
 	qs2, err := trie.StartsWith("2")
 	assert.NoError(err)
 	assert.Equal(11, qs2.Size())
+}
+
+func ExampleTestTrie() {
+	q := queue.New[string]()
+	trie := New[string, int](q)
+	input := []string{"cats", "cape", "captain", "foes",
+		"apple", "she", "root", "shells", "the", "thermos", "foo"}
+
+	for idx, v := range input {
+		trie.Put(v, idx)
+	}
+
+	longestPref, _ := trie.LongestPrefix("capetown")
+	q1, _ := trie.StartsWith("ca")
+
+	result := []string{}
+	for q1.Size() > 0 {
+		val, _ := q1.Dequeue()
+		result = append(result, val)
+	}
+
+	fmt.Println(trie.Size())
+	fmt.Println(longestPref)
+	fmt.Println(result)
+
+	// Output:
+	// 11
+	// cape
+	// [cape captain cats]
 }

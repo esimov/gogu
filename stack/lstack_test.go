@@ -1,6 +1,7 @@
 package stack
 
 import (
+	"fmt"
 	"sync"
 	"testing"
 
@@ -64,4 +65,25 @@ func TestLinkedStack_Concurrency(t *testing.T) {
 		item := l.Pop()
 		assert.Equal(tmp[item], item)
 	}
+}
+
+func ExampleTestLinkedStack() {
+	l := NewLinked("foo")
+	fmt.Println(l.Size())
+	fmt.Println(l.Peek())
+
+	l.Push("bar")
+	fmt.Println(l.Peek())
+
+	fmt.Println(l.Pop())
+	fmt.Println(l.Peek())
+	fmt.Println(l.Search("foo"))
+
+	// Output:
+	// 1
+	// foo
+	// bar
+	// foo
+	// foo
+	// true
 }

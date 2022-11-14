@@ -39,6 +39,10 @@ Package list provides an implementation of the linked list data structure. This 
   - [func (l *SList[T]) Replace(oldVal, newVal T) (*singleNode[T], error)](<#func-slistt-replace>)
   - [func (l *SList[T]) Shift() *singleNode[T]](<#func-slistt-shift>)
   - [func (l *SList[T]) Unshift(data T)](<#func-slistt-unshift>)
+- [type doubleNode](<#type-doublenode>)
+  - [func newDNode[T comparable](data T) *doubleNode[T]](<#func-newdnode>)
+- [type singleNode](<#type-singlenode>)
+  - [func newNode[T comparable](data T) *singleNode[T]](<#func-newnode>)
 
 
 ## type DList
@@ -47,7 +51,7 @@ DList contains the node elements of the doubly linked list.
 
 ```go
 type DList[T comparable] struct {
-    // contains filtered or unexported fields
+    doubleNode[T]
 }
 ```
 
@@ -177,7 +181,7 @@ SList contains the individual nodes of the list.
 
 ```go
 type SList[T comparable] struct {
-    // contains filtered or unexported fields
+    singleNode[T]
 }
 ```
 
@@ -260,6 +264,45 @@ func (l *SList[T]) Unshift(data T)
 ```
 
 Unshift inserts a new node at the beginning of the list.
+
+## type doubleNode
+
+doubleNode holds an additional prev pointer to the node before.
+
+```go
+type doubleNode[T comparable] struct {
+    data T
+    next *doubleNode[T]
+    prev *doubleNode[T]
+}
+```
+
+### func newDNode
+
+```go
+func newDNode[T comparable](data T) *doubleNode[T]
+```
+
+newDNode creates a new doubly linked list node element.
+
+## type singleNode
+
+singleNode has two components: the data and a pointer to the next node of the list.
+
+```go
+type singleNode[T comparable] struct {
+    data T
+    next *singleNode[T]
+}
+```
+
+### func newNode
+
+```go
+func newNode[T comparable](data T) *singleNode[T]
+```
+
+newNode creates a new node. It holds a pointer to the next node \(which is nil on initialization\) and the node data.
 
 
 

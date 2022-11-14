@@ -8,7 +8,14 @@ import "github.com/esimov/torx/cmd"
 
 ## Index
 
+- [func main()](<#func-main>)
 
+
+## func main
+
+```go
+func main()
+```
 
 
 

@@ -8,6 +8,7 @@ import "github.com/esimov/torx"
 
 ## Index
 
+- [Variables](<#variables>)
 - [func Abs[T Number](x T) T](<#func-abs>)
 - [func After[V constraints.Signed](n *V, fn func())](<#func-after>)
 - [func Before[S ~string, T any, V constraints.Signed](n *V, c *cache.Cache[S, T], fn func() T) T](<#func-before>)
@@ -112,6 +113,10 @@ import "github.com/esimov/torx"
 - [func Wrap[T ~string](str T, token string) T](<#func-wrap>)
 - [func WrapAllRune[T ~string](str T, token string) T](<#func-wrapallrune>)
 - [func Zip[T any](slices ...[]T) [][]T](<#func-zip>)
+- [func baseFlatten[T any](acc []T, slice any) ([]T, error)](<#func-baseflatten>)
+- [func mapByIndex[T1 comparable, T2 any](origSlice []T2, mapSlice []T1) map[T1][]T2](<#func-mapbyindex>)
+- [func splitStringWithDelimiter[T ~string](str T, delimiter string) T](<#func-splitstringwithdelimiter>)
+- [func swap[T any](a, b *T)](<#func-swap>)
 - [type Bound](<#type-bound>)
   - [func (b Bound[T]) Enclose(nth T) bool](<#func-boundt-enclose>)
 - [type CompFn](<#type-compfn>)
@@ -122,7 +127,21 @@ import "github.com/esimov/torx"
 - [type RType](<#type-rtype>)
   - [func (v RType[T]) Retry(n int, fn func(T) error) (int, error)](<#func-rtypet-retry>)
   - [func (v RType[T]) RetryWithDelay(n int, delay time.Duration, fn func(time.Duration, T) error) (time.Duration, int, error)](<#func-rtypet-retrywithdelay>)
+- [type debouncer](<#type-debouncer>)
+  - [func (d *debouncer) add(f func())](<#func-debouncer-add>)
+  - [func (d *debouncer) cancel()](<#func-debouncer-cancel>)
+- [type throttler](<#type-throttler>)
+  - [func NewThrottle(wait time.Duration, trailing bool) *throttler](<#func-newthrottle>)
+  - [func (t *throttler) Call()](<#func-throttler-call>)
+  - [func (t *throttler) Cancel()](<#func-throttler-cancel>)
+  - [func (t *throttler) Next() bool](<#func-throttler-next>)
 
+
+## Variables
+
+```go
+var n = 2
+```
 
 ## func Abs
 
@@ -586,7 +605,7 @@ MapValues creates a new map with the same number of elements as the original one
 func Max[T constraints.Ordered](values ...T) T
 ```
 
-Max returns the biggest value of the provided parameters.
+Max returns the biggest value from the provided parameters.
 
 ## func Mean
 
@@ -610,7 +629,7 @@ Merge merges the first slice with the other slices defined as variadic parameter
 func Min[T constraints.Ordered](values ...T) T
 ```
 
-Min returns the slowest value of the provided parameters.
+Min returns the lowest value from the provided parameters.
 
 ## func N
 
@@ -746,7 +765,7 @@ Pluck extracts all the values of a map by the key definition.
 func Range[T Number](args ...T) ([]T, error)
 ```
 
-In case you'd like negative values, use a negative step.
+Range creates a slice of numbers \(integers\) progressing from start up to, but not including end. This method can accept 1, 2 or 3 arguments. Depending on the number of provided parameters, \`start\`, \`step\` and \`end\` has the following meaning: \[start=0\]: The start of the range. If ommited it defaults to 0. \[step=1\]: The value to increment or decrement by. end: The end of the range. In case you'd like negative values, use a negative step.
 
 ## func RangeRight
 
@@ -954,6 +973,36 @@ func Zip[T any](slices ...[]T) [][]T
 
 Zip iteratively merges together the values of the slice parameters with the values at the corresponding position.
 
+## func baseFlatten
+
+```go
+func baseFlatten[T any](acc []T, slice any) ([]T, error)
+```
+
+## func mapByIndex
+
+```go
+func mapByIndex[T1 comparable, T2 any](origSlice []T2, mapSlice []T1) map[T1][]T2
+```
+
+MapByIndex
+
+## func splitStringWithDelimiter
+
+```go
+func splitStringWithDelimiter[T ~string](str T, delimiter string) T
+```
+
+splitStringWithDelimiter splits a string to lower case with the provided delimiter.
+
+## func swap
+
+```go
+func swap[T any](a, b *T)
+```
+
+swap the two items.
+
 ## type Bound
 
 ```go
@@ -985,7 +1034,7 @@ Memoizer is a two component struct type used to memoize the results of a functio
 ```go
 type Memoizer[T ~string, V any] struct {
     Cache *cache.Cache[T, V]
-    // contains filtered or unexported fields
+    group *singleflight.Group
 }
 ```
 
@@ -1011,7 +1060,7 @@ Number is a custom type set of constraints extending the Float and Integer type 
 
 ```go
 type Number interface {
-    // contains filtered or unexported methods
+    constraints.Float | constraints.Integer
 }
 ```
 
@@ -1040,6 +1089,81 @@ func (v RType[T]) RetryWithDelay(n int, delay time.Duration, fn func(time.Durati
 ```
 
 RetryWithDelay tries to invoke the callback function n times, but with a delay between each calls. It runs until the number of attempts is reached or the error return value of the callback function is nil.
+
+## type debouncer
+
+```go
+type debouncer struct {
+    duration time.Duration
+    timer    *time.Timer
+    mu       sync.Mutex
+}
+```
+
+### func \(\*debouncer\) add
+
+```go
+func (d *debouncer) add(f func())
+```
+
+add method schedules the execution of the passed in function after a predefined delay.
+
+### func \(\*debouncer\) cancel
+
+```go
+func (d *debouncer) cancel()
+```
+
+cancel the execution of a scheduled debounce function.
+
+## type throttler
+
+The throttle implementation is based on this package: https://github.com/boz/go-throttle.
+
+```go
+type throttler struct {
+    duration time.Duration
+    cond     *sync.Cond
+    last     time.Time
+    waiting  bool
+    trailing bool
+    stop     bool
+}
+```
+
+### func NewThrottle
+
+```go
+func NewThrottle(wait time.Duration, trailing bool) *throttler
+```
+
+NewThrottle creates a throttled function in order to limit the frequency rate at which the passed in function is invoked. The throttled function comes with a cancel method for canceling delayed function invocation. If the trailing parameter is true, the function is invoked right after the throttled code has been started, but at the trailing edge of the timeout. In this case the code will be executed one more time at the beginning of the next period.
+
+This function is useful for rate\-limiting events that occur faster than you can keep up with.
+
+### func \(\*throttler\) Call
+
+```go
+func (t *throttler) Call()
+```
+
+Call schedules the execution of the passed in function after the predefined delay.
+
+### func \(\*throttler\) Cancel
+
+```go
+func (t *throttler) Cancel()
+```
+
+cancel the execution of a scheduled throttle function.
+
+### func \(\*throttler\) Next
+
+```go
+func (t *throttler) Next() bool
+```
+
+next returns true at most once per time period. It runs until the throttled function is not canceled.
 
 
 

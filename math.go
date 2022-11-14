@@ -2,7 +2,7 @@ package torx
 
 import "golang.org/x/exp/constraints"
 
-// Min returns the slowest value of the provided parameters.
+// Min returns the lowest value from the provided parameters.
 func Min[T constraints.Ordered](values ...T) T {
 	var acc T = values[0]
 
@@ -14,7 +14,7 @@ func Min[T constraints.Ordered](values ...T) T {
 	return acc
 }
 
-// Max returns the biggest value of the provided parameters.
+// Max returns the biggest value from the provided parameters.
 func Max[T constraints.Ordered](values ...T) T {
 	var acc T = values[0]
 

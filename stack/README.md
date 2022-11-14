@@ -34,7 +34,9 @@ LStack implements the linked\-list version of the LIFO stack.
 
 ```go
 type LStack[T comparable] struct {
-    // contains filtered or unexported fields
+    list *list.DList[T]
+    mu   *sync.RWMutex
+    n    int
 }
 ```
 
@@ -92,7 +94,8 @@ Stack implements the LIFO Stack.
 
 ```go
 type Stack[T comparable] struct {
-    // contains filtered or unexported fields
+    mu    *sync.RWMutex
+    items []T
 }
 ```
 
