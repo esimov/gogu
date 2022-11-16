@@ -10,6 +10,165 @@ Package list provides an implementation of the linked list data structure. This 
 
 Package list provides an implementation of the linked list data structure. This is the singly linked list version, which has a data element storing the node value and a pointer to the next element of the list.
 
+<details><summary>Example (Doubly Linked List)</summary>
+<p>
+
+```go
+{
+	list := InitDList(1)
+
+	values := []int{2, 3, 4, 5, 6, 7, 8}
+	for _, val := range values {
+		list.Append(val)
+	}
+	sl := []int{}
+	list.Each(func(val int) {
+		sl = append(sl, val)
+	})
+	fmt.Println(sl)
+
+	item := list.Pop()
+	fmt.Println(item.data)
+
+	sl = nil
+	list.Each(func(val int) {
+		sl = append(sl, val)
+	})
+	fmt.Println(sl)
+
+	item = list.Shift()
+	fmt.Println(item.data)
+
+	sl = nil
+	list.Each(func(val int) {
+		sl = append(sl, val)
+	})
+	fmt.Println(sl)
+
+	item, err := list.Replace(20, 10)
+	fmt.Println(err)
+	fmt.Println(item)
+
+	item, err = list.Replace(7, 8)
+	fmt.Println(item.data)
+	item, err = list.Replace(8, 7)
+
+	n := list.Unshift(1)
+	fmt.Println(n.data)
+
+	last := list.Append(8)
+	item, _ = list.Find(8)
+	fmt.Println(item.data)
+
+	list.InsertAfter(last, 9)
+
+	sl = nil
+	list.Each(func(val int) {
+		sl = append(sl, val)
+	})
+	fmt.Println(sl)
+
+	list.Delete(last)
+
+	sl = nil
+	list.Each(func(val int) {
+		sl = append(sl, val)
+	})
+	fmt.Println(sl)
+
+	fmt.Println(list.First())
+	fmt.Println(list.Last())
+
+}
+```
+
+#### Output
+
+```
+[1 2 3 4 5 6 7 8]
+7
+[1 2 3 4 5 6 7]
+1
+[2 3 4 5 6 7]
+requested node does not exists
+<nil>
+8
+1
+8
+[1 2 3 4 5 6 7 8 9]
+[1 2 3 4 5 6 7 9]
+1
+9
+```
+
+</p>
+</details>
+
+<details><summary>Example (Singly Linked List)</summary>
+<p>
+
+```go
+{
+	list := Init(1)
+
+	values := []int{2, 3, 4, 5, 6, 7, 8}
+	for _, val := range values {
+		list.Append(val)
+	}
+	sl := []int{}
+	list.Each(func(val int) {
+		sl = append(sl, val)
+	})
+	fmt.Println(sl)
+
+	item := list.Pop()
+	fmt.Println(item.data)
+
+	sl = nil
+	list.Each(func(val int) {
+		sl = append(sl, val)
+	})
+	fmt.Println(sl)
+
+	item = list.Shift()
+	fmt.Println(item.data)
+
+	sl = nil
+	list.Each(func(val int) {
+		sl = append(sl, val)
+	})
+	fmt.Println(sl)
+
+	item, err := list.Replace(20, 10)
+	fmt.Println(err)
+	fmt.Println(item)
+
+	item, err = list.Replace(7, 8)
+	fmt.Println(item.data)
+
+	item, _ = list.Find(8)
+	fmt.Println(item.data)
+
+}
+```
+
+#### Output
+
+```
+[1 2 3 4 5 6 7 8]
+7
+[1 2 3 4 5 6 7]
+1
+[2 3 4 5 6 7]
+requested node does not exists
+<nil>
+8
+8
+```
+
+</p>
+</details>
+
 ## Index
 
 - [type DList](<#type-dlist>)

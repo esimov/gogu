@@ -6,6 +6,210 @@
 import "github.com/esimov/torx/heap"
 ```
 
+<details><summary>Example (Heap Convert)</summary>
+<p>
+
+```go
+{
+	input := []int{1, 4, 2, 3, 5}
+
+	heap := NewHeap(func(a, b int) bool { return a < b })
+	heap.Push(input...)
+	heap.Convert(func(a, b int) bool { return a > b })
+	fmt.Println(heap.GetValues())
+
+}
+```
+
+#### Output
+
+```
+[5 4 2 1 3]
+```
+
+</p>
+</details>
+
+<details><summary>Example (Heap Meld)</summary>
+<p>
+
+```go
+{
+	slice1 := []int{1, 4, 2, 3, 5}
+	slice2 := []int{8, 6, 9, 10, 7}
+
+	heap1 := FromSlice(slice1, func(a, b int) bool { return a < b })
+	heap2 := FromSlice(slice2, func(a, b int) bool { return a < b })
+
+	mergedHeap := heap1.Meld(heap2)
+	fmt.Println(mergedHeap.Size())
+	fmt.Println(heap1.Size())
+	fmt.Println(heap2.Size())
+
+}
+```
+
+#### Output
+
+```
+10
+0
+0
+```
+
+</p>
+</details>
+
+<details><summary>Example (Heap Merge)</summary>
+<p>
+
+```go
+{
+	slice1 := []int{1, 4, 2, 3, 5}
+	slice2 := []int{8, 6, 9, 10, 7}
+
+	heap1 := FromSlice(slice1, func(a, b int) bool { return a < b })
+	heap2 := FromSlice(slice2, func(a, b int) bool { return a < b })
+
+	mergedHeap := heap1.Merge(heap2)
+	fmt.Println(mergedHeap.Size())
+	fmt.Println(heap1.Size())
+	fmt.Println(heap2.Size())
+
+}
+```
+
+#### Output
+
+```
+10
+5
+5
+```
+
+</p>
+</details>
+
+<details><summary>Example (Heap Sort)</summary>
+<p>
+
+```go
+{
+	data := []int{1, 3, 2, 8, 7, 6, 4, 9, 5, 10}
+
+	res := Sort(data, func(a, b int) bool { return a > b })
+	fmt.Println(res)
+
+	res = Sort(data, func(a, b int) bool { return a < b })
+	fmt.Println(res)
+
+}
+```
+
+#### Output
+
+```
+[1 2 3 4 5 6 7 8 9 10]
+[10 9 8 7 6 5 4 3 2 1]
+```
+
+</p>
+</details>
+
+<details><summary>Example (Max Heap)</summary>
+<p>
+
+```go
+{
+	values := []int{9, 3, 20, 8, 6, 5, 12, 10, 9, 18}
+	heap := FromSlice(values, func(a, b int) bool { return a > b })
+	fmt.Println(heap.GetValues())
+
+	ok, _ := heap.Delete(12)
+	fmt.Println(ok)
+	fmt.Println(heap.Size())
+
+	heap.Clear()
+	fmt.Println(heap.GetValues())
+
+	input := []int{20, 18, 10, 9, 9, 8, 6, 5, 3}
+	heap.Push(input...)
+
+	popSlice := []int{}
+	for range heap.GetValues() {
+		val := heap.Pop()
+		popSlice = append(popSlice, val)
+	}
+	fmt.Println(popSlice)
+
+}
+```
+
+#### Output
+
+```
+[20 18 12 10 6 5 9 8 9 3]
+true
+9
+[]
+[20 18 10 9 9 8 6 5 3]
+```
+
+</p>
+</details>
+
+<details><summary>Example (Min Heap)</summary>
+<p>
+
+```go
+{
+	heap := NewHeap(func(a, b int) bool { return a < b })
+	fmt.Println(heap.IsEmpty())
+
+	heap.Push(10)
+	fmt.Println(heap.Size())
+	heap.Pop()
+	fmt.Println(heap.IsEmpty())
+
+	values := []int{2, 5, 1, 4, 3}
+	for _, v := range values {
+		heap.Push(v)
+	}
+	fmt.Println(heap.GetValues())
+
+	heap.Push(0)
+	fmt.Println(heap.GetValues())
+
+	heap.Clear()
+	fmt.Println(heap.GetValues())
+
+	fmt.Println(heap.Pop())
+
+	heap.Push(10, 4, 2, 5, 3)
+	for range heap.GetValues() {
+		heap.Pop()
+	}
+	fmt.Println(heap.Size())
+
+}
+```
+
+#### Output
+
+```
+true
+1
+true
+[1 3 2 5 4]
+[0 3 1 5 4 2]
+[]
+0
+0
+```
+
+</p>
+</details>
+
 ## Index
 
 - [func Sort[T comparable](data []T, comp torx.CompFn[T]) []T](<#func-sort>)

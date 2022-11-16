@@ -10,39 +10,7 @@ Linked\-list implementation of the LIFO stack.
 
 Package stack implements a concurrent safe LIFO \(Last\-In\-First\-Out\) data structure using as storage a resizing array, where the last element added to the stack is processed first.
 
-<details><summary>Example</summary>
-<p>
-
-```go
-{
-	l := New[string]()
-
-	l.Push("foo")
-	fmt.Println(l.Size())
-	fmt.Println(l.Peek())
-	l.Push("bar")
-
-	fmt.Println(l.Pop())
-	fmt.Println(l.Search("foo"))
-	fmt.Println(l.Peek())
-
-}
-```
-
-#### Output
-
-```
-1
-foo
-bar
-true
-foo
-```
-
-</p>
-</details>
-
-<details><summary>Example (,inked List)</summary>
+<details><summary>Example (Linked List)</summary>
 <p>
 
 ```go
@@ -70,6 +38,38 @@ bar
 foo
 foo
 true
+```
+
+</p>
+</details>
+
+<details><summary>Example</summary>
+<p>
+
+```go
+{
+	l := New[string]()
+
+	l.Push("foo")
+	fmt.Println(l.Size())
+	fmt.Println(l.Peek())
+	l.Push("bar")
+
+	fmt.Println(l.Pop())
+	fmt.Println(l.Search("foo"))
+	fmt.Println(l.Peek())
+
+}
+```
+
+#### Output
+
+```
+1
+foo
+bar
+true
+foo
 ```
 
 </p>
@@ -119,7 +119,7 @@ NewLinked creates a new LIFO stack where the items are stored in a linked\-list.
 func (s *LStack[T]) Peek() T
 ```
 
-Peek returns the last element of the stack. It does not remove it.
+Peek returns the last element of the stack without removing it.
 
 ### func \(\*LStack\[T\]\) Pop
 

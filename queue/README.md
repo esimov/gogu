@@ -10,6 +10,75 @@ Linked\-list implementation of the queue \(FIFO\) data structure.
 
 Package queue implements a concurrent safe FIFO \(First\-In\-First\-Out\) data structure using as storage a resizing array, where the first element added to the queue is processed first.
 
+<details><summary>Example (Linked Queue)</summary>
+<p>
+
+```go
+{
+	q := NewLinked(1)
+	q.Enqueue(2)
+	q.Enqueue(3)
+	fmt.Println(q.Peek())
+	q.Dequeue()
+	fmt.Println(q.Peek())
+	q.Dequeue()
+	fmt.Println(q.Peek())
+	fmt.Println(q.Search(3))
+	q.Dequeue()
+
+	q.Enqueue(10)
+	fmt.Println(q.Size())
+	q.Clear()
+	fmt.Println(q.Size())
+
+}
+```
+
+#### Output
+
+```
+1
+2
+3
+true
+1
+0
+```
+
+</p>
+</details>
+
+<details><summary>Example</summary>
+<p>
+
+```go
+{
+	q := New[int]()
+	q.Enqueue(1)
+	q.Enqueue(2)
+	q.Enqueue(3)
+	fmt.Println(q.Size())
+	fmt.Println(q.Peek())
+
+	q.Dequeue()
+	fmt.Println(q.Peek())
+	fmt.Println(q.Search(2))
+
+}
+```
+
+#### Output
+
+```
+3
+1
+2
+true
+```
+
+</p>
+</details>
+
 ## Index
 
 - [type LQueue](<#type-lqueue>)
