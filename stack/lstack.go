@@ -46,7 +46,7 @@ func (s *LStack[T]) Pop() (item T) {
 	return s.list.Data(node)
 }
 
-// Peek returns the last element of the stack. It does not remove it.
+// Peek returns the last element of the stack without removing it.
 func (s *LStack[T]) Peek() T {
 	s.mu.RLock()
 	defer s.mu.RUnlock()

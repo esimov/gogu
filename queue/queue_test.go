@@ -1,6 +1,7 @@
 package queue
 
 import (
+	"fmt"
 	"sync"
 	"testing"
 
@@ -51,4 +52,23 @@ func TestQueue_Concurrency(t *testing.T) {
 		assert.NoError(err)
 	}
 	assert.Equal(0, q.Size())
+}
+
+func Example_Queue() {
+	q := New[int]()
+	q.Enqueue(1)
+	q.Enqueue(2)
+	q.Enqueue(3)
+	fmt.Println(q.Size())
+	fmt.Println(q.Peek())
+
+	q.Dequeue()
+	fmt.Println(q.Peek())
+	fmt.Println(q.Search(2))
+
+	// Output:
+	// 3
+	// 1
+	// 2
+	// true
 }

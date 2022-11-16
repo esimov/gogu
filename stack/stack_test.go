@@ -51,7 +51,7 @@ func TestStack_Concurrency(t *testing.T) {
 	}
 }
 
-func Example() {
+func Example_Stack() {
 	l := New[string]()
 
 	l.Push("foo")

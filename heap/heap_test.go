@@ -1,6 +1,7 @@
 package heap
 
 import (
+	"fmt"
 	"sync"
 	"testing"
 
@@ -45,6 +46,46 @@ func TestHeap_MinHeap(t *testing.T) {
 	assert.Empty(heap.Size())
 }
 
+func Example_MinHeap() {
+	heap := NewHeap(func(a, b int) bool { return a < b })
+	fmt.Println(heap.IsEmpty())
+
+	heap.Push(10)
+	fmt.Println(heap.Size())
+	heap.Pop()
+	fmt.Println(heap.IsEmpty())
+
+	values := []int{2, 5, 1, 4, 3}
+	for _, v := range values {
+		heap.Push(v)
+	}
+	fmt.Println(heap.GetValues())
+
+	heap.Push(0)
+	fmt.Println(heap.GetValues())
+
+	heap.Clear()
+	fmt.Println(heap.GetValues())
+
+	fmt.Println(heap.Pop())
+
+	heap.Push(10, 4, 2, 5, 3)
+	for range heap.GetValues() {
+		heap.Pop()
+	}
+	fmt.Println(heap.Size())
+
+	// Output:
+	// true
+	// 1
+	// true
+	// [1 3 2 5 4]
+	// [0 3 1 5 4 2]
+	// []
+	// 0
+	// 0
+}
+
 func TestHeap_MaxHeap(t *testing.T) {
 	assert := assert.New(t)
 
@@ -72,6 +113,36 @@ func TestHeap_MaxHeap(t *testing.T) {
 		val := heap.Pop()
 		assert.Equal(val, input[idx])
 	}
+}
+
+func Example_MaxHeap() {
+	values := []int{9, 3, 20, 8, 6, 5, 12, 10, 9, 18}
+	heap := FromSlice(values, func(a, b int) bool { return a > b })
+	fmt.Println(heap.GetValues())
+
+	ok, _ := heap.Delete(12)
+	fmt.Println(ok)
+	fmt.Println(heap.Size())
+
+	heap.Clear()
+	fmt.Println(heap.GetValues())
+
+	input := []int{20, 18, 10, 9, 9, 8, 6, 5, 3}
+	heap.Push(input...)
+
+	popSlice := []int{}
+	for range heap.GetValues() {
+		val := heap.Pop()
+		popSlice = append(popSlice, val)
+	}
+	fmt.Println(popSlice)
+
+	// Output:
+	// [20 18 12 10 6 5 9 8 9 3]
+	// true
+	// 9
+	// []
+	// [20 18 10 9 9 8 6 5 3]
 }
 
 func TestHeap_Struct(t *testing.T) {
@@ -159,6 +230,18 @@ func TestHeap_Convert(t *testing.T) {
 	assert.Equal([]int{5, 4, 2, 1, 3}, heap.GetValues())
 }
 
+func Example_HeapConvert() {
+	input := []int{1, 4, 2, 3, 5}
+
+	heap := NewHeap(func(a, b int) bool { return a < b })
+	heap.Push(input...)
+	heap.Convert(func(a, b int) bool { return a > b })
+	fmt.Println(heap.GetValues())
+
+	// Output:
+	// [5 4 2 1 3]
+}
+
 func TestHeap_Merge(t *testing.T) {
 	assert := assert.New(t)
 
@@ -176,6 +259,24 @@ func TestHeap_Merge(t *testing.T) {
 	assert.Len(heap2.GetValues(), 5)
 }
 
+func Example_HeapMerge() {
+	slice1 := []int{1, 4, 2, 3, 5}
+	slice2 := []int{8, 6, 9, 10, 7}
+
+	heap1 := FromSlice(slice1, func(a, b int) bool { return a < b })
+	heap2 := FromSlice(slice2, func(a, b int) bool { return a < b })
+
+	mergedHeap := heap1.Merge(heap2)
+	fmt.Println(mergedHeap.Size())
+	fmt.Println(heap1.Size())
+	fmt.Println(heap2.Size())
+
+	// Output:
+	// 10
+	// 5
+	// 5
+}
+
 func TestHeap_Meld(t *testing.T) {
 	assert := assert.New(t)
 
@@ -191,6 +292,24 @@ func TestHeap_Meld(t *testing.T) {
 	assert.Len(mergedHeap.GetValues(), 10)
 	assert.Len(heap1.GetValues(), 0)
 	assert.Len(heap2.GetValues(), 0)
+}
+
+func Example_HeapMeld() {
+	slice1 := []int{1, 4, 2, 3, 5}
+	slice2 := []int{8, 6, 9, 10, 7}
+
+	heap1 := FromSlice(slice1, func(a, b int) bool { return a < b })
+	heap2 := FromSlice(slice2, func(a, b int) bool { return a < b })
+
+	mergedHeap := heap1.Meld(heap2)
+	fmt.Println(mergedHeap.Size())
+	fmt.Println(heap1.Size())
+	fmt.Println(heap2.Size())
+
+	// Output:
+	// 10
+	// 0
+	// 0
 }
 
 func TestHeap_Concurrency(t *testing.T) {

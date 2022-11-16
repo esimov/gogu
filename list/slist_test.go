@@ -1,6 +1,7 @@
 package list
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -89,4 +90,57 @@ func TestSinglyLinkedList(t *testing.T) {
 	item, found = list.Find(22)
 	assert.Nil(item)
 	assert.False(found)
+}
+
+func Example_SinglyLinkedList() {
+	list := Init(1)
+
+	values := []int{2, 3, 4, 5, 6, 7, 8}
+	for _, val := range values {
+		list.Append(val)
+	}
+	sl := []int{}
+	list.Each(func(val int) {
+		sl = append(sl, val)
+	})
+	fmt.Println(sl)
+
+	item := list.Pop()
+	fmt.Println(item.data)
+
+	sl = nil
+	list.Each(func(val int) {
+		sl = append(sl, val)
+	})
+	fmt.Println(sl)
+
+	item = list.Shift()
+	fmt.Println(item.data)
+
+	sl = nil
+	list.Each(func(val int) {
+		sl = append(sl, val)
+	})
+	fmt.Println(sl)
+
+	item, err := list.Replace(20, 10)
+	fmt.Println(err)
+	fmt.Println(item)
+
+	item, err = list.Replace(7, 8)
+	fmt.Println(item.data)
+
+	item, _ = list.Find(8)
+	fmt.Println(item.data)
+
+	// Output:
+	// [1 2 3 4 5 6 7 8]
+	// 7
+	// [1 2 3 4 5 6 7]
+	// 1
+	// [2 3 4 5 6 7]
+	// requested node does not exists
+	// <nil>
+	// 8
+	// 8
 }

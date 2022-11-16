@@ -1,6 +1,7 @@
 package queue
 
 import (
+	"fmt"
 	"sync"
 	"testing"
 
@@ -20,7 +21,6 @@ func TestLinkedQueue(t *testing.T) {
 	assert.Equal(3, q.Peek())
 	assert.True(q.Search(3))
 	q.Dequeue()
-	//assert.Error(err)
 
 	q.Enqueue(10)
 	assert.Equal(1, q.Size())
@@ -62,4 +62,30 @@ func TestLinkedQueue_Concurrency(t *testing.T) {
 		assert.Equal(tmp[item], item)
 	}
 	assert.Equal(0, q.Size())
+}
+
+func Example_LinkedQueue() {
+	q := NewLinked(1)
+	q.Enqueue(2)
+	q.Enqueue(3)
+	fmt.Println(q.Peek())
+	q.Dequeue()
+	fmt.Println(q.Peek())
+	q.Dequeue()
+	fmt.Println(q.Peek())
+	fmt.Println(q.Search(3))
+	q.Dequeue()
+
+	q.Enqueue(10)
+	fmt.Println(q.Size())
+	q.Clear()
+	fmt.Println(q.Size())
+
+	// Output:
+	// 1
+	// 2
+	// 3
+	// true
+	// 1
+	// 0
 }

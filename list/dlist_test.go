@@ -1,6 +1,7 @@
 package list
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -116,4 +117,86 @@ func TestDoublyLinkedList(t *testing.T) {
 	list.Clear()
 	assert.Equal(0, list.First())
 	assert.Equal(0, list.Last())
+}
+
+func Example_DoublyLinkedList() {
+	list := InitDList(1)
+
+	values := []int{2, 3, 4, 5, 6, 7, 8}
+	for _, val := range values {
+		list.Append(val)
+	}
+	sl := []int{}
+	list.Each(func(val int) {
+		sl = append(sl, val)
+	})
+	fmt.Println(sl)
+
+	item := list.Pop()
+	fmt.Println(item.data)
+
+	sl = nil
+	list.Each(func(val int) {
+		sl = append(sl, val)
+	})
+	fmt.Println(sl)
+
+	item = list.Shift()
+	fmt.Println(item.data)
+
+	sl = nil
+	list.Each(func(val int) {
+		sl = append(sl, val)
+	})
+	fmt.Println(sl)
+
+	item, err := list.Replace(20, 10)
+	fmt.Println(err)
+	fmt.Println(item)
+
+	item, err = list.Replace(7, 8)
+	fmt.Println(item.data)
+	item, err = list.Replace(8, 7)
+
+	n := list.Unshift(1)
+	fmt.Println(n.data)
+
+	last := list.Append(8)
+	item, _ = list.Find(8)
+	fmt.Println(item.data)
+
+	list.InsertAfter(last, 9)
+
+	sl = nil
+	list.Each(func(val int) {
+		sl = append(sl, val)
+	})
+	fmt.Println(sl)
+
+	list.Delete(last)
+
+	sl = nil
+	list.Each(func(val int) {
+		sl = append(sl, val)
+	})
+	fmt.Println(sl)
+
+	fmt.Println(list.First())
+	fmt.Println(list.Last())
+
+	// Output:
+	// [1 2 3 4 5 6 7 8]
+	// 7
+	// [1 2 3 4 5 6 7]
+	// 1
+	// [2 3 4 5 6 7]
+	// requested node does not exists
+	// <nil>
+	// 8
+	// 1
+	// 8
+	// [1 2 3 4 5 6 7 8 9]
+	// [1 2 3 4 5 6 7 9]
+	// 1
+	// 9
 }
