@@ -63,11 +63,6 @@ cape
   - [func (t *Trie[K, V]) Put(key K, val V)](<#func-triek-v-put>)
   - [func (t *Trie[K, V]) Size() int](<#func-triek-v-size>)
   - [func (t *Trie[K, V]) StartsWith(prefix K) (Queuer[K], error)](<#func-triek-v-startswith>)
-- [type node](<#type-node>)
-  - [func newNode[K ~string, V any](key K, val V) *node[K, V]](<#func-newnode>)
-  - [func (n *node[K, V]) collect(t *Trie[K, V], prefix K) (Queuer[K], error)](<#func-nodek-v-collect>)
-  - [func (n *node[K, V]) get(key K, d int) (*node[K, V], error)](<#func-nodek-v-get>)
-  - [func (n *node[K, V]) put(t *Trie[K, V], key K, val V, d int, isValid bool) *node[K, V]](<#func-nodek-v-put>)
 
 
 ## Variables
@@ -82,8 +77,7 @@ Item is a key\-value struct pair used for storing the node values.
 
 ```go
 type Item[K ~string, V any] struct {
-    key K
-    val V
+    // contains filtered or unexported fields
 }
 ```
 
@@ -106,10 +100,7 @@ Trie is a lock\-free tree data structure having the root as the first node. It's
 
 ```go
 type Trie[K ~string, V any] struct {
-    n    int
-    root *node[K, V]
-    mu   *sync.RWMutex
-    q    Queuer[K]
+    // contains filtered or unexported fields
 }
 ```
 
@@ -176,45 +167,6 @@ func (t *Trie[K, V]) StartsWith(prefix K) (Queuer[K], error)
 ```
 
 StartsWith returns all of the keys in the set that start with prefix.
-
-## type node
-
-```go
-type node[K ~string, V any] struct {
-    c       byte
-    left    *node[K, V]
-    mid     *node[K, V]
-    right   *node[K, V]
-    isValid bool
-    Item[K, V]
-}
-```
-
-### func newNode
-
-```go
-func newNode[K ~string, V any](key K, val V) *node[K, V]
-```
-
-newNode creates a new node.
-
-### func \(\*node\[K, V\]\) collect
-
-```go
-func (n *node[K, V]) collect(t *Trie[K, V], prefix K) (Queuer[K], error)
-```
-
-### func \(\*node\[K, V\]\) get
-
-```go
-func (n *node[K, V]) get(key K, d int) (*node[K, V], error)
-```
-
-### func \(\*node\[K, V\]\) put
-
-```go
-func (n *node[K, V]) put(t *Trie[K, V], key K, val V, d int, isValid bool) *node[K, V]
-```
 
 
 

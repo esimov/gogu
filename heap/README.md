@@ -6,7 +6,7 @@
 import "github.com/esimov/torx/heap"
 ```
 
-<details><summary>Example (Heap Convert)</summary>
+<details><summary>Example ((Heap Convert)</summary>
 <p>
 
 ```go
@@ -30,7 +30,7 @@ import "github.com/esimov/torx/heap"
 </p>
 </details>
 
-<details><summary>Example (Heap Meld)</summary>
+<details><summary>Example ((Heap Meld)</summary>
 <p>
 
 ```go
@@ -60,7 +60,7 @@ import "github.com/esimov/torx/heap"
 </p>
 </details>
 
-<details><summary>Example (Heap Merge)</summary>
+<details><summary>Example ((Heap Merge)</summary>
 <p>
 
 ```go
@@ -90,7 +90,7 @@ import "github.com/esimov/torx/heap"
 </p>
 </details>
 
-<details><summary>Example (Heap Sort)</summary>
+<details><summary>Example ((Heap Sort)</summary>
 <p>
 
 ```go
@@ -213,7 +213,6 @@ true
 ## Index
 
 - [func Sort[T comparable](data []T, comp torx.CompFn[T]) []T](<#func-sort>)
-- [func swap[T any](data []T, i, j int)](<#func-swap>)
 - [type Heap](<#type-heap>)
   - [func FromSlice[T comparable](data []T, comp torx.CompFn[T]) *Heap[T]](<#func-fromslice>)
   - [func NewHeap[T comparable](comp torx.CompFn[T]) *Heap[T]](<#func-newheap>)
@@ -228,12 +227,6 @@ true
   - [func (h *Heap[T]) Pop() T](<#func-heapt-pop>)
   - [func (h *Heap[T]) Push(val ...T)](<#func-heapt-push>)
   - [func (h *Heap[T]) Size() int](<#func-heapt-size>)
-  - [func (h *Heap[T]) getIndex(slice []T, val T) (int, bool)](<#func-heapt-getindex>)
-  - [func (h *Heap[T]) leftChild(i int) int](<#func-heapt-leftchild>)
-  - [func (h *Heap[T]) moveDown(n, i int)](<#func-heapt-movedown>)
-  - [func (h *Heap[T]) moveUp(i int)](<#func-heapt-moveup>)
-  - [func (h *Heap[T]) parent(i int) int](<#func-heapt-parent>)
-  - [func (h *Heap[T]) rightChild(i int) int](<#func-heapt-rightchild>)
 
 
 ## func Sort
@@ -242,23 +235,13 @@ true
 func Sort[T comparable](data []T, comp torx.CompFn[T]) []T
 ```
 
-Sort sorts the heap in ascending or descening order, depending on the heap type. If the heap is a max heap, the heap is sorted in ascending order, otherwise if the heap is a min heap, it is sorted in descending order.
-
-## func swap
-
-```go
-func swap[T any](data []T, i, j int)
-```
-
-swap swaps the position of elements at index i and j.
+Sort sorts the heap in ascending or descening order depending on the heap type. If the heap is a max heap, the heap is sorted in ascending order, otherwise in case the heap is a min heap, it is sorted in descending order.
 
 ## type Heap
 
 ```go
 type Heap[T comparable] struct {
-    mu   *sync.RWMutex
-    data []T
-    comp torx.CompFn[T]
+    // contains filtered or unexported fields
 }
 ```
 
@@ -365,52 +348,6 @@ func (h *Heap[T]) Size() int
 ```
 
 Size returns the heap size.
-
-### func \(\*Heap\[T\]\) getIndex
-
-```go
-func (h *Heap[T]) getIndex(slice []T, val T) (int, bool)
-```
-
-### func \(\*Heap\[T\]\) leftChild
-
-```go
-func (h *Heap[T]) leftChild(i int) int
-```
-
-leftChild returns the index of the left child of node at index i.
-
-### func \(\*Heap\[T\]\) moveDown
-
-```go
-func (h *Heap[T]) moveDown(n, i int)
-```
-
-moveDown moves the element at the position i down to its correct position in the heap following the heap rules.
-
-### func \(\*Heap\[T\]\) moveUp
-
-```go
-func (h *Heap[T]) moveUp(i int)
-```
-
-moveUp moves the element from index i up to its correct position in the heap following the heap rules.
-
-### func \(\*Heap\[T\]\) parent
-
-```go
-func (h *Heap[T]) parent(i int) int
-```
-
-parent returns the index of the child node parent at index i.
-
-### func \(\*Heap\[T\]\) rightChild
-
-```go
-func (h *Heap[T]) rightChild(i int) int
-```
-
-rightChild returns the index of the right child of node at index i.
 
 
 

@@ -6,9 +6,9 @@
 import "github.com/esimov/torx/list"
 ```
 
-Package list provides an implementation of the linked list data structure. This is the doubly linked list version, which compared to the singly linked list variant has an additional pointer to the previous node.
+Package list provides an implementation of the linked list data structure. It comes with two version: singly and doubly linked list. The singly linked list version has a data element storing the node value and a pointer to the next element of the list.
 
-Package list provides an implementation of the linked list data structure. This is the singly linked list version, which has a data element storing the node value and a pointer to the next element of the list.
+The doubly linked list version has an additional pointer to previous node.
 
 <details><summary>Example (Doubly Linked List)</summary>
 <p>
@@ -198,10 +198,6 @@ requested node does not exists
   - [func (l *SList[T]) Replace(oldVal, newVal T) (*singleNode[T], error)](<#func-slistt-replace>)
   - [func (l *SList[T]) Shift() *singleNode[T]](<#func-slistt-shift>)
   - [func (l *SList[T]) Unshift(data T)](<#func-slistt-unshift>)
-- [type doubleNode](<#type-doublenode>)
-  - [func newDNode[T comparable](data T) *doubleNode[T]](<#func-newdnode>)
-- [type singleNode](<#type-singlenode>)
-  - [func newNode[T comparable](data T) *singleNode[T]](<#func-newnode>)
 
 
 ## type DList
@@ -210,7 +206,7 @@ DList contains the node elements of the doubly linked list.
 
 ```go
 type DList[T comparable] struct {
-    doubleNode[T]
+    // contains filtered or unexported fields
 }
 ```
 
@@ -260,7 +256,7 @@ Delete removes the specified node from the list.
 func (l *DList[T]) Each(fn func(data T))
 ```
 
-Each iterates over the elements of the linked list and invokes the callback function, having as parameter the nodes data.
+Each iterates over the elements of the linked list and invokes the callback function having as parameter the nodes data.
 
 ### func \(\*DList\[T\]\) Find
 
@@ -336,11 +332,11 @@ Unshift inserts a new node at the beginning of the doubly linked list.
 
 ## type SList
 
-SList contains the individual nodes of the list.
+SList is a struct containing the individual nodes of the list.
 
 ```go
 type SList[T comparable] struct {
-    singleNode[T]
+    // contains filtered or unexported fields
 }
 ```
 
@@ -423,45 +419,6 @@ func (l *SList[T]) Unshift(data T)
 ```
 
 Unshift inserts a new node at the beginning of the list.
-
-## type doubleNode
-
-doubleNode holds an additional prev pointer to the node before.
-
-```go
-type doubleNode[T comparable] struct {
-    data T
-    next *doubleNode[T]
-    prev *doubleNode[T]
-}
-```
-
-### func newDNode
-
-```go
-func newDNode[T comparable](data T) *doubleNode[T]
-```
-
-newDNode creates a new doubly linked list node element.
-
-## type singleNode
-
-singleNode has two components: the data and a pointer to the next node of the list.
-
-```go
-type singleNode[T comparable] struct {
-    data T
-    next *singleNode[T]
-}
-```
-
-### func newNode
-
-```go
-func newNode[T comparable](data T) *singleNode[T]
-```
-
-newNode creates a new node. It holds a pointer to the next node \(which is nil on initialization\) and the node data.
 
 
 

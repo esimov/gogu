@@ -1,6 +1,7 @@
 // Package list provides an implementation of the linked list data structure.
-// This is the singly linked list version, which has a data element
-// storing the node value and a pointer to the next element of the list.
+// It comes with two version: singly and doubly linked list.
+// The singly linked list version has a data element storing the node value
+// and a pointer to the next element of the list.
 package list
 
 import (
@@ -13,7 +14,7 @@ type singleNode[T comparable] struct {
 	next *singleNode[T]
 }
 
-// SList contains the individual nodes of the list.
+// SList is a struct containing the individual nodes of the list.
 type SList[T comparable] struct {
 	singleNode[T]
 }

@@ -105,9 +105,7 @@ LQueue implements the linked\-list version of the FIFO queue.
 
 ```go
 type LQueue[T comparable] struct {
-    list *list.DList[T]
-    mu   *sync.RWMutex
-    n    int
+    // contains filtered or unexported fields
 }
 ```
 
@@ -173,8 +171,7 @@ Queue implements a FIFO Queue data structure.
 
 ```go
 type Queue[T comparable] struct {
-    mu    *sync.RWMutex
-    items []T
+    // contains filtered or unexported fields
 }
 ```
 

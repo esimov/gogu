@@ -1,6 +1,4 @@
-// Package list provides an implementation of the linked list data structure.
-// This is the doubly linked list version, which compared to the
-// singly linked list variant has an additional pointer to the previous node.
+// The doubly linked list version has an additional pointer to previous node.
 package list
 
 import (
@@ -259,7 +257,7 @@ func (l *DList[T]) Last() T {
 }
 
 // Each iterates over the elements of the linked list and invokes
-// the callback function, having as parameter the nodes data.
+// the callback function having as parameter the nodes data.
 func (l *DList[T]) Each(fn func(data T)) {
 	head := &l.doubleNode
 	node := l.doubleNode

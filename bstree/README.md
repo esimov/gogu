@@ -21,11 +21,6 @@ Package bstree provides an implementation of the Binary Search Tree \(BST\) data
 - [type Item](<#type-item>)
 - [type Node](<#type-node>)
   - [func NewNode[K constraints.Ordered, V any](key K, val V) *Node[K, V]](<#func-newnode>)
-  - [func (n *Node[K, V]) delete(b *BsTree[K, V], key K) (*Node[K, V], error)](<#func-nodek-v-delete>)
-  - [func (n *Node[K, V]) get(b *BsTree[K, V], key K) (Item[K, V], error)](<#func-nodek-v-get>)
-  - [func (n *Node[K, V]) min() *Node[K, V]](<#func-nodek-v-min>)
-  - [func (n *Node[K, V]) traverse(b *BsTree[K, V], ch chan<- Item[K, V])](<#func-nodek-v-traverse>)
-  - [func (n *Node[K, V]) upsert(b *BsTree[K, V], key K, val V)](<#func-nodek-v-upsert>)
 
 
 ## Variables
@@ -40,10 +35,7 @@ BsTree is the basic component for the BST data structure initialization. It inco
 
 ```go
 type BsTree[K constraints.Ordered, V any] struct {
-    mu   *sync.RWMutex
-    comp torx.CompFn[K]
-    root *Node[K, V]
-    size int
+    // contains filtered or unexported fields
 }
 ```
 
@@ -114,7 +106,7 @@ Node represents the BST internal Node, having as components the Node item define
 type Node[K constraints.Ordered, V any] struct {
     Left  *Node[K, V]
     Right *Node[K, V]
-    Item[K, V]
+    // contains filtered or unexported fields
 }
 ```
 
@@ -125,38 +117,6 @@ func NewNode[K constraints.Ordered, V any](key K, val V) *Node[K, V]
 ```
 
 NewNode creates a new node.
-
-### func \(\*Node\[K, V\]\) delete
-
-```go
-func (n *Node[K, V]) delete(b *BsTree[K, V], key K) (*Node[K, V], error)
-```
-
-### func \(\*Node\[K, V\]\) get
-
-```go
-func (n *Node[K, V]) get(b *BsTree[K, V], key K) (Item[K, V], error)
-```
-
-### func \(\*Node\[K, V\]\) min
-
-```go
-func (n *Node[K, V]) min() *Node[K, V]
-```
-
-min searches for the latest node on the left branch, but considering that BST is an ordered tree data structure it happens that it holds also the smallest value.
-
-### func \(\*Node\[K, V\]\) traverse
-
-```go
-func (n *Node[K, V]) traverse(b *BsTree[K, V], ch chan<- Item[K, V])
-```
-
-### func \(\*Node\[K, V\]\) upsert
-
-```go
-func (n *Node[K, V]) upsert(b *BsTree[K, V], key K, val V)
-```
 
 
 
