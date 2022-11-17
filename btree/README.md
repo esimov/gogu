@@ -31,6 +31,42 @@ type BTree[K constraints.Ordered, V any] struct {
 }
 ```
 
+<details><summary>Example</summary>
+<p>
+
+```go
+{
+	btree := New[int, string]()
+	fmt.Println(btree.IsEmpty())
+
+	btree.Put(10, "foo")
+	btree.Put(-1, "baz")
+	btree.Put(2, "bar")
+	btree.Put(-4, "qux")
+
+	fmt.Println(btree.Size())
+
+	tree := []string{}
+	btree.Traverse(func(key int, val string) {
+		item, _ := btree.Get(key)
+		tree = append(tree, item)
+	})
+	fmt.Println(tree)
+
+}
+```
+
+#### Output
+
+```
+true
+4
+[qux baz bar foo]
+```
+
+</p>
+</details>
+
 ### func New
 
 ```go

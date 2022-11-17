@@ -36,6 +36,125 @@ type Cache[T ~string, V any] struct {
 }
 ```
 
+<details><summary>Example (Basic)</summary>
+<p>
+
+```go
+{
+	c := New[string, string](DefaultExpiration, 1*time.Minute)
+	item, err := c.Get("foo")
+	fmt.Println(err)
+	fmt.Println(item)
+
+	c.Set("foo", "bar", DefaultExpiration)
+	item, err = c.Get("foo")
+	fmt.Println(item.Val())
+
+	err = c.Set("foo", "", DefaultExpiration)
+	fmt.Println(err)
+	fmt.Println(c.IsExpired("foo"))
+
+	c.Update("foo", "baz", DefaultExpiration)
+	item, _ = c.Get("foo")
+	fmt.Println(item.Val())
+
+	list := c.List()
+	fmt.Println(len(list))
+
+	c.Flush()
+	fmt.Println(c.Count())
+
+	c.Set("foo", "bar", DefaultExpiration)
+	item, err = c.Get("foo")
+	fmt.Println(item.Val())
+
+	err = c.Delete("foo")
+	fmt.Println(err)
+	fmt.Println(c.Count())
+
+}
+```
+
+#### Output
+
+```
+item with key 'foo' not found
+<nil>
+bar
+item with key 'foo' already exists. Use the Update method
+false
+baz
+1
+0
+bar
+<nil>
+0
+```
+
+</p>
+</details>
+
+<details><summary>Example (Expiration Time)</summary>
+<p>
+
+```go
+{
+	c1 := New[string, string](NoExpiration, 0)
+	c1.Set("item1", "a", DefaultExpiration)
+	item, _ := c1.Get("item1")
+	fmt.Println(item.expiration)
+
+	c1.Update("item1", "b", NoExpiration)
+	item, _ = c1.Get("item1")
+	fmt.Println(item.expiration)
+
+	err := c1.DeleteExpired()
+	fmt.Println(err)
+
+	c1.Set("item1", "a", 1*time.Millisecond)
+	<-time.After(2 * time.Millisecond)
+	c1.DeleteExpired()
+	fmt.Println(c1.Count())
+
+	c1.Set("item1", "b", 1*time.Millisecond)
+	c1.Set("item2", "b", 4*time.Millisecond)
+	<-time.After(2 * time.Millisecond)
+	c1.DeleteExpired()
+	fmt.Println(c1.Count())
+
+	<-time.After(3 * time.Millisecond)
+	c1.DeleteExpired()
+	fmt.Println(c1.Count())
+
+	c2 := New[string, int](5*time.Millisecond, 1*time.Millisecond)
+	c2.Set("a", 1, DefaultExpiration)
+	c2.Set("b", 2, NoExpiration)
+	c2.Set("c", 3, 5*time.Millisecond)
+	c2.Set("d", 4, 20*time.Millisecond)
+	<-time.After(10 * time.Millisecond)
+	fmt.Println(c2.Count())
+	<-time.After(15 * time.Millisecond)
+	fmt.Println(c2.Count())
+
+}
+```
+
+#### Output
+
+```
+0
+0
+<nil>
+0
+1
+0
+1
+0
+```
+
+</p>
+</details>
+
 ### func New
 
 ```go

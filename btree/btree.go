@@ -5,8 +5,7 @@
 // The implementation is an adapted version of https://algs4.cs.princeton.edu/62btree/BTree.java.
 
 // This package is NOT thread-safe.
-// For data consistency some sort of concurrency safe
-// mechanism should be implemented on the client side.
+// For data consistency some sort of concurrency safe mechanism should be implemented on the client side.
 package btree
 
 import (

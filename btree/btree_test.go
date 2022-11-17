@@ -1,6 +1,7 @@
 package btree
 
 import (
+	"fmt"
 	"math/rand"
 	"sync"
 	"testing"
@@ -49,4 +50,28 @@ func TestBTree(t *testing.T) {
 
 	assert.Empty(btree.Size())
 	assert.True(btree.IsEmpty())
+}
+
+func ExampleBTree() {
+	btree := New[int, string]()
+	fmt.Println(btree.IsEmpty())
+
+	btree.Put(10, "foo")
+	btree.Put(-1, "baz")
+	btree.Put(2, "bar")
+	btree.Put(-4, "qux")
+
+	fmt.Println(btree.Size())
+
+	tree := []string{}
+	btree.Traverse(func(key int, val string) {
+		item, _ := btree.Get(key)
+		tree = append(tree, item)
+	})
+	fmt.Println(tree)
+
+	// Output:
+	// true
+	// 4
+	// [qux baz bar foo]
 }
