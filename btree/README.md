@@ -6,7 +6,7 @@
 import "github.com/esimov/torx/btree"
 ```
 
-This package is NOT thread\-safe. For data consistency some sort of concurrency safe mechanism should be implemented on the client side.
+Package btree provides an implementation of the B\-tree data structure, which is a self\-balancing tree data structure maintaining its values in sorted order and allowing each node to have more than two children, compared to the standard BST where each node has only two leaves. The implementation is an adapted version of https://algs4.cs.princeton.edu/62btree/BTree.java. This package is NOT thread\-safe. For data consistency some sort of concurrency safe mechanism should be implemented on the client side.
 
 ## Index
 
