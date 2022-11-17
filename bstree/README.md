@@ -8,6 +8,49 @@ import "github.com/esimov/torx/bstree"
 
 Package bstree provides an implementation of the Binary Search Tree \(BST\) data structure algorithm, where each node has at most two child nodes and the key of its internal node is greater than all the keys in the respective node's left subtree and less than the ones in the right subtree.
 
+<details><summary>Example</summary>
+<p>
+
+```go
+{
+	bst := New[int, string](func(a, b int) bool {
+		return a < b
+	})
+
+	bst.Upsert(10, "foo")
+	bst.Upsert(-1, "baz")
+	bst.Upsert(2, "bar")
+	bst.Upsert(-4, "qux")
+
+	fmt.Println(bst.Size())
+
+	tree := []string{}
+	bst.Traverse(func(item Item[int, string]) {
+		node, _ := bst.Get(item.Key)
+		tree = append(tree, node.Val)
+	})
+	fmt.Println(tree)
+
+	for key := range tree {
+		bst.Delete(key)
+	}
+
+	fmt.Println(bst.Size())
+
+}
+```
+
+#### Output
+
+```
+4
+[qux baz bar foo]
+0
+```
+
+</p>
+</details>
+
 ## Index
 
 - [Variables](<#variables>)

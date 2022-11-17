@@ -1,6 +1,7 @@
 package bstree
 
 import (
+	"fmt"
 	"math/rand"
 	"sync"
 	"testing"
@@ -94,4 +95,35 @@ func TestBSTree_Concurrency(t *testing.T) {
 	}
 
 	assert.Empty(bst.Size())
+}
+
+func ExampleBSTree() {
+	bst := New[int, string](func(a, b int) bool {
+		return a < b
+	})
+
+	bst.Upsert(10, "foo")
+	bst.Upsert(-1, "baz")
+	bst.Upsert(2, "bar")
+	bst.Upsert(-4, "qux")
+
+	fmt.Println(bst.Size())
+
+	tree := []string{}
+	bst.Traverse(func(item Item[int, string]) {
+		node, _ := bst.Get(item.Key)
+		tree = append(tree, node.Val)
+	})
+	fmt.Println(tree)
+
+	for key := range tree {
+		bst.Delete(key)
+	}
+
+	fmt.Println(bst.Size())
+
+	// Output:
+	// 4
+	// [qux baz bar foo]
+	// 0
 }
