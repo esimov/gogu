@@ -97,7 +97,7 @@ func TestBSTree_Concurrency(t *testing.T) {
 	assert.Empty(bst.Size())
 }
 
-func ExampleBSTree() {
+func Example_BSTree() {
 	bst := New[int, string](func(a, b int) bool {
 		return a < b
 	})

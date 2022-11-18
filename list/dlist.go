@@ -1,3 +1,7 @@
+// Package list provides an implementation of the linked list data structure.
+// It comes with two version: singly and doubly linked list.
+// The singly linked list version has a data element storing the node value
+// and a pointer to the next element of the list.
 // The doubly linked list version has an additional pointer to previous node.
 package list
 
@@ -27,7 +31,7 @@ func newDNode[T comparable](data T) *doubleNode[T] {
 }
 
 // InitDList initializes a doubly linked list with one node.
-// Because this is the only node curently existing in the list, its next and prev pointers are nil.
+// Because this is the only node in the list, its next and prev pointers are nil.
 func InitDList[T comparable](data T) *DList[T] {
 	return &DList[T]{
 		*newDNode(data),
@@ -113,7 +117,7 @@ func (l *DList[T]) InsertAfter(prev *doubleNode[T], data T) error {
 	return nil
 }
 
-// Replace replaces a node's value with a new one.
+// Replace replaces a node's value with the new one.
 // It returns an error in case the requested node does not exists.
 func (l *DList[T]) Replace(oldVal, newVal T) (*doubleNode[T], error) {
 	head := &l.doubleNode
@@ -233,14 +237,14 @@ func (l *DList[T]) Find(val T) (*doubleNode[T], bool) {
 	return nil, false
 }
 
-// First retrieves the first element of the double linked list.
+// First retrieves the first element of the doubly linked list.
 func (l *DList[T]) First() T {
 	head := l.doubleNode
 
 	return head.data
 }
 
-// Last retrieves the last element of the double linked list.
+// Last retrieves the last element of the doubly linked list.
 func (l *DList[T]) Last() T {
 	head := l.doubleNode
 	var data T

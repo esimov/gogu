@@ -1,6 +1,8 @@
 // Package queue implements a concurrent safe FIFO (First-In-First-Out)
-// data structure using as storage a resizing array,
-// where the first element added to the queue is processed first.
+// data structure where the first element added to the queue is processed first.
+// It's implemented in two versions:
+// 1.) where the storage system is a resizing array,
+// 2.) where the storage system is a doubly linked list.
 package queue
 
 import (

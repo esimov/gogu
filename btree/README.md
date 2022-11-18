@@ -81,7 +81,7 @@ New creates a new B\-tree.
 func (t *BTree[K, V]) Get(key K) (V, bool)
 ```
 
-Get searches for a value in the tree and if it's found it returns the value together with a boolean value signalig if it's found or not.
+Get searches for a key and in case it's found it returns the key's value together with a boolean flag signalig the key existence in the tree data structure.
 
 ### func \(\*BTree\[K, V\]\) Height
 
@@ -129,7 +129,7 @@ Size returns the B\-tree size \(the number of elements\).
 func (t *BTree[K, V]) Traverse(fn func(key K, val V))
 ```
 
-Traverse iterates over the tree nodes and invokes the callback function.
+Traverse iterates over the tree nodes and invokes the callback function provided as argument.
 
 
 

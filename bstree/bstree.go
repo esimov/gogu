@@ -39,7 +39,7 @@ func NewNode[K constraints.Ordered, V any](key K, val V) *Node[K, V] {
 }
 
 // BsTree is the basic component for the BST data structure initialization.
-// It incorporates a thread safe mechanism using the sync.Mutex to guarantee
+// It incorporates a thread safe mechanism using `sync.Mutex` to guarantee
 // the data consistency on concurrent read and write operation.
 type BsTree[K constraints.Ordered, V any] struct {
 	mu   *sync.RWMutex
@@ -88,7 +88,7 @@ func (n *Node[K, V]) get(b *BsTree[K, V], key K) (Item[K, V], error) {
 	return n.Item, nil
 }
 
-// Upsert insert a new node, or update an existing node in case the key is found in the tree list.
+// Upsert insert a new node or update an existing node in case the key is found in the tree list.
 func (b *BsTree[K, V]) Upsert(key K, val V) {
 	b.mu.Lock()
 	defer b.mu.Unlock()

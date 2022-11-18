@@ -65,8 +65,8 @@ func (t *BTree[K, V]) Height() int {
 	return t.height
 }
 
-// Get searches for a value in the tree and if it's found it returns the value
-// together with a boolean value signalig if it's found or not.
+// Get searches for a key and in case it's found it returns the key's value
+// together with a boolean flag signalig the key existence in the tree data structure.
 func (t *BTree[K, V]) Get(key K) (V, bool) {
 	return t.root.search(t, key, t.height)
 }
@@ -185,7 +185,7 @@ func (t *BTree[K, V]) Remove(key K) {
 	t.root.insert(t, key, val, t.height, true)
 }
 
-// Traverse iterates over the tree nodes and invokes the callback function.
+// Traverse iterates over the tree nodes and invokes the callback function provided as argument.
 func (t *BTree[K, V]) Traverse(fn func(key K, val V)) {
 	t.traverse(t.root, t.height, fn)
 }

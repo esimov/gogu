@@ -15,7 +15,7 @@ var ErrorNotFound = fmt.Errorf("trie node not found")
 // both for searching and for retrieving the existing keys. These are generic methods
 // having the same signature as the correspondig concrete methods from the queue package.
 // Because both the plain array and the linked listed version of the queue package
-// has the same method signature, each of them could be plugged in.
+// has the same method signature, each of them could be plugged in on the method invocation.
 type Queuer[K ~string] interface {
 	Enqueue(K)
 	Dequeue() (K, error)
@@ -49,7 +49,7 @@ func newNode[K ~string, V any](key K, val V) *node[K, V] {
 }
 
 // Trie is a lock-free tree data structure having the root as the first node.
-// It's guarded with a mutex for concurrent data access.
+// It's guarded with a mutex for concurrent-safe data access.
 type Trie[K ~string, V any] struct {
 	n    int
 	root *node[K, V]
@@ -86,7 +86,7 @@ func (t *Trie[K, V]) Contains(key K) bool {
 }
 
 // Put inserts a new node into the symbol table, overwriting the old value
-// with the new value if the key is already in the symbol table.
+// with the new one if the key is already in the symbol table.
 func (t *Trie[K, V]) Put(key K, val V) {
 	if !t.Contains(key) {
 		t.mu.Lock()
@@ -154,8 +154,7 @@ func (n *node[K, V]) get(key K, d int) (*node[K, V], error) {
 	return n, nil
 }
 
-// LongestPrefix returns the string in the symbol table that is the
-// longest prefix of query, or empty if such string does not exists.
+// LongestPrefix returns the longest prefix of query in the symbol table or empty if such string does not exists.
 func (t *Trie[K, V]) LongestPrefix(query K) (K, error) {
 	t.mu.RLock()
 	defer t.mu.RUnlock()

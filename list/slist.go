@@ -1,7 +1,3 @@
-// Package list provides an implementation of the linked list data structure.
-// It comes with two version: singly and doubly linked list.
-// The singly linked list version has a data element storing the node value
-// and a pointer to the next element of the list.
 package list
 
 import (
@@ -29,7 +25,7 @@ func newNode[T comparable](data T) *singleNode[T] {
 }
 
 // Init initializes a new singly linked list with one node.
-// Because this is the only node currently existing in the list its next pointer will be nil.
+// Because this is the only node in the list its next pointer will be nil.
 func Init[T comparable](data T) *SList[T] {
 	return &SList[T]{
 		*newNode(data),

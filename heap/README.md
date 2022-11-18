@@ -6,7 +6,9 @@
 import "github.com/esimov/torx/heap"
 ```
 
-<details><summary>Example ((Heap Convert)</summary>
+Package heap provides a thread\-safe implementation of the binary heap data structure. A common implementation of the heap is the binary tree, where each node of the subtree satisfies the heap property: each node of the subtree is greather or equal then the parent node in case of min heap, and less or equal than the parent node in case of max heap. The conditional operator used on the heap initialization defines the heap type
+
+<details><summary>Example (Heap Convert)</summary>
 <p>
 
 ```go
@@ -30,7 +32,7 @@ import "github.com/esimov/torx/heap"
 </p>
 </details>
 
-<details><summary>Example ((Heap Meld)</summary>
+<details><summary>Example (Heap Meld)</summary>
 <p>
 
 ```go
@@ -60,7 +62,7 @@ import "github.com/esimov/torx/heap"
 </p>
 </details>
 
-<details><summary>Example ((Heap Merge)</summary>
+<details><summary>Example (Heap Merge)</summary>
 <p>
 
 ```go
@@ -90,7 +92,7 @@ import "github.com/esimov/torx/heap"
 </p>
 </details>
 
-<details><summary>Example ((Heap Sort)</summary>
+<details><summary>Example (Heap Sort)</summary>
 <p>
 
 ```go
@@ -235,7 +237,7 @@ true
 func Sort[T comparable](data []T, comp torx.CompFn[T]) []T
 ```
 
-Sort sorts the heap in ascending or descening order depending on the heap type. If the heap is a max heap, the heap is sorted in ascending order, otherwise in case the heap is a min heap, it is sorted in descending order.
+Sort sorts the heap in ascending or descening order depending on the heap type. In case the heap is a max heap, the heap is sorted in ascending order, otherwise in descending order.
 
 ## type Heap
 
@@ -259,7 +261,7 @@ FromSlice imports the slice elements into a new heap using the comparator functi
 func NewHeap[T comparable](comp torx.CompFn[T]) *Heap[T]
 ```
 
-NewHeap creates a new heap data structure having two components: a data slice holding the concrete values and a comparision function. The comparator sign decides if the heap is a max heap or min heap.
+NewHeap creates a new heap data structure having two components: a data slice holding the concrete values and a comparision function. The sign of the comparision function defines if we are dealing with a min or max heap.
 
 ### func \(\*Heap\[T\]\) Clear
 
@@ -275,7 +277,7 @@ Clear removes all the elements from the heap.
 func (h *Heap[T]) Convert(comp torx.CompFn[T])
 ```
 
-Convert a min heap to max heap and vice versa.
+Convert converts a min heap to max heap and vice versa.
 
 ### func \(\*Heap\[T\]\) Delete
 
@@ -283,7 +285,7 @@ Convert a min heap to max heap and vice versa.
 func (h *Heap[T]) Delete(val T) (bool, error)
 ```
 
-Delete removes an element from the heap. It returns false in case the element does not exists. After removal it reorders the heap based on the heap specific rules.
+Delete removes an element from the heap. It returns false in case the element does not exists. After removal it reorders the heap structure based on the heap\-specific rules.
 
 ### func \(\*Heap\[T\]\) GetValues
 

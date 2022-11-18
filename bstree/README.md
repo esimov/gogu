@@ -74,7 +74,7 @@ var ErrorNotFound = fmt.Errorf("BST node not found")
 
 ## type BsTree
 
-BsTree is the basic component for the BST data structure initialization. It incorporates a thread safe mechanism using the sync.Mutex to guarantee the data consistency on concurrent read and write operation.
+BsTree is the basic component for the BST data structure initialization. It incorporates a thread safe mechanism using `sync.Mutex` to guarantee the data consistency on concurrent read and write operation.
 
 ```go
 type BsTree[K constraints.Ordered, V any] struct {
@@ -128,7 +128,7 @@ Traverse iterates over the tree structure and invokes the callback function prov
 func (b *BsTree[K, V]) Upsert(key K, val V)
 ```
 
-Upsert insert a new node, or update an existing node in case the key is found in the tree list.
+Upsert insert a new node or update an existing node in case the key is found in the tree list.
 
 ## type Item
 

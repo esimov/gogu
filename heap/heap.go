@@ -1,12 +1,9 @@
-// Package heap provides an implementation of the binary heap data structure.
-// A common implementation of the heap is the binary tree, where each node
-// of the subtree satisfies the heap property: each node of the subtree
-// is greather or equal then the parent node in case of min heap,
+// Package heap provides a thread-safe implementation of the binary heap data structure.
+// A common implementation of the heap is the binary tree, where each node of the subtree
+// satisfies the heap property:
+// each node of the subtree is greather or equal then the parent node in case of min heap,
 // and less or equal than the parent node in case of max heap.
-// The heap package implements each of them, where the conditional
-// function of the constructor defines the heap type.
-
-// This package is thread-safe.
+// The conditional operator used on the heap initialization defines the heap type.
 
 package heap
 
@@ -25,7 +22,7 @@ type Heap[T comparable] struct {
 
 // NewHeap creates a new heap data structure having two components:
 // a data slice holding the concrete values and a comparision function.
-// The comparator sign decides if the heap is a max heap or min heap.
+// The sign of the comparision function defines if we are dealing with a min or max heap.
 func NewHeap[T comparable](comp torx.CompFn[T]) *Heap[T] {
 	return &Heap[T]{
 		mu:   new(sync.RWMutex),
@@ -117,7 +114,7 @@ func (h *Heap[T]) Pop() T {
 }
 
 // Delete removes an element from the heap. It returns false in case the element does not exists.
-// After removal it reorders the heap based on the heap specific rules.
+// After removal it reorders the heap structure based on the heap-specific rules.
 func (h *Heap[T]) Delete(val T) (bool, error) {
 	len := h.Size()
 	if len == 0 {
@@ -139,7 +136,7 @@ func (h *Heap[T]) Delete(val T) (bool, error) {
 	return true, nil
 }
 
-// Convert a min heap to max heap and vice versa.
+// Convert converts a min heap to max heap and vice versa.
 func (h *Heap[T]) Convert(comp torx.CompFn[T]) {
 	h.mu.Lock()
 	h.comp = comp

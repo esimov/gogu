@@ -83,7 +83,7 @@ type Item[K ~string, V any] struct {
 
 ## type Queuer
 
-Queuer exposes the basic interface methods for querying the trie data structure both for searching and for retrieving the existing keys. These are generic methods having the same signature as the correspondig concrete methods from the queue package. Because both the plain array and the linked listed version of the queue package has the same method signature, each of them could be plugged in.
+Queuer exposes the basic interface methods for querying the trie data structure both for searching and for retrieving the existing keys. These are generic methods having the same signature as the correspondig concrete methods from the queue package. Because both the plain array and the linked listed version of the queue package has the same method signature, each of them could be plugged in on the method invocation.
 
 ```go
 type Queuer[K ~string] interface {
@@ -96,7 +96,7 @@ type Queuer[K ~string] interface {
 
 ## type Trie
 
-Trie is a lock\-free tree data structure having the root as the first node. It's guarded with a mutex for concurrent data access.
+Trie is a lock\-free tree data structure having the root as the first node. It's guarded with a mutex for concurrent\-safe data access.
 
 ```go
 type Trie[K ~string, V any] struct {
@@ -142,7 +142,7 @@ Keys collects all the existing keys in the set.
 func (t *Trie[K, V]) LongestPrefix(query K) (K, error)
 ```
 
-LongestPrefix returns the string in the symbol table that is the longest prefix of query, or empty if such string does not exists.
+LongestPrefix returns the longest prefix of query in the symbol table or empty if such string does not exists.
 
 ### func \(\*Trie\[K, V\]\) Put
 
@@ -150,7 +150,7 @@ LongestPrefix returns the string in the symbol table that is the longest prefix 
 func (t *Trie[K, V]) Put(key K, val V)
 ```
 
-Put inserts a new node into the symbol table, overwriting the old value with the new value if the key is already in the symbol table.
+Put inserts a new node into the symbol table, overwriting the old value with the new one if the key is already in the symbol table.
 
 ### func \(\*Trie\[K, V\]\) Size
 

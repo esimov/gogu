@@ -6,13 +6,23 @@
 import "github.com/esimov/torx/cache"
 ```
 
-Package cache implements a basic in memory key\-value storage system using map as storing mechanism. The cache and the cache items also have an expiration time. The cache will be invalidated once the expiration time is reached. On cache initialization a cleanup interval is also required. The scope of the cleanup method is to run at a predefined interval and remove all the expired cache items.
+Package cache implements a basic in memory key\-value storage system using map as storing mechanism. The cache and the cache items also have an expiration time. The cache will be invalidated once the expiration time is reached. On cache initialization a cleanup interval is also required. The scope of the cleanup method is to run at a predefined interval and to remove all the expired cache items.
 
 ## Index
 
 - [Constants](<#constants>)
 - [type Cache](<#type-cache>)
   - [func New[T ~string, V any](expTime, cleanupTime time.Duration) *Cache[T, V]](<#func-new>)
+  - [func (c *Cache[T, V]) Count() int](<#func-cachet-v-count>)
+  - [func (c *Cache[T, V]) Delete(key T) error](<#func-cachet-v-delete>)
+  - [func (c *Cache[T, V]) Flush()](<#func-cachet-v-flush>)
+  - [func (c *Cache[T, V]) Get(key T) (*Item[V], error)](<#func-cachet-v-get>)
+  - [func (c *Cache[T, V]) IsExpired(key T) bool](<#func-cachet-v-isexpired>)
+  - [func (c *Cache[T, V]) List() map[T]*Item[V]](<#func-cachet-v-list>)
+  - [func (c *Cache[T, V]) MapToCache(m map[T]V, d time.Duration) error](<#func-cachet-v-maptocache>)
+  - [func (c *Cache[T, V]) Set(key T, val V, d time.Duration) error](<#func-cachet-v-set>)
+  - [func (c *Cache[T, V]) SetDefault(key T, val V) error](<#func-cachet-v-setdefault>)
+  - [func (c *Cache[T, V]) Update(key T, val V, d time.Duration) error](<#func-cachet-v-update>)
 - [type Item](<#type-item>)
   - [func (it *Item[V]) Val() V](<#func-itemv-val>)
 
@@ -28,7 +38,7 @@ const (
 
 ## type Cache
 
-Cache incorporates the local scope cache struct type.
+Cache is a publicly available struct type, which incorporates the unexported cache struct type holding the cache components.
 
 ```go
 type Cache[T ~string, V any] struct {
@@ -36,7 +46,7 @@ type Cache[T ~string, V any] struct {
 }
 ```
 
-<details><summary>Example (Basic)</summary>
+<details><summary>Example</summary>
 <p>
 
 ```go
@@ -162,6 +172,86 @@ func New[T ~string, V any](expTime, cleanupTime time.Duration) *Cache[T, V]
 ```
 
 New instantiates a cache struct which requires an expiration time and a cleanup interval. The cache will be invalidated once the expiration time is reached. If the expiration time is less than zero \(or NoExpiration\) the cache items will never expire and should be manually deleted. A cleanup method is running in the background and removes the expired caches at a predifined interval.
+
+### func \(\*Cache\[T, V\]\) Count
+
+```go
+func (c *Cache[T, V]) Count() int
+```
+
+Count returns the number of existing items in the cache.
+
+### func \(\*Cache\[T, V\]\) Delete
+
+```go
+func (c *Cache[T, V]) Delete(key T) error
+```
+
+Delete removes a cache item.
+
+### func \(\*Cache\[T, V\]\) Flush
+
+```go
+func (c *Cache[T, V]) Flush()
+```
+
+Flush removes all the existing items in the cache.
+
+### func \(\*Cache\[T, V\]\) Get
+
+```go
+func (c *Cache[T, V]) Get(key T) (*Item[V], error)
+```
+
+Get returns a cache item defined by it's key. If the item is expired an error is returned. If the item is expired it's considered as unexistent and it will be evicted from the cache when the purge method is invoked at a predifined interval.
+
+### func \(\*Cache\[T, V\]\) IsExpired
+
+```go
+func (c *Cache[T, V]) IsExpired(key T) bool
+```
+
+IsExpired checks if a cache item is expired.
+
+### func \(\*Cache\[T, V\]\) List
+
+```go
+func (c *Cache[T, V]) List() map[T]*Item[V]
+```
+
+List returns the cache items which are not expired.
+
+### func \(\*Cache\[T, V\]\) MapToCache
+
+```go
+func (c *Cache[T, V]) MapToCache(m map[T]V, d time.Duration) error
+```
+
+MapToCache transfers the map values into the cache.
+
+### func \(\*Cache\[T, V\]\) Set
+
+```go
+func (c *Cache[T, V]) Set(key T, val V, d time.Duration) error
+```
+
+Set inserts a new item into the cache, but first verifies if an item with the same key already exists in the cache. In case an item with the specified key already exists in the cache it will return an error.
+
+### func \(\*Cache\[T, V\]\) SetDefault
+
+```go
+func (c *Cache[T, V]) SetDefault(key T, val V) error
+```
+
+SetDefault adds a new item into the cache with the default expiration time.
+
+### func \(\*Cache\[T, V\]\) Update
+
+```go
+func (c *Cache[T, V]) Update(key T, val V, d time.Duration) error
+```
+
+Update replaces a cache item with the new value.
 
 ## type Item
 

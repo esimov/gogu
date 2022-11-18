@@ -6,9 +6,7 @@
 import "github.com/esimov/torx/list"
 ```
 
-Package list provides an implementation of the linked list data structure. It comes with two version: singly and doubly linked list. The singly linked list version has a data element storing the node value and a pointer to the next element of the list.
-
-The doubly linked list version has an additional pointer to previous node.
+Package list provides an implementation of the linked list data structure. It comes with two version: singly and doubly linked list. The singly linked list version has a data element storing the node value and a pointer to the next element of the list. The doubly linked list version has an additional pointer to previous node.
 
 <details><summary>Example (Doubly Linked List)</summary>
 <p>
@@ -216,7 +214,7 @@ type DList[T comparable] struct {
 func InitDList[T comparable](data T) *DList[T]
 ```
 
-InitDList initializes a doubly linked list with one node. Because this is the only node curently existing in the list, its next and prev pointers are nil.
+InitDList initializes a doubly linked list with one node. Because this is the only node in the list, its next and prev pointers are nil.
 
 ### func \(\*DList\[T\]\) Append
 
@@ -272,7 +270,7 @@ Find search for a node element in the linked list. It returns the node in case t
 func (l *DList[T]) First() T
 ```
 
-First retrieves the first element of the double linked list.
+First retrieves the first element of the doubly linked list.
 
 ### func \(\*DList\[T\]\) InsertAfter
 
@@ -296,7 +294,7 @@ InsertBefore inserts a new node before the current node. In case the requested n
 func (l *DList[T]) Last() T
 ```
 
-Last retrieves the last element of the double linked list.
+Last retrieves the last element of the doubly linked list.
 
 ### func \(\*DList\[T\]\) Pop
 
@@ -312,7 +310,7 @@ Pop removes the last node from the list.
 func (l *DList[T]) Replace(oldVal, newVal T) (*doubleNode[T], error)
 ```
 
-Replace replaces a node's value with a new one. It returns an error in case the requested node does not exists.
+Replace replaces a node's value with the new one. It returns an error in case the requested node does not exists.
 
 ### func \(\*DList\[T\]\) Shift
 
@@ -346,7 +344,7 @@ type SList[T comparable] struct {
 func Init[T comparable](data T) *SList[T]
 ```
 
-Init initializes a new singly linked list with one node. Because this is the only node currently existing in the list its next pointer will be nil.
+Init initializes a new singly linked list with one node. Because this is the only node in the list its next pointer will be nil.
 
 ### func \(\*SList\[T\]\) Append
 

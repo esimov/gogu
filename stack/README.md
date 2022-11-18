@@ -6,9 +6,39 @@
 import "github.com/esimov/torx/stack"
 ```
 
-Linked\-list implementation of the LIFO stack.
+Package queue implements a concurrent safe LIFO \(Last\-In\-First\-Out\) data structure where the last element added to the stack is processed first. It's implemented in two versions: 1.\) where the storage system is a resizing array, 2.\) where the storage system is a doubly linked list.
 
-Package stack implements a concurrent safe LIFO \(Last\-In\-First\-Out\) data structure using as storage a resizing array, where the last element added to the stack is processed first.
+<details><summary>Example</summary>
+<p>
+
+```go
+{
+	l := New[string]()
+
+	l.Push("foo")
+	fmt.Println(l.Size())
+	fmt.Println(l.Peek())
+	l.Push("bar")
+
+	fmt.Println(l.Pop())
+	fmt.Println(l.Search("foo"))
+	fmt.Println(l.Peek())
+
+}
+```
+
+#### Output
+
+```
+1
+foo
+bar
+true
+foo
+```
+
+</p>
+</details>
 
 <details><summary>Example (Linked List)</summary>
 <p>
@@ -38,38 +68,6 @@ bar
 foo
 foo
 true
-```
-
-</p>
-</details>
-
-<details><summary>Example</summary>
-<p>
-
-```go
-{
-	l := New[string]()
-
-	l.Push("foo")
-	fmt.Println(l.Size())
-	fmt.Println(l.Peek())
-	l.Push("bar")
-
-	fmt.Println(l.Pop())
-	fmt.Println(l.Search("foo"))
-	fmt.Println(l.Peek())
-
-}
-```
-
-#### Output
-
-```
-1
-foo
-bar
-true
-foo
 ```
 
 </p>

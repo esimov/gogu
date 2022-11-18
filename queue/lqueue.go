@@ -1,4 +1,3 @@
-// Linked-list implementation of the queue (FIFO) data structure.
 package queue
 
 import (
