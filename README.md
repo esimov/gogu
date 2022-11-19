@@ -1,8 +1,8 @@
 # torx
 
-Torx is a versatile, comprehensive, reusable and efficient utility functions and data structures library taking advantage of the Go generics. It was inspired by other well established and consecrated frameworks like [underscore.js](https://underscorejs.org/), [lodash](https://lodash.com/) and some concepts familiar to the functional programming paradigms. 
+Torx is a versatile, comprehensive, reusable, efficient and concurrent-safe utility functions and data structures library taking advantage of the Go generics. It was inspired by other well established and consecrated frameworks like [underscore.js](https://underscorejs.org/), [lodash](https://lodash.com/) and some concepts familiar to the functional programming paradigms. 
 
-Its main purpose is to help the developers in their day-to-day jobs by exposing some generic helper functions to facilitate the work with slices, maps and strings, but also implementing some of the most used data structures.
+Its main purpose is to help the developers in their day-to-day jobs to ease-up the work with slices, maps and strings, but also implementing some of the most used data structures.
 
 ## Installation
 
@@ -22,6 +22,15 @@ func main() {
 ```
 
 ## Specifications
+- Generic Data Structures
+  - [`bst`](https://github.com/esimov/torx/tree/master/bstree): Binary Search Tree data structure implementation, where each node has at most two child nodes and the key of its internal node is greater than all the keys in the respective node's left subtree and less than the ones in the right subtree
+  - [`btree`](https://github.com/esimov/torx/tree/master/btree): B-tree data structure implementation which is a self-balancing tree data structure maintaining its values in sorted order
+  - [`cache`](https://github.com/esimov/torx/tree/master/cache): a basic in-memory key-value storage system
+  - [`heap`](https://github.com/esimov/torx/tree/master/heap): Binary Heap data structure implementation where each node of the subtree is greather or equal then the parent node
+  - [`list`](https://github.com/esimov/torx/tree/master/list): implements a singly and doubly linked list data structure
+  - [`queue`](https://github.com/esimov/torx/tree/master/queue): package queue implements a FIFO (First-In-First-Out) data structure in two forms: using as storage system a resizing array and a doubly linked list
+  - [`stack`](https://github.com/esimov/torx/tree/master/stack): package stack implements a LIFO (Last-In-First-Out) data structure where the last element added to the stack is processed first
+
 - General utility functions
   - [Abs](<#func-abs>)
   - [Clamp](<#func-clamp>)
@@ -139,14 +148,6 @@ func main() {
   - [Once](<#func-once>)
   - [Retry](<#func-rtypet-retry>)
   - [RetryWithDelay](<#func-rtypet-retrywithdelay>)
-
-- Generic Data Structures
-  - [`bst`](https://github.com/esimov/torx/tree/master/bstree): Binary Search Tree data structure implementation, where each node has at most two child nodes and the key of its internal node is greater than all the keys in the respective node's left subtree and less than the ones in the right subtree
-  - [`btree`](https://github.com/esimov/torx/tree/master/btree): B-tree data structure implementation which is a self-balancing tree data structure maintaining its values in sorted order
-  - [`cache`](https://github.com/esimov/torx/tree/master/cache): a basic in-memory key-value storage system
-  - [`heap`](https://github.com/esimov/torx/tree/master/heap): Binary Heap data structure implementation where each node of the subtree is greather or equal then the parent node
-  - [`list`](https://github.com/esimov/torx/tree/master/list): implementing a singly and doubly linked list data structure
-  - [`queue`](https://github.com/esimov/torx/tree/master/queue): implementing a FIFO (First-In-First-Out) data structure in two forms: using as storage system a resizing array and a doubly linked list
 
 ## func Abs
 
