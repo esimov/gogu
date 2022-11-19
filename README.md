@@ -22,7 +22,7 @@ func main() {
 ```
 
 ## Specifications
-- Generic Data Structures
+- **Generic Data Structures**
   - [`bst`](https://github.com/esimov/torx/tree/master/bstree): Binary Search Tree data structure implementation, where each node has at most two child nodes and the key of its internal node is greater than all the keys in the respective node's left subtree and less than the ones in the right subtree
   - [`btree`](https://github.com/esimov/torx/tree/master/btree): B-tree data structure implementation which is a self-balancing tree data structure maintaining its values in sorted order
   - [`cache`](https://github.com/esimov/torx/tree/master/cache): a basic in-memory key-value storage system
