@@ -31,7 +31,7 @@ func main() {
   - [`queue`](https://github.com/esimov/torx/tree/master/queue): package queue implements a FIFO (First-In-First-Out) data structure in two forms: using as storage system a resizing array and a doubly linked list
   - [`stack`](https://github.com/esimov/torx/tree/master/stack): package stack implements a LIFO (Last-In-First-Out) data structure where the last element added to the stack is processed first
 
-- General utility functions
+- **General utility functions**
   - [Abs](<#func-abs>)
   - [Clamp](<#func-clamp>)
   - [Compare](<#func-compare>)
@@ -42,7 +42,7 @@ func main() {
   - [Max](<#func-max>)
   - [Min](<#func-min>)
 
-- Strings utility functions
+- **Strings utility functions**
   - [CamelCase](<#func-camelcase>)
   - [Capitalize](<#func-capitalize>)
   - [KebabCase](<#func-kebabcase>)
@@ -62,7 +62,7 @@ func main() {
   - [Wrap](<#func-wrap>)
   - [WrapAllRune](<#func-wrapallrune>)
 
-- Slice utility functions
+- **Slice utility functions**
   - [Chunk](<#func-chunk>)
   - [SumBy](#sumby)
   - [Contains](<#func-contains>)
@@ -116,7 +116,7 @@ func main() {
   - [Without](<#func-without>)
   - [Zip](<#func-zip>)
 
-- Map utility functions
+- **Map utility functions**
   - [Filter2DMapCollection](<#func-filter2dmapcollection>)
   - [FilterMap](<#func-filtermap>)
   - [FilterMapCollection](<#func-filtermapcollection>)
@@ -138,7 +138,7 @@ func main() {
   - [PickBy](<#func-pickby>)
   - [Values](<#func-values>)
 
-- Concurrency and time related utility functions
+- **Concurrency and time related utility functions**
   - [After](<#func-after>)
   - [Before](<#func-before>)
   - [Delay](<#func-delay>)
