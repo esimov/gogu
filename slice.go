@@ -33,6 +33,28 @@ func Mean[T Number](slice []T) T {
 	return result / T(len(slice))
 }
 
+// IndexOf returns the index of the firs orccurrence of a value
+// in the slice, or -1 if value is not present in the slice.
+func IndexOf[T comparable](s []T, val T) int {
+	for k, v := range s {
+		if v == val {
+			return k
+		}
+	}
+
+	return -1
+}
+
+// LastIndexOf returns the index of the last occurrence of a value.
+func LastIndexOf[T comparable](s []T, val T) int {
+	for i, j := len(s)-1, 0; i >= 0; i, j = i-1, j+1 {
+		if s[i] == val {
+			return i
+		}
+	}
+	return -1
+}
+
 // Map produces a new slice of values by mapping each value in the list through a transformation function.
 func Map[T1, T2 any](slice []T1, fn func(T1) T2) []T2 {
 	result := make([]T2, len(slice))
@@ -222,7 +244,7 @@ func Merge[T any](s []T, params ...[]T) []T {
 	return merged
 }
 
-// Flatten flattens the slice all the way to the deepest nesting level.
+// Flatten flattens the slice all the way down to the deepest nesting level.
 func Flatten[T any](slice any) ([]T, error) {
 	return baseFlatten([]T{}, slice)
 }
@@ -412,7 +434,7 @@ func Drop[T any](slice []T, n int) []T {
 }
 
 // DropWhile creates a new slice excluding the elements dropped from the beginning.
-// Elements are dropped by applying the conditional invoked in the callback function.
+// Elements are dropped by applying the condition invoked in the callback function.
 func DropWhile[T any](slice []T, fn func(T) bool) []T {
 	result := make([]T, 0, len(slice))
 
@@ -426,7 +448,7 @@ func DropWhile[T any](slice []T, fn func(T) bool) []T {
 }
 
 // DropRightWhile creates a new slice excluding the elements dropped from the end.
-// Elements are dropped by applying the conditional invoked in the callback function.
+// Elements are dropped by applying the condition invoked in the callback function.
 func DropRightWhile[T any](slice []T, fn func(T) bool) []T {
 	result := make([]T, 0, len(slice))
 

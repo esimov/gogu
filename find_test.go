@@ -1,6 +1,7 @@
 package torx
 
 import (
+	"fmt"
 	"math"
 	"strings"
 	"testing"
@@ -59,20 +60,15 @@ func TestFind_All(t *testing.T) {
 	assert.Empty(items2)
 }
 
-func TestFind_IndexOf(t *testing.T) {
+func Example_FindAll() {
 	input := []int{1, 2, 3, 4, 2, -2, -1, 2}
+	items := FindAll(input, func(v int) bool {
+		return v == 2
+	})
+	fmt.Println(items)
 
-	assert := assert.New(t)
-	assert.Equal(0, IndexOf(input, 1))
-	assert.Equal(-1, IndexOf(input, 5))
-}
-
-func TestFind_LastIndexOf(t *testing.T) {
-	input := []int{1, 2, -1, 4, 2, -2, -1, 2}
-
-	assert := assert.New(t)
-	assert.Equal(6, LastIndexOf(input, -1))
-	assert.Equal(-1, IndexOf(input, 5))
+	// Output:
+	// map[1:2 4:2 7:2]
 }
 
 func TestFind_Min(t *testing.T) {

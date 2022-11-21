@@ -16,15 +16,16 @@ func Flip[T any](fn func(args ...T) []T) func(args ...T) []T {
 	}
 }
 
-// Delay invokes the function with a predefined delay.
+// Delay invokes the callback function with a predefined delay.
 func Delay(delay time.Duration, fn func()) *time.Timer {
 	t := time.AfterFunc(delay, fn)
 	return t
 }
 
 // After creates a function wrapper that does nothing at first.
-// From the nth call onwards, it starts actually calling the callback function.
-// Useful for grouping responses, where you want to be sure that all the calls have finished, before proceeding.
+// From the nth call onwards, it starts actually invoking the callback function.
+// Useful for grouping responses, where you need to be sure that all
+// the calls have finished just before proceeding to the actual job.
 func After[V constraints.Signed](n *V, fn func()) {
 	if *n < 1 {
 		fn()
@@ -111,11 +112,10 @@ type debouncer struct {
 	mu       sync.Mutex
 }
 
-// NewDebounce creates a new debounced version of the invoked function which will postpone the execution
-// until the time duration has elapsed since the last invocation passed in as a function argument.
-//
+// NewDebounce creates a new debounced version of the invoked function which
+// postpone the execution with a time delay passed in as a function argument.
 // It returns a callback function which will be invoked after the predefined delay and
-// also a cancel function which should be invoked to cancel a scheduled debounce.
+// also a cancel method which should be invoked to cancel a scheduled debounce.
 func NewDebounce(wait time.Duration) (func(f func()), func()) {
 	d := &debouncer{duration: wait}
 	return func(f func()) {

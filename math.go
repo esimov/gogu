@@ -34,12 +34,12 @@ func Abs[T Number](x T) T {
 	return x
 }
 
-// Clamp restricts a number between two other numbers.
-func Clamp[T Number](num, lo, up T) T {
-	if num <= lo {
-		return lo
-	} else if num >= up {
-		return up
+// Clamp returns a range-limited number between min and max.
+func Clamp[T Number](num, min, max T) T {
+	if num <= min {
+		return min
+	} else if num >= max {
+		return max
 	}
 	return num
 }

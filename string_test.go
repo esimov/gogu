@@ -1,6 +1,7 @@
 package torx
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -68,6 +69,25 @@ func TestString_CamelCase(t *testing.T) {
 	assert.Equal("fooBar", CamelCase("&&foo&&bar__"))
 }
 
+func Example_StringCamelCase() {
+	fmt.Println(CamelCase("Foo Bar"))
+	fmt.Println(CamelCase("--foo-Bar--"))
+	fmt.Println(CamelCase("__foo-_Bar__"))
+	fmt.Println(CamelCase("__FOO BAR__"))
+	fmt.Println(CamelCase(" FOO BAR "))
+	fmt.Println(CamelCase("&FOO&baR "))
+	fmt.Println(CamelCase("&&foo&&bar__"))
+
+	// Output:
+	// fooBar
+	// fooBar
+	// fooBar
+	// fooBar
+	// fooBar
+	// fooBar
+	// fooBar
+}
+
 func TestString_SnakeCase(t *testing.T) {
 	assert := assert.New(t)
 
@@ -108,6 +128,17 @@ func TestString_KebabCase(t *testing.T) {
 	assert.Equal("foo-bar-baz-qux", KebabCase("FooBarBaz_Qux"))
 	assert.Equal("foo-bar-baz-qux", KebabCase("FooBarBaz Qux"))
 	assert.Equal("foo-bar-baz-qux", KebabCase("Foo Bar_Baz&Qux"))
+}
+
+func Example_StringKebebCase() {
+	fmt.Println(KebabCase("fooBarBaz"))
+	fmt.Println(KebabCase("Foo BarBaz"))
+	fmt.Println(KebabCase("Foo_Bar_Baz"))
+
+	// Output:
+	// foo-bar-baz
+	// foo-bar-baz
+	// foo-bar-baz
 }
 
 func TestString_SplitAtIndex(t *testing.T) {

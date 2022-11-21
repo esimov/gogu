@@ -1,6 +1,7 @@
 package torx
 
 import (
+	"fmt"
 	"math"
 	"reflect"
 	"sort"
@@ -29,6 +30,22 @@ func TestSlice_Mean(t *testing.T) {
 	assert.Equal(2, Mean([]int{1, 2, 3}))
 }
 
+func TestFind_IndexOf(t *testing.T) {
+	input := []int{1, 2, 3, 4, 2, -2, -1, 2}
+
+	assert := assert.New(t)
+	assert.Equal(0, IndexOf(input, 1))
+	assert.Equal(-1, IndexOf(input, 5))
+}
+
+func TestFind_LastIndexOf(t *testing.T) {
+	input := []int{1, 2, -1, 4, 2, -2, -1, 2}
+
+	assert := assert.New(t)
+	assert.Equal(6, LastIndexOf(input, -1))
+	assert.Equal(-1, IndexOf(input, 5))
+}
+
 func TestSlice_Map(t *testing.T) {
 	assert := assert.New(t)
 
@@ -38,6 +55,16 @@ func TestSlice_Map(t *testing.T) {
 	assert.Len(Map([]int{2, 4}, func(val int) int {
 		return val * val
 	}), 2)
+}
+
+func Example_SliceMap() {
+	res := Map([]int{1, 2, 3}, func(val int) int {
+		return val * 2
+	})
+	fmt.Println(res)
+
+	// Output:
+	// [2 4 6]
 }
 
 func TestSlice_ForEach(t *testing.T) {
@@ -80,6 +107,20 @@ func TestSlice_ForEach(t *testing.T) {
 		output3 = append(output3, strconv.Itoa(val))
 	})
 	assert.Equal([]string{"4", "3", "2", "1"}, output3)
+}
+
+func Example_SliceForEach() {
+	input := []int{1, 2, 3, 4}
+	output := []int{}
+
+	ForEach(input, func(val int) {
+		val = val * 2
+		output = append(output, val)
+	})
+	fmt.Println(output)
+
+	// Output:
+	// [2 4 6 8]
 }
 
 func TestSlice_Reduce(t *testing.T) {
@@ -225,6 +266,20 @@ func TestSlice_Duplicate(t *testing.T) {
 	assert.ElementsMatch([]int{-1, 1, 2}, indices)
 }
 
+func Example_SliceDuplicate() {
+	input1 := []int{-1, -1, 0, 1, 2, 3, 2, 5, 1, 6}
+	res1 := Duplicate(input1)
+	sort.Slice(res1, func(a, b int) bool { return res1[a] < res1[b] })
+	fmt.Println(res1)
+
+	res2 := DuplicateWithIndex(input1)
+	fmt.Println(res2)
+
+	// Output:
+	// [-1 1 2]
+	// map[-1:0 1:3 2:4]
+}
+
 func TestSlice_Merge(t *testing.T) {
 	assert := assert.New(t)
 
@@ -271,6 +326,15 @@ func TestSlice_Flatten(t *testing.T) {
 	assert.NoError(err)
 }
 
+func Example_SliceFlatten() {
+	input := []any{[]int{1, 2, 3}, []any{[]int{4}, 5}}
+	result, _ := Flatten[int](input)
+	fmt.Println(result)
+
+	// Output:
+	// [1 2 3 4 5]
+}
+
 func TestSlice_Union(t *testing.T) {
 	assert := assert.New(t)
 
@@ -311,6 +375,18 @@ func TestSlice_Intersection(t *testing.T) {
 	assert.Equal([]string{"a"}, result4)
 }
 
+func Example_SliceIntersection() {
+	res1 := Intersection([]int{1, 2, 4}, []int{0, 2, 1}, []int{2, 1, -2})
+	fmt.Println(res1)
+
+	res2 := Intersection([]string{"a", "b"}, []string{"a", "a", "a"}, []string{"b", "a", "e"})
+	fmt.Println(res2)
+
+	// Output:
+	// [1 2]
+	// [a]
+}
+
 func TestSlice_IntersectionBy(t *testing.T) {
 	assert := assert.New(t)
 
@@ -328,6 +404,22 @@ func TestSlice_IntersectionBy(t *testing.T) {
 		return math.Floor(v)
 	}, []float64{1.1, 2.0, 3.2}, []float64{4.0})
 	assert.Equal([]float64{}, result3)
+}
+
+func Example_SliceIntersectioBy() {
+	result1 := IntersectionBy(func(v float64) float64 {
+		return math.Floor(v)
+	}, []float64{2.1, 1.2}, []float64{2.3, 3.4}, []float64{1.0, 2.3})
+	fmt.Println(result1)
+
+	result2 := IntersectionBy(func(v int) int {
+		return v % 2
+	}, []int{1, 2}, []int{2, 1})
+	fmt.Println(result2)
+
+	// Output:
+	// [2.1]
+	// [1 2]
 }
 
 func TestSlice_Without(t *testing.T) {
@@ -384,6 +476,17 @@ func TestSlice_Chunk(t *testing.T) {
 	assert.Panics(func() { Chunk([]int{0, 1}, 0) })
 }
 
+func Example_SliceChunk() {
+	fmt.Println(Chunk([]int{0, 1, 2, 3}, 2))
+	fmt.Println(Chunk([]int{0, 1, 2, 3, 4}, 2))
+	fmt.Println(Chunk([]int{0, 1}, 1))
+
+	// Output:
+	// [[0 1] [2 3]]
+	// [[0 1] [2 3] [4]]
+	// [[0] [1]]
+}
+
 func TestSlice_Drop(t *testing.T) {
 	assert := assert.New(t)
 
@@ -422,6 +525,16 @@ func TestSlice_Drop(t *testing.T) {
 	assert.Empty(DropRightWhile([]int{1, 2}, func(val int) bool {
 		return val <= 2
 	}))
+}
+
+func Example_SliceDrop() {
+	res := DropWhile([]string{"a", "aa", "bbb", "ccc"}, func(elem string) bool {
+		return len(elem) > 2
+	})
+	fmt.Println(res)
+
+	// Output:
+	// [a aa]
 }
 
 func TestSlice_GroupBy(t *testing.T) {
@@ -465,6 +578,17 @@ func TestSlice_GroupBy(t *testing.T) {
 		val, _ := strconv.Atoi(v[0])
 		assert.Equal(k, val)
 	}
+}
+
+func Example_SliceGroupBy() {
+	input := []float64{1.3, 1.5, 2.1, 2.9}
+	res := GroupBy(input, func(val float64) float64 {
+		return math.Floor(val)
+	})
+	fmt.Println(res)
+
+	// Output:
+	// map[1:[1.3 1.5] 2:[2.1 2.9]]
 }
 
 func TestSlice_ToSlice(t *testing.T) {

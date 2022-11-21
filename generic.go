@@ -7,7 +7,7 @@ import (
 // CompFn is a generic function type for comparing two values.
 type CompFn[T any] func(a, b T) bool
 
-// Compare compares two values using as comparator the the callback function argument.
+// Compare compares two values using as comparator the callback function argument.
 func Compare[T comparable](a, b T, comp CompFn[T]) int {
 	if comp(a, b) {
 		return 1

@@ -1,8 +1,8 @@
 # torx
 
-Torx is a versatile, comprehensive, reusable, efficient and concurrent-safe utility functions and data structures library taking advantage of the Go generics. It was inspired by other well established and consecrated frameworks like [underscore.js](https://underscorejs.org/), [lodash](https://lodash.com/) and some concepts familiar to the functional programming paradigms. 
+Torx is a versatile, comprehensive, reusable and efficient concurrent-safe utility functions and data structures library taking advantage of the Go generics. It was inspired by other well established and consecrated frameworks like [underscore.js](https://underscorejs.org/), [lodash](https://lodash.com/) and some concepts being more closer to the functional programming paradigms. 
 
-Its main purpose is to help the developers in their day-to-day jobs to ease-up the work with slices, maps and strings, but also implementing some of the most used data structures.
+Its main purpose is to help developers in their day-to-day jobs to ease up their work with slices, maps and strings, but also implementing some of the most used data structures.
 
 ## Installation
 
@@ -163,7 +163,41 @@ Abs returns the absolut value of x.
 func After[V constraints.Signed](n *V, fn func())
 ```
 
-After creates a function wrapper that does nothing at first. From the nth call onwards, it starts actually calling the callback function. Useful for grouping responses, where you want to be sure that all the calls have finished, before proceeding.
+After creates a function wrapper that does nothing at first. From the nth call onwards, it starts actually invoking the callback function. Useful for grouping responses, where you need to be sure that all the calls have finished just before proceeding to the actual job.
+
+<details><summary>Example</summary>
+<p>
+
+```go
+{
+	sample := []int{1, 2, 3, 4, 5, 6}
+	length := len(sample) - 1
+
+	initVal := 0
+	fn := func(val int) int {
+		return val + 1
+	}
+
+	ForEach(sample, func(val int) {
+		now := time.Now()
+		After(&length, func() {
+			<-time.After(10 * time.Millisecond)
+			initVal = fn(initVal)
+			after := time.Since(now).Milliseconds()
+			fmt.Println(after)
+		})
+	})
+
+}
+```
+
+#### Output
+
+```
+10
+```
+</p>
+</details>
 
 ## func Before
 
@@ -173,6 +207,53 @@ func Before[S ~string, T any, V constraints.Signed](n *V, c *cache.Cache[S, T], 
 
 Before creates a function wrapper that memoizes its return value. From the nth call onwards, the memoized result of the last invocation is returned immediately instead of invoking function again. So the wrapper will invoke function at most n\-1 times.
 
+<details><summary>Example</summary>
+<p>
+
+```go
+{
+  c := cache.New[string, int](cache.DefaultExpiration, cache.NoExpiration)
+
+	var n = 3
+	sample := []int{1, 2, 3}
+	ForEach(sample, func(val int) {
+		fn := func() int {
+			<-time.After(10 * time.Millisecond)
+			return n
+		}
+		res := Before(&n, c, fn)
+		// The trick to test this function is to decrease the n value after each iteration.
+		// We can be sure that the callback function is not served from the cache if n > 0.
+		// In this case the cache item "func" should be empty.
+		if n > 0 {
+			val, _ := c.Get("func")
+			fmt.Println(val)
+			fmt.Println(res)
+		}
+		if n <= 0 {
+			// Here the callback function is served from the cache.
+			val, _ := c.Get("func")
+			fmt.Println(val)
+			fmt.Println(res)
+		}
+	})
+}
+```
+
+#### Output
+
+```
+<nil>
+2
+<nil>
+1
+&{0 0}
+0
+```
+
+</p>
+</details>
+
 ## func CamelCase
 
 ```go
@@ -180,6 +261,36 @@ func CamelCase[T ~string](str T) T
 ```
 
 CamelCase converts a string to camelCase \(https://en.wikipedia.org/wiki/CamelCase\).
+
+<details><summary>Example</summary>
+<p>
+
+```go
+{
+	fmt.Println(CamelCase("Foo Bar"))
+	fmt.Println(CamelCase("--foo-Bar--"))
+	fmt.Println(CamelCase("__foo-_Bar__"))
+	fmt.Println(CamelCase("__FOO BAR__"))
+	fmt.Println(CamelCase(" FOO BAR "))
+	fmt.Println(CamelCase("&FOO&baR "))
+	fmt.Println(CamelCase("&&foo&&bar__"))
+}
+```
+
+#### Output
+
+```
+fooBar
+fooBar
+fooBar
+fooBar
+fooBar
+fooBar
+fooBar
+```
+
+</p>
+</details>
 
 ## func Capitalize
 
@@ -197,13 +308,36 @@ func Chunk[T comparable](slice []T, size int) [][]T
 
 Chunk split the slice into groups of slices each having the length of size. In case the source slice cannot be distributed equally, the last slice will contain fewer elements.
 
+<details><summary>Example</summary>
+<p>
+
+```go
+{
+	fmt.Println(Chunk([]int{0, 1, 2, 3}, 2))
+	fmt.Println(Chunk([]int{0, 1, 2, 3, 4}, 2))
+	fmt.Println(Chunk([]int{0, 1}, 1))
+
+}
+```
+
+#### Output
+
+```
+[[0 1] [2 3]]
+[[0 1] [2 3] [4]]
+[[0] [1]]
+```
+
+</p>
+</details>
+
 ## func Clamp
 
 ```go
-func Clamp[T Number](num, lo, up T) T
+func Clamp[T Number](num, min, max T) T
 ```
 
-Clamp restricts a number between two other numbers.
+Clamp returns a range\-limited number between min and max.
 
 ## func Compare
 
@@ -211,7 +345,7 @@ Clamp restricts a number between two other numbers.
 func Compare[T comparable](a, b T, comp CompFn[T]) int
 ```
 
-Compare compares two values using as comparator the the callback function argument.
+Compare compares two values using as comparator the callback function argument.
 
 ## func Contains
 
@@ -227,7 +361,45 @@ Contains returns true if the value is present in the collection.
 func Delay(delay time.Duration, fn func()) *time.Timer
 ```
 
-Delay invokes the function with a predefined delay.
+Delay invokes the callback function with a predefined delay.
+
+<details><summary>Example</summary>
+<p>
+
+```go
+{
+	ch := make(chan struct{})
+	now := time.Now()
+
+	var value uint32
+	timer := Delay(20*time.Millisecond, func() {
+		atomic.AddUint32(&value, 1)
+		ch <- struct{}{}
+	})
+	r1 := atomic.LoadUint32(&value)
+	fmt.Println(r1)
+	<-ch
+	if timer.Stop() {
+		<-timer.C
+	}
+	r1 = atomic.LoadUint32(&value)
+	fmt.Println(r1)
+	after := time.Since(now).Milliseconds()
+	fmt.Println(after)
+
+}
+```
+
+#### Output
+
+```
+0
+1
+20
+```
+
+</p>
+</details>
 
 ## func Difference
 
@@ -253,21 +425,43 @@ func Drop[T any](slice []T, n int) []T
 
 Drop creates a new slice with n elements dropped from the beginning. If n \< 0 the elements will be dropped from the back of the collection.
 
-## func DropRightWhile
-
-```go
-func DropRightWhile[T any](slice []T, fn func(T) bool) []T
-```
-
-DropRightWhile creates a new slice excluding the elements dropped from the end. Elements are dropped by applying the conditional invoked in the callback function.
-
 ## func DropWhile
 
 ```go
 func DropWhile[T any](slice []T, fn func(T) bool) []T
 ```
 
-DropWhile creates a new slice excluding the elements dropped from the beginning. Elements are dropped by applying the conditional invoked in the callback function.
+DropWhile creates a new slice excluding the elements dropped from the beginning. Elements are dropped by applying the condition invoked in the callback function.
+
+<details><summary>Example</summary>
+<p>
+
+```go
+{
+	res := DropWhile([]string{"a", "aa", "bbb", "ccc"}, func(elem string) bool {
+		return len(elem) > 2
+	})
+	fmt.Println(res)
+
+}
+```
+
+#### Output
+
+```
+[a aa]
+```
+
+</p>
+</details>
+
+## func DropRightWhile
+
+```go
+func DropRightWhile[T any](slice []T, fn func(T) bool) []T
+```
+
+DropRightWhile creates a new slice excluding the elements dropped from the end. Elements are dropped by applying the condition invoked in the callback function.
 
 ## func Duplicate
 
@@ -284,6 +478,28 @@ func DuplicateWithIndex[T comparable](slice []T) map[T]int
 ```
 
 DuplicateWithIndex puts the duplicated values of a collection into a map as a key value pair, where the key is the collection element and the value is it's position.
+
+<details><summary>Example</summary>
+<p>
+
+```go
+{
+	input1 := []int{-1, -1, 0, 1, 2, 3, 2, 5, 1, 6}
+	fmt.Println(Duplicate(input1))
+	fmt.Println(DuplicateWithIndex(input1))
+
+}
+```
+
+#### Output
+
+```
+[-1 1 2]
+map[-1:0 1:3 2:4]
+```
+
+</p>
+</details>
 
 ## func Equal
 
@@ -347,7 +563,30 @@ Find iterates over the elements of a map and returns the first item for which th
 func FindAll[T any](s []T, fn func(T) bool) map[int]T
 ```
 
-FindAll is like FindIndex, but inserts into a map all the values which stisfies the conditional logic of the callback function. The map key represents the position of the found value and the value is the item itself.
+FindAll is like FindIndex, but returns into a map all the values which stisfies the conditional logic of the callback function. The map key represents the position of the found value and the value is the item itself.
+
+<details><summary>Example</summary>
+<p>
+
+```go
+{
+	input := []int{1, 2, 3, 4, 2, -2, -1, 2}
+	items := FindAll(input, func(v int) bool {
+		return v == 2
+	})
+	fmt.Println(items)
+
+}
+```
+
+#### Output
+
+```
+map[1:2 4:2 7:2]
+```
+
+</p>
+</details>
 
 ## func FindByKey
 
@@ -395,7 +634,7 @@ FindMax finds the maximum value of a slice.
 func FindMaxBy[T constraints.Ordered](s []T, fn func(val T) T) T
 ```
 
-FindMaxBy is like FindMax except that it accept a callback function and the conditional logic is applied over the resulted value. If there are more than one identical values resulted from the callback function the first one is used.
+FindMaxBy is like FindMax except that it accept a callback function and the conditional logic is applied over the resulted value. If there are more than one identical values resulted from the callback function the first one is returned.
 
 ## func FindMaxByKey
 
@@ -419,7 +658,7 @@ FindMin finds the minumum value of a slice.
 func FindMinBy[T constraints.Ordered](s []T, fn func(val T) T) T
 ```
 
-FindMinBy is like FindMin except that it accept a callback function and the conditional logic is applied over the resulted value. If there are more than one identical values resulted from the callback function the first one is used.
+FindMinBy is like FindMin except that it accept a callback function and the conditional logic is applied over the resulted value. If there are more than one identical values resulted from the callback function the first one is returned.
 
 ## func FindMinByKey
 
@@ -435,7 +674,28 @@ FindMinByKey finds the minimum value from a map by using some existing key as a 
 func Flatten[T any](slice any) ([]T, error)
 ```
 
-Flatten flattens the slice all the way to the deepest nesting level.
+Flatten flattens the slice all the way down to the deepest nesting level.
+
+<details><summary>Example</summary>
+<p>
+
+```go
+{
+	input := []any{[]int{1, 2, 3}, []any{[]int{4}, 5}}
+	result, _ := Flatten[int](input)
+	fmt.Println(result)
+
+}
+```
+
+#### Output
+
+```
+[1 2 3 4 5]
+```
+
+</p>
+</details>
 
 ## func Flip
 
@@ -445,6 +705,28 @@ func Flip[T any](fn func(args ...T) []T) func(args ...T) []T
 
 Flip creates a function that invokes fn with arguments reversed.
 
+<details><summary>Example</summary>
+<p>
+
+```go
+{
+	flipped := Flip(func(args ...int) []int {
+		return ToSlice(args...)
+	})
+	fmt.Println(flipped(1, 2, 3))
+
+}
+```
+
+#### Output
+
+```
+[3 2 1]
+```
+
+</p>
+</details>
+
 ## func ForEach
 
 ```go
@@ -452,6 +734,32 @@ func ForEach[T any](slice []T, fn func(T))
 ```
 
 ForEach iterates over the elements of a collection and invokes the callback fn function on each element.
+
+<details><summary>Example</summary>
+<p>
+
+```go
+{
+	input := []int{1, 2, 3, 4}
+	output := []int{}
+
+	ForEach(input, func(val int) {
+		val = val * 2
+		output = append(output, val)
+	})
+	fmt.Println(output)
+
+}
+```
+
+#### Output
+
+```
+[2 4 6 8]
+```
+
+</p>
+</details>
 
 ## func ForEachRight
 
@@ -469,6 +777,29 @@ func GroupBy[T1, T2 comparable](slice []T1, fn func(T1) T2) map[T2][]T1
 
 GroupBy splits a collection into a key\-value set, grouped by the result of running each value through the callback function fn. The return value is a map where the key is the conditional logic of the callback function and the values are the callback function returned values.
 
+<details><summary>Example</summary>
+<p>
+
+```go
+{
+	input := []float64{1.3, 1.5, 2.1, 2.9}
+	res := GroupBy(input, func(val float64) float64 {
+		return math.Floor(val)
+	})
+	fmt.Println(res)
+
+}
+```
+
+#### Output
+
+```
+map[1:[1.3 1.5] 2:[2.1 2.9]]
+```
+
+</p>
+</details>
+
 ## func InRange
 
 ```go
@@ -483,7 +814,7 @@ InRange checks if a number is inside a range.
 func IndexOf[T comparable](s []T, val T) int
 ```
 
-IndexOf returns the index at which value can be found in the slice, or \-1 if value is not present in the slice.
+IndexOf returns the index of the firs orccurrence of a value in the slice, or \-1 if value is not present in the slice.
 
 ## func Intersection
 
@@ -493,6 +824,30 @@ func Intersection[T comparable](params ...[]T) []T
 
 Intersection computes the list of values that are the intersection of all the slices. Each value in the result should be present in each of the provided slices.
 
+<details><summary>Example</summary>
+<p>
+
+```go
+{
+	res1 := Intersection([]int{1, 2, 4}, []int{0, 2, 1}, []int{2, 1, -2})
+	fmt.Println(res1)
+
+	res2 := Intersection([]string{"a", "b"}, []string{"a", "a", "a"}, []string{"b", "a", "e"})
+	fmt.Println(res2)
+
+}
+```
+
+#### Output
+
+```
+[1 2]
+[a]
+```
+
+</p>
+</details>
+
 ## func IntersectionBy
 
 ```go
@@ -500,6 +855,34 @@ func IntersectionBy[T comparable](fn func(T) T, params ...[]T) []T
 ```
 
 IntersectionBy is like Intersection, except that it accepts and callback function which is invoked on each element of the collection.
+
+<details><summary>Example</summary>
+<p>
+
+```go
+{
+	result1 := IntersectionBy(func(v float64) float64 {
+		return math.Floor(v)
+	}, []float64{2.1, 1.2}, []float64{2.3, 3.4}, []float64{1.0, 2.3})
+	fmt.Println(result1)
+
+	result2 := IntersectionBy(func(v int) int {
+		return v % 2
+	}, []int{1, 2}, []int{2, 1})
+	fmt.Println(result2)
+
+}
+```
+
+#### Output
+
+```
+[2.1]
+[1 2]
+```
+
+</p>
+</details>
 
 ## func Invert
 
@@ -516,6 +899,29 @@ func KebabCase[T ~string](str T) T
 ```
 
 KebabCase converts a string to kebab\-case \(https://en.wikipedia.org/wiki/Letter_case#Kebab_case\).
+
+<details><summary>Example</summary>
+<p>
+
+```go
+{
+	fmt.Println(KebabCase("fooBarBaz"))
+	fmt.Println(KebabCase("Foo BarBaz"))
+	fmt.Println(KebabCase("Foo_Bar_Baz"))
+
+}
+```
+
+#### Output
+
+```
+foo-bar-baz
+foo-bar-baz
+foo-bar-baz
+```
+
+</p>
+</details>
 
 ## func Keys
 
@@ -548,6 +954,27 @@ func Map[T1, T2 any](slice []T1, fn func(T1) T2) []T2
 ```
 
 Map produces a new slice of values by mapping each value in the list through a transformation function.
+
+<details><summary>Example</summary>
+<p>
+
+```go
+{
+	res := Map([]int{1, 2, 3}, func(val int) int {
+		return val * 2
+	})
+	fmt.Println()
+
+}
+```
+
+#### Output
+
+```
+[2 4 6]
+```
+</p>
+</details>
 
 ## func MapCollection
 
@@ -651,9 +1078,64 @@ N converts a string to a generic number.
 func NewDebounce(wait time.Duration) (func(f func()), func())
 ```
 
-NewDebounce creates a new debounced version of the invoked function which will postpone the execution until the time duration has elapsed since the last invocation passed in as a function argument.
+NewDebounce creates a new debounced version of the invoked function which postpone the execution with a time delay passed in as a function argument. It returns a callback function which will be invoked after the predefined delay and also a cancel method which should be invoked to cancel a scheduled debounce.
 
-It returns a callback function which will be invoked after the predefined delay and also a cancel function which should be invoked to cancel a scheduled debounce.
+<details><summary>Example</summary>
+<p>
+
+```go
+{
+	var (
+		counter1 uint64
+		counter2 uint64
+	)
+
+	f1 := func() {
+		atomic.AddUint64(&counter1, 1)
+	}
+
+	f2 := func() {
+		atomic.AddUint64(&counter2, 1)
+	}
+
+	debounce, cancel := NewDebounce(10 * time.Millisecond)
+	for i := 0; i < 2; i++ {
+		for j := 0; j < 100; j++ {
+			debounce(f1)
+		}
+		<-time.After(20 * time.Millisecond)
+	}
+	cancel()
+
+	debounce, cancel = NewDebounce(10 * time.Millisecond)
+	for i := 0; i < 5; i++ {
+		for j := 0; j < 50; j++ {
+			debounce(f2)
+		}
+		for j := 0; j < 50; j++ {
+			debounce(f2)
+		}
+		<-time.After(20 * time.Millisecond)
+	}
+	cancel()
+
+	c1 := atomic.LoadUint64(&counter1)
+	c2 := atomic.LoadUint64(&counter2)
+	fmt.Println(c1)
+	fmt.Println(c2)
+
+}
+```
+
+#### Output
+
+```
+2
+5
+```
+
+</p>
+</details>
 
 ## func Nth
 
@@ -1065,6 +1547,3 @@ func (v RType[T]) RetryWithDelay(n int, delay time.Duration, fn func(time.Durati
 ```
 
 RetryWithDelay tries to invoke the callback function n times, but with a delay between each calls. It runs until the number of attempts is reached or the error return value of the callback function is nil.
-
-
-

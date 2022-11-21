@@ -24,6 +24,16 @@ func TestFunc_Flip(t *testing.T) {
 	assert.Equal([]int{3, 2, 1}, flipped(1, 2, 3))
 }
 
+func Example_FuncFlip() {
+	flipped := Flip(func(args ...int) []int {
+		return ToSlice(args...)
+	})
+	fmt.Println(flipped(1, 2, 3))
+
+	// Output:
+	// [3 2 1]
+}
+
 func TestFunc_Delay(t *testing.T) {
 	assert := assert.New(t)
 
@@ -47,6 +57,31 @@ func TestFunc_Delay(t *testing.T) {
 	assert.LessOrEqual(int(after), 30)
 }
 
+func Example_FuncDelay() {
+	ch := make(chan struct{})
+	now := time.Now()
+
+	var value uint32
+	timer := Delay(20*time.Millisecond, func() {
+		atomic.AddUint32(&value, 1)
+		ch <- struct{}{}
+	})
+	r1 := atomic.LoadUint32(&value)
+	fmt.Println(r1)
+	<-ch
+	if timer.Stop() {
+		<-timer.C
+	}
+	r1 = atomic.LoadUint32(&value)
+	fmt.Println(r1)
+	after := time.Since(now).Milliseconds()
+	fmt.Println(after)
+
+	// Output:
+	// 0
+	// 1
+	// 20
+}
 func TestFunc_After(t *testing.T) {
 	assert := assert.New(t)
 
@@ -71,6 +106,29 @@ func TestFunc_After(t *testing.T) {
 	assert.Equal(1, initVal)
 }
 
+func Example_FuncAfter() {
+	sample := []int{1, 2, 3, 4, 5, 6}
+	length := len(sample) - 1
+
+	initVal := 0
+	fn := func(val int) int {
+		return val + 1
+	}
+
+	ForEach(sample, func(val int) {
+		now := time.Now()
+		After(&length, func() {
+			<-time.After(10 * time.Millisecond)
+			initVal = fn(initVal)
+			after := time.Since(now).Milliseconds()
+			fmt.Println(after)
+		})
+	})
+
+	// Output:
+	// 10
+}
+
 func TestFunc_Before(t *testing.T) {
 	assert := assert.New(t)
 	c := cache.New[string, int](cache.DefaultExpiration, cache.NoExpiration)
@@ -92,12 +150,48 @@ func TestFunc_Before(t *testing.T) {
 			assert.Equal(res, n)
 		}
 		if n <= 0 {
-			// Here we can be sure that the callback function is served from the cache.
+			// Here the callback function is served from the cache.
 			val, _ := c.Get("func")
 			assert.NotNil(val)
 			assert.Equal(res, 0)
 		}
 	})
+}
+
+func Example_FuncBefore() {
+	c := cache.New[string, int](cache.DefaultExpiration, cache.NoExpiration)
+
+	var n = 3
+	sample := []int{1, 2, 3}
+	ForEach(sample, func(val int) {
+		fn := func() int {
+			<-time.After(10 * time.Millisecond)
+			return n
+		}
+		res := Before(&n, c, fn)
+		// The trick to test this function is to decrease the n value after each iteration.
+		// We can be sure that the callback function is not served from the cache if n > 0.
+		// In this case the cache item "func" should be empty.
+		if n > 0 {
+			val, _ := c.Get("func")
+			fmt.Println(val)
+			fmt.Println(res)
+		}
+		if n <= 0 {
+			// Here the callback function is served from the cache.
+			val, _ := c.Get("func")
+			fmt.Println(val)
+			fmt.Println(res)
+		}
+	})
+
+	// Output:
+	// <nil>
+	// 2
+	// <nil>
+	// 1
+	// &{0 0}
+	// 0
 }
 
 func TestFunc_Once(t *testing.T) {
@@ -344,6 +438,51 @@ func TestFunc_Debounce(t *testing.T) {
 
 	c3 = atomic.LoadUint64(&counter3)
 	assert.Equal(1, int(c3))
+}
+
+func Example_FuncDebounce() {
+	var (
+		counter1 uint64
+		counter2 uint64
+	)
+
+	f1 := func() {
+		atomic.AddUint64(&counter1, 1)
+	}
+
+	f2 := func() {
+		atomic.AddUint64(&counter2, 1)
+	}
+
+	debounce, cancel := NewDebounce(10 * time.Millisecond)
+	for i := 0; i < 2; i++ {
+		for j := 0; j < 100; j++ {
+			debounce(f1)
+		}
+		<-time.After(20 * time.Millisecond)
+	}
+	cancel()
+
+	debounce, cancel = NewDebounce(10 * time.Millisecond)
+	for i := 0; i < 5; i++ {
+		for j := 0; j < 50; j++ {
+			debounce(f2)
+		}
+		for j := 0; j < 50; j++ {
+			debounce(f2)
+		}
+		<-time.After(20 * time.Millisecond)
+	}
+	cancel()
+
+	c1 := atomic.LoadUint64(&counter1)
+	c2 := atomic.LoadUint64(&counter2)
+	fmt.Println(c1)
+	fmt.Println(c2)
+
+	// Output:
+	// 2
+	// 5
 }
 
 func TestFunc_ThrottleCache(t *testing.T) {

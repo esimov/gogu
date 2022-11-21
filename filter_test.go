@@ -1,6 +1,7 @@
 package torx
 
 import (
+	"fmt"
 	"math"
 	"testing"
 
@@ -77,4 +78,39 @@ func TestFilter(t *testing.T) {
 	assert.NotEqual(expected, Filter2DMapCollection(input2, func(v map[string]int) bool {
 		return v["age"] > 20 && v["ranking"] > 1
 	}))
+}
+
+func ExampleFilter() {
+	items1 := []int{1, 2, 3, 4, 5, 10, 20, 30, 40, 50}
+	res := Filter(items1, func(val int) bool {
+		return val >= 10
+	})
+	fmt.Println(res)
+
+	items2 := []int{1, 2, 3, 4, 5, 6, 10, 20, 30, 40, 50}
+	res = Reject(items2, func(val int) bool {
+		return val >= 10
+	})
+	fmt.Println(res)
+
+	items3 := map[int]string{1: "John", 2: "Doe", 3: "Fred"}
+	resMap := FilterMap(items3, func(v string) bool {
+		return v == "John"
+	})
+	fmt.Println(resMap)
+
+	input1 := []map[string]int{
+		{"bernie": 22},
+		{"robert": 30},
+	}
+	resMapCol := FilterMapCollection(input1, func(val int) bool {
+		return val > 22
+	})
+	fmt.Println(resMapCol)
+
+	// Output:
+	// [10 20 30 40 50]
+	// [1 2 3 4 5 6]
+	// map[1:John]
+	// [map[robert:30]]
 }
