@@ -1,6 +1,7 @@
 package torx
 
 import (
+	"fmt"
 	"sort"
 	"strconv"
 	"strings"
@@ -186,6 +187,24 @@ func TestMap_Omit(t *testing.T) {
 	assert.Equal(map[string]int{"b": 2}, OmitBy(map[string]int{"a": 1, "b": 2, "c": 3}, func(key string, val int) bool {
 		return val%2 == 1
 	}))
+}
+
+func Example_MapOmit() {
+	res := Omit(map[string]any{"name": "moe", "age": 40, "active": false}, "name", "age")
+	fmt.Println(res)
+
+	// Output:
+	// map[active:false]
+}
+
+func Example_MapOmitBy() {
+	res := OmitBy(map[string]int{"a": 1, "b": 2, "c": 3}, func(key string, val int) bool {
+		return val%2 == 1
+	})
+	fmt.Println(res)
+
+	// Output:
+	// map[b:2]
 }
 
 func TestMap_Partition(t *testing.T) {

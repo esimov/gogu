@@ -106,29 +106,6 @@ func TestFunc_After(t *testing.T) {
 	assert.Equal(1, initVal)
 }
 
-func Example_FuncAfter() {
-	sample := []int{1, 2, 3, 4, 5, 6}
-	length := len(sample) - 1
-
-	initVal := 0
-	fn := func(val int) int {
-		return val + 1
-	}
-
-	ForEach(sample, func(val int) {
-		now := time.Now()
-		After(&length, func() {
-			<-time.After(10 * time.Millisecond)
-			initVal = fn(initVal)
-			after := time.Since(now).Milliseconds()
-			fmt.Println(after)
-		})
-	})
-
-	// Output:
-	// 10
-}
-
 func TestFunc_Before(t *testing.T) {
 	assert := assert.New(t)
 	c := cache.New[string, int](cache.DefaultExpiration, cache.NoExpiration)
@@ -198,27 +175,50 @@ func TestFunc_Once(t *testing.T) {
 	assert := assert.New(t)
 	c := cache.New[string, int](cache.DefaultExpiration, cache.NoExpiration)
 
-	var n int = 2
-	sample := []int{1, 2, 3, 4, 5, 6}
-	ForEach(sample, func(val int) {
-		fn := func() int {
+	ForEach([]int{1, 2, 3, 4, 5}, func(val int) {
+		fn := func(val int) func() int {
 			<-time.After(10 * time.Millisecond)
-			n--
-			return n
+			return func() int {
+				return val
+			}
 		}
-		res := Once(c, fn)
-		// If the callback function is invoked once the cache item "func" should be empty.
-		// Otherwise the callback function is served from the cache.
-		if n == 1 {
-			val, _ := c.Get("func")
-			assert.Nil(val)
-		} else {
-			val, _ := c.Get("func")
-			assert.NotNil(val)
-			assert.Equal(res, 0)
-		}
+		res := Once[string, int, int](c, fn(val))
+		// We can test the implementation correctness by invoking the `Once` function multiple times.
+		// When it's invoked for the first time the result should be served from the callback function.
+		// From the second invocation onward the results are served from the cache.
+		// In our example the results of each invokation should be always equal with 1.
+		assert.Equal(1, res)
 	})
+	c.Flush()
 }
+
+func Example_FuncOnce() {
+	c := cache.New[string, int](cache.DefaultExpiration, cache.NoExpiration)
+
+	ForEach([]int{1, 2, 3, 4, 5}, func(val int) {
+		fn := func(val int) func() int {
+			<-time.After(10 * time.Millisecond)
+			return func() int {
+				return val
+			}
+		}
+		res := Once[string, int, int](c, fn(val))
+		// We can test the implementation correctness by invoking the `Once` function multiple times.
+		// When it's invoked for the first time the result should be served from the callback function.
+		// From the second invocation onward the results are served from the cache.
+		// In our example the results of each invokation should be always equal with 1.
+		fmt.Println(res)
+	})
+	c.Flush()
+
+	// Output:
+	// 1
+	// 1
+	// 1
+	// 1
+	// 1
+}
+
 func TestFunc_Retry(t *testing.T) {
 	assert := assert.New(t)
 

@@ -1205,6 +1205,26 @@ func Omit[K comparable, V any](collection map[K]V, keys ...K) map[K]V
 
 Omit is the opposite of Pick, it extracts all the map elements which keys are not omitted.
 
+<details><summary>Example</summary>
+<p>
+
+```go
+{
+	res := Omit(map[string]any{"name": "moe", "age": 40, "active": false}, "name", "age")
+	fmt.Println(res)
+
+}
+```
+
+#### Output
+
+```
+map[active:false]
+```
+
+</p>
+</details>
+
 ## func OmitBy
 
 ```go
@@ -1213,13 +1233,71 @@ func OmitBy[K comparable, V any](collection map[K]V, fn func(key K, val V) bool)
 
 OmitBy is the opposite of Omit, it removes all the map elements for which the callback function returns true.
 
+<details><summary>Example</summary>
+<p>
+
+```go
+{
+	res := OmitBy(map[string]int{"a": 1, "b": 2, "c": 3}, func(key string, val int) bool {
+		return val%2 == 1
+	})
+	fmt.Println(res)
+
+}
+```
+
+#### Output
+
+```
+map[b:2]
+```
+
+</p>
+</details>
+
 ## func Once
 
 ```go
 func Once[S ~string, T any](c *cache.Cache[S, T], fn func() T) T
 ```
 
-Once is like Before, but it's invoked only once. Repeated calls to the modified function will have no effect, returning the value from the cache.
+Once is like Before, but it's invoked only once. Repeated calls to the modified function will have no effect and the function invocation is returned from the cache.
+
+<details><summary>Example</summary>
+<p>
+
+```go
+{
+	c := cache.New[string, int](cache.DefaultExpiration, cache.NoExpiration)
+
+	ForEach([]int{1, 2, 3, 4, 5}, func(val int) {
+		fn := func(val int) func() int {
+			<-time.After(10 * time.Millisecond)
+			return func() int {
+				return val
+			}
+		}
+		res := Once[string, int, int](c, fn(val))
+
+		fmt.Println(res)
+	})
+	c.Flush()
+
+}
+```
+
+#### Output
+
+```
+1
+1
+1
+1
+1
+```
+
+</p>
+</details>
 
 ## func Pad
 

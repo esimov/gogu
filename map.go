@@ -243,7 +243,7 @@ func Omit[K comparable, V any](collection map[K]V, keys ...K) map[K]V {
 	return collection
 }
 
-// OmitBy is the opposite of Omit, it removes all the map elements for which the callback function returns true.
+// OmitBy is the opposite of PickBy, it removes all the map elements for which the callback function returns true.
 func OmitBy[K comparable, V any](collection map[K]V, fn func(key K, val V) bool) map[K]V {
 	for k, v := range collection {
 		if fn(k, v) {
