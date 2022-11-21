@@ -357,6 +357,34 @@ func Compare[T comparable](a, b T, comp CompFn[T]) int
 
 Compare compares two values using as comparator the callback function argument.
 
+<details><summary>Example</summary>
+<p>
+
+```go
+{
+	res1 := Compare(1, 2, func(a, b int) bool {
+		return a < b
+	})
+	fmt.Println(res1)
+
+	res2 := Compare("a", "b", func(a, b string) bool {
+		return a > b
+	})
+	fmt.Println(res2)
+
+}
+```
+
+#### Output
+
+```
+1
+-1
+```
+
+</p>
+</details>
+
 ## func Contains
 
 ```go
