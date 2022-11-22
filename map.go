@@ -110,8 +110,9 @@ func MapUnique[K, V comparable](m map[K]V) map[K]V {
 	return result
 }
 
-// MapCollection is like the Map method applied on slices, but this time applied on maps.
-// It runs each element over an iteratee function and saves the resulted values into a new map.
+// MapCollection is like the Map method, but applied to maps.
+// It runs each element of the map over an iteratee function and
+// saves the resulted values into a new map.
 func MapCollection[K comparable, V any](m map[K]V, fn func(V) V) []V {
 	result := make([]V, len(m))
 

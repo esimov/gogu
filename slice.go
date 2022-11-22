@@ -271,8 +271,8 @@ func baseFlatten[T any](acc []T, slice any) ([]T, error) {
 	return acc, nil
 }
 
-// Union computes the union of the passed-in slice and returns in order the list
-// of unique items that are present in one or more of the slices.
+// Union computes the union of the passed\-in slice and returns an
+// ordered list of unique items that are present in one or more of the slices.
 func Union[T comparable](slice any) ([]T, error) {
 	var err error
 	if flatten, err := baseFlatten([]T{}, slice); err == nil {
