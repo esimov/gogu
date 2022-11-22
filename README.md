@@ -2412,3 +2412,11 @@ RetryWithDelay tries to invoke the callback function n times, but with a delay b
 
 </p>
 </details>
+
+## Author
+* Endre Simo ([@simo_endre](https://twitter.com/simo_endre))
+
+## License
+Copyright © 2022 Endre Simo
+
+This software is distributed under the MIT license. See the [LICENSE](https://github.com/esimov/torx/blob/master/LICENSE) file for the full license text.
