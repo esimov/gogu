@@ -145,6 +145,24 @@ func TestSlice_Reduce(t *testing.T) {
 	assert.Equal("abcd", string(res1))
 }
 
+func Example_SliceReduce() {
+	input1 := []int{1, 2, 3, 4}
+	res1 := Reduce(input1, func(a, b int) int {
+		return a + b
+	}, 0)
+	fmt.Println(res1)
+
+	input2 := []string{"a", "b", "c", "d"}
+	res2 := Reduce(input2, func(a, b string) string {
+		return b + a
+	}, "")
+	fmt.Println(res2)
+
+	// Output:
+	// 10
+	// abcd
+}
+
 func TestSlice_Reverse(t *testing.T) {
 	assert := assert.New(t)
 
@@ -231,6 +249,23 @@ func TestSlice_Partition(t *testing.T) {
 	})
 	assert.Empty(res2[0])
 	assert.NotEmpty(res2[1])
+}
+
+func Example_SlicePartition() {
+	input := []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+	res1 := Partition(input, func(val int) bool {
+		return val >= 5
+	})
+	fmt.Println(res1)
+
+	res2 := Partition(input, func(val int) bool {
+		return val < 5
+	})
+	fmt.Println(res2)
+
+	// Output:
+	// [[5 6 7 8 9] [0 1 2 3 4]]
+	// [[0 1 2 3 4] [5 6 7 8 9]]
 }
 
 func TestSlice_Contains(t *testing.T) {
@@ -356,6 +391,15 @@ func TestSlice_Union(t *testing.T) {
 	result3, err := Union[string](resMap)
 	assert.Equal([]string{"one", "two", "foo", "bar", "baz", "qux"}, result3)
 	assert.NoError(err)
+}
+
+func Example_SliceUnion() {
+	input := []any{[]any{1, 2, []any{3, []int{4, 5, 6}}}, 7, []int{1, 2}, 3, []int{4, 7}, 8, 9, 9}
+	res, _ := Union[int](input)
+	fmt.Println(res)
+
+	// Output:
+	// [1 2 3 4 5 6 7 8 9]
 }
 
 func TestSlice_Intersection(t *testing.T) {
@@ -604,7 +648,30 @@ func TestSlice_ToSlice(t *testing.T) {
 func TestSlice_Zip(t *testing.T) {
 	assert := assert.New(t)
 
-	input1 := [][]any{{"one", "two"}, {1, 2}}
-	assert.Panics(func() { Zip(input1) })
+	input := [][]any{{"one", "two"}, {1, 2}}
+	assert.Panics(func() { Zip(input) })
 	assert.Equal([][]any{{"one", 1}, {"two", 2}}, Zip([]any{"one", "two"}, []any{1, 2}))
+}
+
+func TestSlice_Unzip(t *testing.T) {
+	assert := assert.New(t)
+
+	res := Unzip([]any{"one", 1}, []any{"two", 2})
+	assert.Equal([][]any{{"one", "two"}, {1, 2}}, res)
+}
+
+func Example_SliceZip() {
+	res := Zip([]any{"one", "two"}, []any{1, 2})
+	fmt.Println(res)
+
+	// Output:
+	// [[one 1] [two 2]]
+}
+
+func Example_SliceUnzip() {
+	res := Unzip([]any{"one", 1}, []any{"two", 2})
+	fmt.Println(res)
+
+	// Output:
+	// [[one two] [1 2]]
 }

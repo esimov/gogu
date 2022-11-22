@@ -1,6 +1,7 @@
 package torx
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -54,4 +55,31 @@ func TestRangeRight(t *testing.T) {
 
 	rangeR2, _ := RangeRight(1, 2, 6)
 	assert.Equal(rangeR2, []int{5, 3, 1})
+}
+
+func Example_Range() {
+	r1, _ := Range(5)
+	r2, _ := Range(1, 5)
+	r3, _ := Range(0, 2, 10)
+	r4, _ := Range(-4)
+	r5, _ := Range(-1, -4)
+	r6, _ := Range(0, -1, -4)
+	r7, _ := Range[float64](0, 0.12, 0.9)
+
+	fmt.Println(r1)
+	fmt.Println(r2)
+	fmt.Println(r3)
+	fmt.Println(r4)
+	fmt.Println(r5)
+	fmt.Println(r6)
+	fmt.Println(r7)
+
+	// Output:
+	// [0 1 2 3 4]
+	// [1 2 3 4]
+	// [0 2 4 6 8]
+	// [0 -1 -2 -3]
+	// [-1 -2 -3]
+	// [0 -1 -2 -3]
+	// [0 0.12 0.24 0.36 0.48 0.6 0.72 0.84]
 }

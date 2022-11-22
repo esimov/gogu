@@ -510,7 +510,9 @@ func Zip[T any](slices ...[]T) [][]T {
 	return result
 }
 
-// Zip iteratively merges together the values of the slice parameters with the values at the corresponding position.
+// Unzip is the opposite of Zip: given a slice of slices it returns a series of new slices,
+// the first of which contains all of the first elements in the input slices,
+// the second of which contains all of the second elements, and so on.
 func Unzip[T any](slices ...[]T) [][]T {
 	var result = make([][]T, len(slices))
 	var sliceLen int

@@ -163,6 +163,20 @@ func TestMap_Pluck(t *testing.T) {
 	assert.Empty(Pluck(input, "age"))
 }
 
+func Example_MapPluck() {
+	input := []map[string]string{
+		{"name": "moe", "email": "moe@example.com"},
+		{"name": "larry", "email": "larry@example.com"},
+		{"name": "curly", "email": "curly@example.com"},
+		{"name": "moly", "email": "moly@example.com"},
+	}
+	res := Pluck(input, "name")
+	fmt.Println(res)
+
+	// Output:
+	// [moe larry curly moly]
+}
+
 func TestMap_Pick(t *testing.T) {
 	assert := assert.New(t)
 
@@ -177,6 +191,20 @@ func TestMap_Pick(t *testing.T) {
 	assert.Equal(map[string]int{"b": 2, "c": 3}, PickBy(map[string]int{"aa": 1, "b": 2, "c": 3}, func(key string, val int) bool {
 		return len(key) == 1
 	}))
+}
+
+func Example_MapPick() {
+	res1, _ := Pick(map[string]any{"name": "moe", "age": 20, "active": true}, "name", "age")
+	fmt.Println(res1)
+
+	res2 := PickBy(map[string]int{"aa": 1, "b": 2, "c": 3}, func(key string, val int) bool {
+		return len(key) == 1
+	})
+	fmt.Println(res2)
+
+	// Output:
+	// map[age:20 name:moe]
+	// map[b:2 c:3]
 }
 
 func TestMap_Omit(t *testing.T) {
@@ -242,4 +270,15 @@ func TestMap_SliceToMap(t *testing.T) {
 	values := Values(SliceToMap(sl1, sl2))
 	sort.Ints(values)
 	assert.Equal(sl2, values)
+}
+
+func Example_SliceToMap() {
+	sl1 := []string{"a", "b", "c"}
+	sl2 := []int{1, 2, 3}
+
+	m := SliceToMap(sl1, sl2)
+	fmt.Println(m)
+
+	// Output:
+	// map[a:1 b:2 c:3]
 }

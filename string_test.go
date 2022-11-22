@@ -45,6 +45,39 @@ func TestString_Substr(t *testing.T) {
 	assert.Equal("", str16)
 }
 
+func Example_StringSubstr() {
+	str1 := Substr("abcdef", 0, 0)
+	str2 := Substr("abcdef", -1, 0)
+	str3 := Substr("abcdef", 7, 7)
+	str4 := Substr("abcdef", 0, 20)
+	str5 := Substr("abcdef", 5, 10)
+	str6 := Substr("abcdef", 0, -1)
+	str7 := Substr("abcdef", 2, -1)
+	str8 := Substr("abcdef", 4, -4)
+	str9 := Substr("abcdef", -3, -1)
+	str10 := Substr("abcdef", 1, 3)
+
+	fmt.Println(str1)
+	fmt.Println(str2)
+	fmt.Println(str3)
+	fmt.Println(str4)
+	fmt.Println(str5)
+	fmt.Println(str6)
+	fmt.Println(str7)
+	fmt.Println(str8)
+	fmt.Println(str9)
+	fmt.Println(str10)
+
+	// Output:
+	// abcdef
+	// f
+	// abcde
+	// cde
+	//
+	// de
+	// bcd
+}
+
 func TestString_Capitalize(t *testing.T) {
 	assert := assert.New(t)
 
@@ -109,6 +142,16 @@ func TestString_SnakeCase(t *testing.T) {
 	assert.Equal("foo_bar_baz_qux", SnakeCase("Foo Bar_Baz&Qux"))
 }
 
+func Example_StringSnakeCase() {
+	fmt.Println(SnakeCase("fooBarBaz"))
+	fmt.Println(SnakeCase("Foo BarBaz"))
+	fmt.Println(SnakeCase("Foo_Bar_Baz"))
+
+	// Output:
+	// foo_bar_baz
+	// foo_bar_baz
+	// foo_bar_baz
+}
 func TestString_KebabCase(t *testing.T) {
 	assert := assert.New(t)
 
@@ -152,6 +195,23 @@ func TestString_SplitAtIndex(t *testing.T) {
 	assert.Equal([]string{"abcdef", ""}, SplitAtIndex("abcdef", 6))
 }
 
+func Example_StringSplitAtIndex() {
+	fmt.Println(SplitAtIndex("abcdef", -1))
+	fmt.Println(SplitAtIndex("abcdef", 0))
+	fmt.Println(SplitAtIndex("abcdef", 1))
+	fmt.Println(SplitAtIndex("abcdef", 2))
+	fmt.Println(SplitAtIndex("abcdef", 5))
+	fmt.Println(SplitAtIndex("abcdef", 6))
+
+	// Output:
+	// [ abcdef]
+	// [a bcdef]
+	// [ab cdef]
+	// [abc def]
+	// [abcdef ]
+	// [abcdef ]
+}
+
 func TestString_Pad(t *testing.T) {
 	assert := assert.New(t)
 
@@ -178,6 +238,31 @@ func TestString_Pad(t *testing.T) {
 	assert.Equal(".abc..", Pad("abc", 6, "."))
 	assert.Equal("  abc  ", Pad("abc", 7, " "))
 	assert.Equal("_-abc_-_", Pad("abc", 8, "_-"))
+}
+
+func Example_StringPad() {
+	fmt.Println(Pad("abc", 2, "."))
+	fmt.Println(Pad("abc", 3, "."))
+	fmt.Println(Pad("abc", 4, "."))
+	fmt.Println(Pad("abc", 5, "."))
+
+	fmt.Println(PadRight("abc", 8, "..."))
+	fmt.Println(PadRight("abc", 6, "........"))
+
+	fmt.Println(PadLeft("abc", 8, "..."))
+	fmt.Println(PadLeft("abc", 4, "_"))
+	fmt.Println(PadLeft("abc", 6, "_-"))
+
+	// Output:
+	// abc
+	// abc
+	// abc.
+	// .abc.
+	// abc.....
+	// abc...
+	// .....abc
+	// _abc
+	// _-_abc
 }
 
 func TestString_ReverseStr(t *testing.T) {
@@ -207,6 +292,21 @@ func TestString_Unwrap(t *testing.T) {
 	assert.Equal("abc", Unwrap("''abc''", "''"))
 	assert.Equal("abc", Unwrap("\"abc\"", "\""))
 	assert.Equal("'", Unwrap("'''", "'"))
+}
+
+func Example_StringUnwrap() {
+	fmt.Println(Unwrap("'abc'", "'"))
+	fmt.Println(Unwrap("*abc*", "*"))
+	fmt.Println(Unwrap("*a*bc*", "*"))
+	fmt.Println(Unwrap("''abc''", "''"))
+	fmt.Println(Unwrap("\"abc\"", "\""))
+
+	// Output:
+	// abc
+	// abc
+	// a*bc
+	// abc
+	// abc
 }
 
 func TestString_WrapAllRune(t *testing.T) {
