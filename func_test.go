@@ -260,6 +260,36 @@ func TestFunc_Retry(t *testing.T) {
 	})
 }
 
+func Example_FuncRetry() {
+	n := 2
+	idx := 0
+	ForEach([]string{"one", "two", "three"}, func(val string) {
+		rt := RType[string]{Input: val}
+		attempts, e := rt.Retry(n, func(elem string) (err error) {
+			if len(elem)%3 != 0 {
+				err = fmt.Errorf("retry failed: number of %d attempts exceeded", n)
+			}
+			return err
+		})
+		switch idx {
+		case 0:
+			fmt.Println(attempts)
+		case 1:
+			fmt.Println(attempts)
+		case 2:
+			fmt.Println(attempts)
+			fmt.Println(e)
+		}
+		idx++
+	})
+
+	// Output:
+	// 0
+	// 0
+	// 2
+	// retry failed: number of 2 attempts exceeded
+}
+
 func TestFunc_RetryWithDelay(t *testing.T) {
 	rand.Seed(time.Now().UTC().UnixNano())
 

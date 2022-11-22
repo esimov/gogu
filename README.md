@@ -2304,9 +2304,47 @@ func (v RType[T]) Retry(n int, fn func(T) error) (int, error)
 
 Retry tries to invoke the callback function n times. It runs until the number of attempts is reached or the returned value of the callback function is nil.
 
+<details><summary>Example</summary>
+<p>
+
 ```go
-// Check the test cases to get an idea how the `Retry` operation is working. 
+{
+	n := 2
+	idx := 0
+	ForEach([]string{"one", "two", "three"}, func(val string) {
+		rt := RType[string]{Input: val}
+		attempts, e := rt.Retry(n, func(elem string) (err error) {
+			if len(elem)%3 != 0 {
+				err = fmt.Errorf("retry failed: number of %d attempts exceeded", n)
+			}
+			return err
+		})
+		switch idx {
+		case 0:
+			fmt.Println(attempts)
+		case 1:
+			fmt.Println(attempts)
+		case 2:
+			fmt.Println(attempts)
+			fmt.Println(e)
+		}
+		idx++
+	})
+
+}
 ```
+
+#### Output
+
+```
+0
+0
+2
+retry failed: number of 2 attempts exceeded
+```
+
+</p>
+</details>
 
 ### func \(RType\[T\]\) RetryWithDelay
 
@@ -2316,6 +2354,61 @@ func (v RType[T]) RetryWithDelay(n int, delay time.Duration, fn func(time.Durati
 
 RetryWithDelay tries to invoke the callback function n times, but with a delay between each calls. It runs until the number of attempts is reached or the error return value of the callback function is nil.
 
+<details><summary>Example</summary>
+<p>
+
 ```go
-// Check the test cases to get an idea how the `RetryWithDelay` operation is working. 
+{
+	n := 5
+	// In this example we are simulating an external service. In case the response time
+	// exceeds a certain limit we stop retrying and we are returning an error.
+	services := []struct {
+		service string
+		time    time.Duration
+	}{
+		{service: "AWS1"},
+		{service: "AWS2"},
+	}
+
+	type Service[T ~string] struct {
+		Service T
+		Time    time.Duration
+	}
+
+	for _, srv := range services {
+		r := random(1, 10)
+		// Here we are simulating the response time of the external service
+		// by generating some random duration between 1ms and 10ms.
+		// All the test should pass because all of the responses are inside the predefined limit (10ms).
+		service := Service[string]{
+			Service: srv.service,
+			Time:    time.Duration(r) * time.Millisecond,
+		}
+		rtyp := RType[Service[string]]{
+			Input: service,
+		}
+
+		d, att, e := rtyp.RetryWithDelay(n, 20*time.Millisecond, func(d time.Duration, srv Service[string]) (err error) {
+			if srv.Time.Milliseconds() > 10 {
+				err = fmt.Errorf("retry failed: service time exceeded")
+			}
+			return err
+		})
+		fmt.Println(e)
+		fmt.Println(att)
+		fmt.Println(d.Milliseconds())
+	}
+
+}
 ```
+
+#### Output
+
+```
+<nil>
+0
+0
+```
+
+</p>
+</details>
