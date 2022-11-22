@@ -2047,6 +2047,31 @@ func Without[T1 comparable, T2 any](slice []T1, values ...T1) []T1
 
 Without returns a copy of the slice with all the values defined in the variadic parameter removed.
 
+<details><summary>Example</summary>
+<p>
+
+```go
+{
+	fmt.Println(Without[int, int]([]int{2, 1, 2, 3}, 1, 2))
+	fmt.Println(Without[int, int]([]int{1, 2, 3, 4}, 3, 4))
+	fmt.Println(Without[int, int]([]int{0, 1, 2, 3, 4, 5}, 0, 3, 4, 5))
+	fmt.Println(Without[float64, float64]([]float64{1.0, 2.2, 3.0, 4.2}, 3.0, 4.2))
+
+}
+```
+
+#### Output
+
+```
+[3]
+[1 2]
+[1 2]
+[1 2.2]
+```
+
+</p>
+</details>
+
 ## func Wrap
 
 ```go
@@ -2055,11 +2080,65 @@ func Wrap[T ~string](str T, token string) T
 
 Wrap a string with the specified token.
 
+<details><summary>Example</summary>
+<p>
+
+```go
+{
+	fmt.Println(Unwrap("'abc'", "'"))
+	fmt.Println(Unwrap("*abc*", "*"))
+	fmt.Println(Unwrap("*a*bc*", "*"))
+	fmt.Println(Unwrap("''abc''", "''"))
+	fmt.Println(Unwrap("\"abc\"", "\""))
+
+}
+```
+
+#### Output
+
+```
+abc
+abc
+a*bc
+abc
+abc
+```
+
+</p>
+</details>
+
 ## func WrapAllRune
 
 ```go
 func WrapAllRune[T ~string](str T, token string) T
 ```
+
+WrapAllRune is like Wrap, only that instead of strings it's applied over runes.
+
+<details><summary>Example</summary>
+<p>
+
+```go
+{
+	fmt.Println(WrapAllRune("abc", ""))
+	fmt.Println(WrapAllRune("abc", "'"))
+	fmt.Println(WrapAllRune("abc", "*"))
+	fmt.Println(WrapAllRune("abc", "-"))
+
+}
+```
+
+#### Output
+
+```
+abc
+'a''b''c'
+*a**b**c*
+-a--b--c-
+```
+
+</p>
+</details>
 
 ## func Zip
 
@@ -2140,6 +2219,63 @@ func (m Memoizer[T, V]) Memoize(key T, fn func() (*cache.Item[V], error)) (*cach
 
 Memoize returns the item under a specific key instantly in case the key exists, otherwise returns the results of the given function, making sure that only one execution is in\-flight for a given key at a time. This method is useful for caching the result of a time consuming operation when is more important to return a slightly outdated result, than to wait for an operation to complete before serving it.
 
+<details><summary>Example</summary>
+<p>
+
+```go
+{
+	m := NewMemoizer[string, any](time.Second, time.Minute)
+
+	sampleItem := map[string]any{
+		"foo": "one",
+		"bar": "two",
+		"baz": "three",
+	}
+
+	expensiveOp := func() (*cache.Item[any], error) {
+		// Here we are simulating an expensive operation.
+		time.Sleep(500 * time.Millisecond)
+
+		foo := FindByKey(sampleItem, func(key string) bool {
+			return key == "foo"
+		})
+		m.Cache.MapToCache(foo, cache.DefaultExpiration)
+
+		item, err := m.Cache.Get("foo")
+		if err != nil {
+			return nil, err
+		}
+		return item, nil
+	}
+
+	fmt.Println(m.Cache.List())
+	// Caching the result of some expensive fictive operation result.
+	data, _ := m.Memoize("key1", expensiveOp)
+	fmt.Println(len(m.Cache.List()))
+
+	item, _ := m.Cache.Get("key1")
+	fmt.Println(item.Val())
+
+	// Serving the expensive operation result from the cache. This should return instantly.
+	// If it would invoked the expensiveOp function this would be introduced a 500 millisecond latency.
+	data, _ = m.Memoize("key1", expensiveOp)
+	fmt.Println(data.Val())
+
+}
+```
+
+#### Output
+
+```
+map[]
+2
+one
+one
+```
+
+</p>
+</details>
+
 ## type Number
 
 Number is a custom type set of constraints extending the Float and Integer type set from the experimental constraints package.
@@ -2168,6 +2304,10 @@ func (v RType[T]) Retry(n int, fn func(T) error) (int, error)
 
 Retry tries to invoke the callback function n times. It runs until the number of attempts is reached or the returned value of the callback function is nil.
 
+```go
+// Check the test cases to get an idea how the `Retry` operation is working. 
+```
+
 ### func \(RType\[T\]\) RetryWithDelay
 
 ```go
@@ -2175,3 +2315,7 @@ func (v RType[T]) RetryWithDelay(n int, delay time.Duration, fn func(time.Durati
 ```
 
 RetryWithDelay tries to invoke the callback function n times, but with a delay between each calls. It runs until the number of attempts is reached or the error return value of the callback function is nil.
+
+```go
+// Check the test cases to get an idea how the `RetryWithDelay` operation is working. 
+```

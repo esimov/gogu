@@ -317,3 +317,16 @@ func TestString_WrapAllRune(t *testing.T) {
 	assert.Equal("*a**b**c*", WrapAllRune("abc", "*"))
 	assert.Equal("-a--b--c-", WrapAllRune("abc", "-"))
 }
+
+func Example_StringWrapAllRune() {
+	fmt.Println(WrapAllRune("abc", ""))
+	fmt.Println(WrapAllRune("abc", "'"))
+	fmt.Println(WrapAllRune("abc", "*"))
+	fmt.Println(WrapAllRune("abc", "-"))
+
+	// Output:
+	// abc
+	// 'a''b''c'
+	// *a**b**c*
+	// -a--b--c-
+}

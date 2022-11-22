@@ -305,6 +305,7 @@ func Unwrap[T ~string](str T, token string) T {
 	return str
 }
 
+// WrapAllRune is like Wrap, only that it's applied over runes instead of strings.
 func WrapAllRune[T ~string](str T, token string) T {
 	var s strings.Builder
 

@@ -480,6 +480,19 @@ func TestSlice_Without(t *testing.T) {
 	assert.Empty(Without[int, int]([]int{}))
 }
 
+func Example_SliceWithout() {
+	fmt.Println(Without[int, int]([]int{2, 1, 2, 3}, 1, 2))
+	fmt.Println(Without[int, int]([]int{1, 2, 3, 4}, 3, 4))
+	fmt.Println(Without[int, int]([]int{0, 1, 2, 3, 4, 5}, 0, 3, 4, 5))
+	fmt.Println(Without[float64, float64]([]float64{1.0, 2.2, 3.0, 4.2}, 3.0, 4.2))
+
+	// Output:
+	// [3]
+	// [1 2]
+	// [1 2]
+	// [1 2.2]
+}
+
 func TestSlice_Difference(t *testing.T) {
 	assert := assert.New(t)
 
