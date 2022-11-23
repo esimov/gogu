@@ -13,15 +13,15 @@ func Null[T any]() T {
 }
 
 // Substr returns the portion of string specified by the offset and length.
-
+//
 // If offset is non-negative, the returned string will start
 // at the offset'th position in string, counting from zero.
-
+//
 // If offset is negative, the returned string will start at
 // the offset'th character from the end of string.
-
+//
 // If string is less than offset characters long, an empty string will be returned.
-
+//
 // If length is negative, then that many characters will be omitted
 // from the end of string starting from the offset position.
 func Substr[T ~string](str T, offset, length int) T {

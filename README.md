@@ -1605,7 +1605,15 @@ Pluck extracts all the values of a map by the key definition.
 func Range[T Number](args ...T) ([]T, error)
 ```
 
-Range creates a slice of numbers \(integers\) progressing from start up to, but not including end. This method can accept 1, 2 or 3 arguments. Depending on the number of provided parameters, \`start\`, \`step\` and \`end\` has the following meaning: \[start=0\]: The start of the range. If ommited it defaults to 0. \[step=1\]: The value to increment or decrement by. end: The end of the range. In case you'd like negative values, use a negative step.
+Range creates a slice of integers progressing from start up to, but not including end. This method can accept 1, 2 or 3 arguments. Depending on the number of provided parameters, \`start\`, \`step\` and \`end\` has the following meaning:
+
+\[start=0\]: The start of the range. If ommited it defaults to 0.
+
+\[step=1\]: The value to increment or decrement by.
+
+end: The end of the range.
+
+In case you'd like negative values, use a negative step.
 
 <details><summary>Example</summary>
 <p>
@@ -1835,6 +1843,14 @@ SplitAtIndex split the string at the specified index and returns a slice with th
 ```go
 func Substr[T ~string](str T, offset, length int) T
 ```
+
+Substr returns the portion of string specified by the offset and length.
+
+If offset is non\-negative, the returned string will start at the offset'th position in string, counting from zero.
+
+If offset is negative, the returned string will start at the offset'th character from the end of string.
+
+If string is less than offset characters long, an empty string will be returned.
 
 If length is negative, then that many characters will be omitted from the end of string starting from the offset position.
 
@@ -2217,8 +2233,9 @@ NewMemoizer instantiates a new Memoizer.
 func (m Memoizer[T, V]) Memoize(key T, fn func() (*cache.Item[V], error)) (*cache.Item[V], error)
 ```
 
-Memoize returns the item under a specific key instantly in case the key exists, otherwise returns the results of the given function, making sure that only one execution is in\-flight for a given key at a time. This method is useful for caching the result of a time consuming operation when is more important to return a slightly outdated result, than to wait for an operation to complete before serving it.
+Memoize returns the item under a specific key instantly in case the key exists, otherwise returns the results of the given function, making sure that only one execution is in\-flight for a given key at a time.
 
+This method is useful for caching the result of a time consuming operation when is more important to return a slightly outdated result, than to wait for an operation to complete before serving it.
 <details><summary>Example</summary>
 <p>
 

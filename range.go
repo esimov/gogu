@@ -7,12 +7,16 @@ import (
 	"strconv"
 )
 
-// Range creates a slice of numbers (integers) progressing from start up to, but not including end.
+// Range creates a slice of integers progressing from start up to, but not including end.
 // This method can accept 1, 2 or 3 arguments.
 // Depending on the number of provided parameters, `start`, `step` and `end` has the following meaning:
+//
 // [start=0]: The start of the range. If ommited it defaults to 0.
+//
 // [step=1]: The value to increment or decrement by.
+//
 // end: The end of the range.
+//
 // In case you'd like negative values, use a negative step.
 func Range[T Number](args ...T) ([]T, error) {
 	var result []T
