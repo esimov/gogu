@@ -69,7 +69,7 @@ type RType[T any] struct {
 	Input T
 }
 
-// Retry tries to invoke the callback function n times.
+// Retry tries to invoke the callback function `n` times.
 // It runs until the number of attempts is reached or the returned value of the callback function is nil.
 func (v RType[T]) Retry(n int, fn func(T) error) (int, error) {
 	var (
@@ -91,7 +91,7 @@ func (v RType[T]) Retry(n int, fn func(T) error) (int, error) {
 	return attempt, err
 }
 
-// RetryWithDelay tries to invoke the callback function n times, but with a delay between each calls.
+// RetryWithDelay tries to invoke the callback function `n` times, but with a delay between each calls.
 // It runs until the number of attempts is reached or the error return value of the callback function is nil.
 func (v RType[T]) RetryWithDelay(n int, delay time.Duration, fn func(time.Duration, T) error) (time.Duration, int, error) {
 	var (

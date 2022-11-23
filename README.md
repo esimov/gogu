@@ -2361,7 +2361,7 @@ RetryWithDelay tries to invoke the callback function n times, but with a delay b
 {
 	n := 5
 	// In this example we are simulating an external service. In case the response time
-	// exceeds a certain limit we stop retrying and we are returning an error.
+	// exceeds a certain time limit we stop retrying and we are returning an error.
 	services := []struct {
 		service string
 		time    time.Duration

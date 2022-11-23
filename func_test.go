@@ -318,8 +318,8 @@ func TestFunc_RetryWithDelay(t *testing.T) {
 		idx++
 	})
 
-	// Here we are simulating an external service. In case the response time
-	// exceeds a certain limit we stop retrying and we are returning an error.
+	// In this example we are simulating an external service. In case the response time
+	// exceeds a certain time limit we stop retrying and an error is returned.
 	services := []struct {
 		service string
 		time    time.Duration
