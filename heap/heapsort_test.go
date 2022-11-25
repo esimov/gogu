@@ -20,7 +20,7 @@ func TestHeapSort(t *testing.T) {
 	assert.Equal([]int{10, 9, 8, 7, 6, 5, 4, 3, 2, 1}, res)
 }
 
-func Example_HeapSort() {
+func Example() {
 	data := []int{1, 3, 2, 8, 7, 6, 4, 9, 5, 10}
 
 	res := Sort(data, func(a, b int) bool { return a > b })

@@ -57,7 +57,7 @@ func TestSlice_Map(t *testing.T) {
 	}), 2)
 }
 
-func Example_SliceMap() {
+func Example_map() {
 	res := Map([]int{1, 2, 3}, func(val int) int {
 		return val * 2
 	})
@@ -109,7 +109,7 @@ func TestSlice_ForEach(t *testing.T) {
 	assert.Equal([]string{"4", "3", "2", "1"}, output3)
 }
 
-func Example_SliceForEach() {
+func Example_forEach() {
 	input := []int{1, 2, 3, 4}
 	output := []int{}
 
@@ -145,7 +145,7 @@ func TestSlice_Reduce(t *testing.T) {
 	assert.Equal("abcd", string(res1))
 }
 
-func Example_SliceReduce() {
+func Example_reduce() {
 	input1 := []int{1, 2, 3, 4}
 	res1 := Reduce(input1, func(a, b int) int {
 		return a + b
@@ -251,7 +251,7 @@ func TestSlice_Partition(t *testing.T) {
 	assert.NotEmpty(res2[1])
 }
 
-func Example_SlicePartition() {
+func Example_partition() {
 	input := []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
 	res1 := Partition(input, func(val int) bool {
 		return val >= 5
@@ -301,7 +301,7 @@ func TestSlice_Duplicate(t *testing.T) {
 	assert.ElementsMatch([]int{-1, 1, 2}, indices)
 }
 
-func Example_SliceDuplicate() {
+func Example_duplicate() {
 	input1 := []int{-1, -1, 0, 1, 2, 3, 2, 5, 1, 6}
 	res1 := Duplicate(input1)
 	sort.Slice(res1, func(a, b int) bool { return res1[a] < res1[b] })
@@ -361,7 +361,7 @@ func TestSlice_Flatten(t *testing.T) {
 	assert.NoError(err)
 }
 
-func Example_SliceFlatten() {
+func Example_flatten() {
 	input := []any{[]int{1, 2, 3}, []any{[]int{4}, 5}}
 	result, _ := Flatten[int](input)
 	fmt.Println(result)
@@ -393,7 +393,7 @@ func TestSlice_Union(t *testing.T) {
 	assert.NoError(err)
 }
 
-func Example_SliceUnion() {
+func Example_union() {
 	input := []any{[]any{1, 2, []any{3, []int{4, 5, 6}}}, 7, []int{1, 2}, 3, []int{4, 7}, 8, 9, 9}
 	res, _ := Union[int](input)
 	fmt.Println(res)
@@ -419,7 +419,7 @@ func TestSlice_Intersection(t *testing.T) {
 	assert.Equal([]string{"a"}, result4)
 }
 
-func Example_SliceIntersection() {
+func Example_intersection() {
 	res1 := Intersection([]int{1, 2, 4}, []int{0, 2, 1}, []int{2, 1, -2})
 	fmt.Println(res1)
 
@@ -450,7 +450,7 @@ func TestSlice_IntersectionBy(t *testing.T) {
 	assert.Equal([]float64{}, result3)
 }
 
-func Example_SliceIntersectioBy() {
+func Example_intersectioBy() {
 	result1 := IntersectionBy(func(v float64) float64 {
 		return math.Floor(v)
 	}, []float64{2.1, 1.2}, []float64{2.3, 3.4}, []float64{1.0, 2.3})
@@ -480,7 +480,7 @@ func TestSlice_Without(t *testing.T) {
 	assert.Empty(Without[int, int]([]int{}))
 }
 
-func Example_SliceWithout() {
+func Example_without() {
 	fmt.Println(Without[int, int]([]int{2, 1, 2, 3}, 1, 2))
 	fmt.Println(Without[int, int]([]int{1, 2, 3, 4}, 3, 4))
 	fmt.Println(Without[int, int]([]int{0, 1, 2, 3, 4, 5}, 0, 3, 4, 5))
@@ -533,7 +533,7 @@ func TestSlice_Chunk(t *testing.T) {
 	assert.Panics(func() { Chunk([]int{0, 1}, 0) })
 }
 
-func Example_SliceChunk() {
+func Example_chunk() {
 	fmt.Println(Chunk([]int{0, 1, 2, 3}, 2))
 	fmt.Println(Chunk([]int{0, 1, 2, 3, 4}, 2))
 	fmt.Println(Chunk([]int{0, 1}, 1))
@@ -584,7 +584,7 @@ func TestSlice_Drop(t *testing.T) {
 	}))
 }
 
-func Example_SliceDrop() {
+func Example_drop() {
 	res := DropWhile([]string{"a", "aa", "bbb", "ccc"}, func(elem string) bool {
 		return len(elem) > 2
 	})
@@ -637,7 +637,7 @@ func TestSlice_GroupBy(t *testing.T) {
 	}
 }
 
-func Example_SliceGroupBy() {
+func Example_groupBy() {
 	input := []float64{1.3, 1.5, 2.1, 2.9}
 	res := GroupBy(input, func(val float64) float64 {
 		return math.Floor(val)
@@ -673,7 +673,7 @@ func TestSlice_Unzip(t *testing.T) {
 	assert.Equal([][]any{{"one", "two"}, {1, 2}}, res)
 }
 
-func Example_SliceZip() {
+func Example_zip() {
 	res := Zip([]any{"one", "two"}, []any{1, 2})
 	fmt.Println(res)
 
@@ -681,7 +681,7 @@ func Example_SliceZip() {
 	// [[one 1] [two 2]]
 }
 
-func Example_SliceUnzip() {
+func Example_unzip() {
 	res := Unzip([]any{"one", 1}, []any{"two", 2})
 	fmt.Println(res)
 

@@ -8,6 +8,67 @@ import "github.com/esimov/torx/cache"
 
 Package cache implements a basic in memory key\-value storage system using map as storing mechanism. The cache and the cache items also have an expiration time. The cache will be invalidated once the expiration time is reached. On cache initialization a cleanup interval is also required. The scope of the cleanup method is to run at a predefined interval and to remove all the expired cache items.
 
+<details><summary>Example (Expiration Time)</summary>
+<p>
+
+```go
+{
+	c1 := New[string, string](NoExpiration, 0)
+	c1.Set("item1", "a", DefaultExpiration)
+	item, _ := c1.Get("item1")
+	fmt.Println(item.expiration)
+
+	c1.Update("item1", "b", NoExpiration)
+	item, _ = c1.Get("item1")
+	fmt.Println(item.expiration)
+
+	err := c1.DeleteExpired()
+	fmt.Println(err)
+
+	c1.Set("item1", "a", 10*time.Millisecond)
+	<-time.After(20 * time.Millisecond)
+	c1.DeleteExpired()
+	fmt.Println(c1.Count())
+
+	c1.Set("item1", "b", 1*time.Millisecond)
+	c1.Set("item2", "b", 50*time.Millisecond)
+	<-time.After(20 * time.Millisecond)
+	c1.DeleteExpired()
+	fmt.Println(c1.Count())
+
+	<-time.After(70 * time.Millisecond)
+	c1.DeleteExpired()
+	fmt.Println(c1.Count())
+
+	c2 := New[string, int](5*time.Millisecond, 1*time.Millisecond)
+	c2.Set("a", 1, DefaultExpiration)
+	c2.Set("b", 2, NoExpiration)
+	c2.Set("c", 3, 10*time.Millisecond)
+	c2.Set("d", 4, 50*time.Millisecond)
+	<-time.After(30 * time.Millisecond)
+	fmt.Println(c2.Count())
+	<-time.After(100 * time.Millisecond)
+	fmt.Println(c2.Count())
+
+}
+```
+
+#### Output
+
+```
+-1
+-1
+<nil>
+1
+2
+1
+2
+1
+```
+
+</p>
+</details>
+
 ## Index
 
 - [Constants](<#constants>)
@@ -57,7 +118,7 @@ type Cache[T ~string, V any] struct {
 	fmt.Println(item)
 
 	c.Set("foo", "bar", DefaultExpiration)
-	item, err = c.Get("foo")
+	item, _ = c.Get("foo")
 	fmt.Println(item.Val())
 
 	err = c.Set("foo", "", DefaultExpiration)
@@ -75,7 +136,7 @@ type Cache[T ~string, V any] struct {
 	fmt.Println(c.Count())
 
 	c.Set("foo", "bar", DefaultExpiration)
-	item, err = c.Get("foo")
+	item, _ = c.Get("foo")
 	fmt.Println(item.Val())
 
 	err = c.Delete("foo")
@@ -104,74 +165,13 @@ bar
 </p>
 </details>
 
-<details><summary>Example (Expiration Time)</summary>
-<p>
-
-```go
-{
-	c1 := New[string, string](NoExpiration, 0)
-	c1.Set("item1", "a", DefaultExpiration)
-	item, _ := c1.Get("item1")
-	fmt.Println(item.expiration)
-
-	c1.Update("item1", "b", NoExpiration)
-	item, _ = c1.Get("item1")
-	fmt.Println(item.expiration)
-
-	err := c1.DeleteExpired()
-	fmt.Println(err)
-
-	c1.Set("item1", "a", 1*time.Millisecond)
-	<-time.After(2 * time.Millisecond)
-	c1.DeleteExpired()
-	fmt.Println(c1.Count())
-
-	c1.Set("item1", "b", 1*time.Millisecond)
-	c1.Set("item2", "b", 4*time.Millisecond)
-	<-time.After(2 * time.Millisecond)
-	c1.DeleteExpired()
-	fmt.Println(c1.Count())
-
-	<-time.After(3 * time.Millisecond)
-	c1.DeleteExpired()
-	fmt.Println(c1.Count())
-
-	c2 := New[string, int](5*time.Millisecond, 1*time.Millisecond)
-	c2.Set("a", 1, DefaultExpiration)
-	c2.Set("b", 2, NoExpiration)
-	c2.Set("c", 3, 5*time.Millisecond)
-	c2.Set("d", 4, 20*time.Millisecond)
-	<-time.After(10 * time.Millisecond)
-	fmt.Println(c2.Count())
-	<-time.After(15 * time.Millisecond)
-	fmt.Println(c2.Count())
-
-}
-```
-
-#### Output
-
-```
-0
-0
-<nil>
-0
-1
-0
-1
-0
-```
-
-</p>
-</details>
-
 ### func New
 
 ```go
 func New[T ~string, V any](expTime, cleanupTime time.Duration) *Cache[T, V]
 ```
 
-New instantiates a cache struct which requires an expiration time and a cleanup interval. The cache will be invalidated once the expiration time is reached. If the expiration time is less than zero \(or NoExpiration\) the cache items will never expire and should be manually deleted. A cleanup method is running in the background and removes the expired caches at a predifined interval.
+New instantiates a cache struct which requires an expiration time and a cleanup interval. The cache will be invalidated once the expiration time is reached. If the expiration time is less than zero \(or NoExpiration\) the cache items will never expire and should be deleted manually. A cleanup method is running in the background and removes the expired caches at a predifined interval.
 
 ### func \(\*Cache\[T, V\]\) Count
 
@@ -203,7 +203,7 @@ Flush removes all the existing items in the cache.
 func (c *Cache[T, V]) Get(key T) (*Item[V], error)
 ```
 
-Get returns a cache item defined by it's key. If the item is expired an error is returned. If the item is expired it's considered as unexistent and it will be evicted from the cache when the purge method is invoked at a predifined interval.
+Get returns a cache item defined by it's key. If the item is expired an error is returned. If an item is expired it's considered as unexistent and it will be evicted from the cache when the purge method is invoked at the predifined interval.
 
 ### func \(\*Cache\[T, V\]\) IsExpired
 

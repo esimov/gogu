@@ -25,7 +25,7 @@ func Null[T any]() T {
 // If length is negative, then that many characters will be omitted
 // from the end of string starting from the offset position.
 func Substr[T ~string](str T, offset, length int) T {
-	var end = length
+	var end int
 
 	if offset < 0 {
 		offset = len(str) + offset

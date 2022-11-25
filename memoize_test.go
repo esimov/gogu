@@ -56,7 +56,7 @@ func TestMemoize(t *testing.T) {
 	assert.LessOrEqual(int(after), 1)
 }
 
-func Example_Memoize() {
+func Example_memoize() {
 	m := NewMemoizer[string, any](time.Second, time.Minute)
 
 	sampleItem := map[string]any{
@@ -85,7 +85,7 @@ func Example_Memoize() {
 	fmt.Println(m.Cache.List())
 
 	// Caching the result of some expensive fictive operation result.
-	data, _ := m.Memoize("key1", expensiveOp)
+	m.Memoize("key1", expensiveOp)
 	fmt.Println(len(m.Cache.List()))
 
 	item, _ := m.Cache.Get("key1")
@@ -93,7 +93,7 @@ func Example_Memoize() {
 
 	// Serving the expensive operation result from the cache. This should return instantly.
 	// If it would invoked the expensiveOp function this would be introduced a 500 millisecond latency.
-	data, _ = m.Memoize("key1", expensiveOp)
+	data, _ := m.Memoize("key1", expensiveOp)
 	fmt.Println(data.Val())
 
 	// Output:

@@ -45,7 +45,7 @@ func TestString_Substr(t *testing.T) {
 	assert.Equal("", str16)
 }
 
-func Example_StringSubstr() {
+func Example_substr() {
 	str1 := Substr("abcdef", 0, 0)
 	str2 := Substr("abcdef", -1, 0)
 	str3 := Substr("abcdef", 7, 7)
@@ -102,7 +102,7 @@ func TestString_CamelCase(t *testing.T) {
 	assert.Equal("fooBar", CamelCase("&&foo&&bar__"))
 }
 
-func Example_StringCamelCase() {
+func Example_camelCase() {
 	fmt.Println(CamelCase("Foo Bar"))
 	fmt.Println(CamelCase("--foo-Bar--"))
 	fmt.Println(CamelCase("__foo-_Bar__"))
@@ -142,7 +142,7 @@ func TestString_SnakeCase(t *testing.T) {
 	assert.Equal("foo_bar_baz_qux", SnakeCase("Foo Bar_Baz&Qux"))
 }
 
-func Example_StringSnakeCase() {
+func Example_snakeCase() {
 	fmt.Println(SnakeCase("fooBarBaz"))
 	fmt.Println(SnakeCase("Foo BarBaz"))
 	fmt.Println(SnakeCase("Foo_Bar_Baz"))
@@ -173,7 +173,7 @@ func TestString_KebabCase(t *testing.T) {
 	assert.Equal("foo-bar-baz-qux", KebabCase("Foo Bar_Baz&Qux"))
 }
 
-func Example_StringKebebCase() {
+func Example_kebebCase() {
 	fmt.Println(KebabCase("fooBarBaz"))
 	fmt.Println(KebabCase("Foo BarBaz"))
 	fmt.Println(KebabCase("Foo_Bar_Baz"))
@@ -195,7 +195,7 @@ func TestString_SplitAtIndex(t *testing.T) {
 	assert.Equal([]string{"abcdef", ""}, SplitAtIndex("abcdef", 6))
 }
 
-func Example_StringSplitAtIndex() {
+func Example_splitAtIndex() {
 	fmt.Println(SplitAtIndex("abcdef", -1))
 	fmt.Println(SplitAtIndex("abcdef", 0))
 	fmt.Println(SplitAtIndex("abcdef", 1))
@@ -240,7 +240,7 @@ func TestString_Pad(t *testing.T) {
 	assert.Equal("_-abc_-_", Pad("abc", 8, "_-"))
 }
 
-func Example_StringPad() {
+func Example_pad() {
 	fmt.Println(Pad("abc", 2, "."))
 	fmt.Println(Pad("abc", 3, "."))
 	fmt.Println(Pad("abc", 4, "."))
@@ -294,7 +294,7 @@ func TestString_Unwrap(t *testing.T) {
 	assert.Equal("'", Unwrap("'''", "'"))
 }
 
-func Example_StringUnwrap() {
+func Example_unwrap() {
 	fmt.Println(Unwrap("'abc'", "'"))
 	fmt.Println(Unwrap("*abc*", "*"))
 	fmt.Println(Unwrap("*a*bc*", "*"))
@@ -318,7 +318,7 @@ func TestString_WrapAllRune(t *testing.T) {
 	assert.Equal("-a--b--c-", WrapAllRune("abc", "-"))
 }
 
-func Example_StringWrapAllRune() {
+func Example_wrapAllRune() {
 	fmt.Println(WrapAllRune("abc", ""))
 	fmt.Println(WrapAllRune("abc", "'"))
 	fmt.Println(WrapAllRune("abc", "*"))
