@@ -92,7 +92,7 @@ func TestSinglyLinkedList(t *testing.T) {
 	assert.False(found)
 }
 
-func Example_SinglyLinkedList() {
+func Example_singlyLinkedList() {
 	list := Init(1)
 
 	values := []int{2, 3, 4, 5, 6, 7, 8}
@@ -127,7 +127,7 @@ func Example_SinglyLinkedList() {
 	fmt.Println(err)
 	fmt.Println(item)
 
-	item, err = list.Replace(7, 8)
+	item, _ = list.Replace(7, 8)
 	fmt.Println(item.data)
 
 	item, _ = list.Find(8)

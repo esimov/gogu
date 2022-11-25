@@ -60,7 +60,7 @@ func TestFind_All(t *testing.T) {
 	assert.Empty(items2)
 }
 
-func Example_FindAll() {
+func Example() {
 	input := []int{1, 2, 3, 4, 2, -2, -1, 2}
 	items := FindAll(input, func(v int) bool {
 		return v == 2

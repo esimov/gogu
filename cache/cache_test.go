@@ -9,8 +9,8 @@ import (
 )
 
 type SampleStruct struct {
-	Id    int
 	Items []*SampleStruct
+	Id    int
 }
 
 func TestCache_Basic(t *testing.T) {
@@ -74,14 +74,14 @@ func TestCache_Basic(t *testing.T) {
 	assert.Equal(2, res4.Val())
 }
 
-func ExampleCache_Basic() {
+func ExampleCache() {
 	c := New[string, string](DefaultExpiration, 1*time.Minute)
 	item, err := c.Get("foo")
 	fmt.Println(err)
 	fmt.Println(item)
 
 	c.Set("foo", "bar", DefaultExpiration)
-	item, err = c.Get("foo")
+	item, _ = c.Get("foo")
 	fmt.Println(item.Val())
 
 	err = c.Set("foo", "", DefaultExpiration)
@@ -99,7 +99,7 @@ func ExampleCache_Basic() {
 	fmt.Println(c.Count())
 
 	c.Set("foo", "bar", DefaultExpiration)
-	item, err = c.Get("foo")
+	item, _ = c.Get("foo")
 	fmt.Println(item.Val())
 
 	err = c.Delete("foo")
@@ -202,11 +202,11 @@ func TestCache_ExpirationTime(t *testing.T) {
 	c1 := New[string, string](NoExpiration, 0)
 	c1.Set("item1", "a", DefaultExpiration)
 	res, _ := c1.Get("item1")
-	assert.Equal(int64(DefaultExpiration), res.expiration)
+	assert.Equal(int64(NoExpiration), res.expiration)
 
 	c1.Update("item1", "b", NoExpiration)
 	res, _ = c1.Get("item1")
-	assert.Equal(int64(DefaultExpiration), res.expiration)
+	assert.Equal(int64(NoExpiration), res.expiration)
 
 	c1.Set("item1", "a", 10*time.Millisecond)
 	c1.Delete("item1")
@@ -222,37 +222,37 @@ func TestCache_ExpirationTime(t *testing.T) {
 	assert.NoError(err)
 	assert.Len(c1.List(), 0)
 
-	c1.Set("item1", "b", 1*time.Millisecond)
-	c1.Set("item2", "b", 4*time.Millisecond)
-	<-time.After(2 * time.Millisecond)
+	c1.Set("item1", "b", 10*time.Millisecond)
+	c1.Set("item2", "b", 60*time.Millisecond)
+	<-time.After(40 * time.Millisecond)
 	c1.DeleteExpired()
 	assert.Len(c1.List(), 1)
-	<-time.After(3 * time.Millisecond)
+	<-time.After(100 * time.Millisecond)
 	c1.DeleteExpired()
 	assert.Empty(c1.List())
 
-	c1.Set("item1", "c", 1*time.Millisecond)
-	<-time.After(2 * time.Millisecond)
+	c1.Set("item1", "c", 10*time.Millisecond)
+	<-time.After(20 * time.Millisecond)
 	res, err = c1.Get("item1")
 	assert.Nil(res)
 	assert.Error(err)
 
-	c2 := New[string, int](5*time.Millisecond, 1*time.Millisecond)
+	c2 := New[string, int](5*time.Millisecond, 100*time.Millisecond)
 	c2.Set("a", 1, DefaultExpiration)
 	c2.Set("b", 2, NoExpiration)
-	c2.Set("c", 3, 5*time.Millisecond)
-	c2.Set("d", 4, 20*time.Millisecond)
-	<-time.After(10 * time.Millisecond)
+	c2.Set("c", 3, 50*time.Millisecond)
+	c2.Set("d", 4, 200*time.Millisecond)
+	<-time.After(150 * time.Millisecond)
+	assert.Equal(2, c2.Count())
+	<-time.After(300 * time.Millisecond)
 	assert.Equal(1, c2.Count())
-	<-time.After(15 * time.Millisecond)
-	assert.Equal(0, c2.Count())
 
-	c2.Set("a", 1, 2*time.Millisecond)
-	<-time.After(5 * time.Millisecond)
-	assert.Equal(0, c2.Count())
+	c2.Set("b", 1, 2*time.Millisecond)
+	<-time.After(40 * time.Millisecond)
+	assert.Equal(1, c2.Count())
 }
 
-func ExampleCache_ExpirationTime() {
+func Example_expirationTime() {
 	c1 := New[string, string](NoExpiration, 0)
 	c1.Set("item1", "a", DefaultExpiration)
 	item, _ := c1.Get("item1")
@@ -265,38 +265,38 @@ func ExampleCache_ExpirationTime() {
 	err := c1.DeleteExpired()
 	fmt.Println(err)
 
-	c1.Set("item1", "a", 1*time.Millisecond)
-	<-time.After(2 * time.Millisecond)
+	c1.Set("item1", "a", 10*time.Millisecond)
+	<-time.After(20 * time.Millisecond)
 	c1.DeleteExpired()
 	fmt.Println(c1.Count())
 
 	c1.Set("item1", "b", 1*time.Millisecond)
-	c1.Set("item2", "b", 4*time.Millisecond)
-	<-time.After(2 * time.Millisecond)
+	c1.Set("item2", "b", 50*time.Millisecond)
+	<-time.After(20 * time.Millisecond)
 	c1.DeleteExpired()
 	fmt.Println(c1.Count())
 
-	<-time.After(3 * time.Millisecond)
+	<-time.After(70 * time.Millisecond)
 	c1.DeleteExpired()
 	fmt.Println(c1.Count())
 
-	c2 := New[string, int](5*time.Millisecond, 1*time.Millisecond)
+	c2 := New[string, int](5*time.Millisecond, 100*time.Millisecond)
 	c2.Set("a", 1, DefaultExpiration)
 	c2.Set("b", 2, NoExpiration)
-	c2.Set("c", 3, 5*time.Millisecond)
-	c2.Set("d", 4, 20*time.Millisecond)
-	<-time.After(10 * time.Millisecond)
+	c2.Set("c", 3, 50*time.Millisecond)
+	c2.Set("d", 4, 200*time.Millisecond)
+	<-time.After(150 * time.Millisecond)
 	fmt.Println(c2.Count())
-	<-time.After(15 * time.Millisecond)
+	<-time.After(300 * time.Millisecond)
 	fmt.Println(c2.Count())
 
 	// Output:
-	// 0
-	// 0
+	// -1
+	// -1
 	// <nil>
-	// 0
 	// 1
-	// 0
+	// 2
 	// 1
-	// 0
+	// 2
+	// 1
 }

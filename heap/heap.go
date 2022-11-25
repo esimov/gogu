@@ -16,8 +16,8 @@ import (
 
 type Heap[T comparable] struct {
 	mu   *sync.RWMutex
-	data []T
 	comp torx.CompFn[T]
+	data []T
 }
 
 // NewHeap creates a new heap data structure having two components:

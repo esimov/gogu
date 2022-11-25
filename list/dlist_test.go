@@ -119,7 +119,7 @@ func TestDoublyLinkedList(t *testing.T) {
 	assert.Equal(0, list.Last())
 }
 
-func Example_DoublyLinkedList() {
+func Example_doublyLinkedList() {
 	list := InitDList(1)
 
 	values := []int{2, 3, 4, 5, 6, 7, 8}
@@ -154,9 +154,9 @@ func Example_DoublyLinkedList() {
 	fmt.Println(err)
 	fmt.Println(item)
 
-	item, err = list.Replace(7, 8)
+	item, _ = list.Replace(7, 8)
 	fmt.Println(item.data)
-	item, err = list.Replace(8, 7)
+	item, _ = list.Replace(8, 7)
 
 	n := list.Unshift(1)
 	fmt.Println(n.data)

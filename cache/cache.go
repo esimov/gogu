@@ -28,9 +28,9 @@ type Item[V any] struct {
 type cache[T ~string, V any] struct {
 	mu         *sync.RWMutex
 	items      map[T]*Item[V]
+	done       chan struct{}
 	expTime    time.Duration
 	cleanupInt time.Duration
-	done       chan struct{}
 }
 
 // Cache is a publicly available struct type, which incorporates the
@@ -53,7 +53,7 @@ func newCache[T ~string, V any](expTime, cleanupInt time.Duration, item map[T]*I
 
 // New instantiates a cache struct which requires an expiration time and a cleanup interval.
 // The cache will be invalidated once the expiration time is reached.
-// If the expiration time is less than zero (or NoExpiration) the cache items will never expire and should be manually deleted.
+// If the expiration time is less than zero (or NoExpiration) the cache items will never expire and should be deleted manually.
 // A cleanup method is running in the background and removes the expired caches at a predifined interval.
 func New[T ~string, V any](expTime, cleanupTime time.Duration) *Cache[T, V] {
 	items := make(map[T]*Item[V])
@@ -98,6 +98,8 @@ func (c *Cache[T, V]) add(key T, val V, d time.Duration) error {
 	}
 	if d > 0 {
 		exp = time.Now().Add(d).UnixNano()
+	} else if d < 0 {
+		exp = int64(NoExpiration)
 	}
 
 	item, err := c.Get(key)
@@ -123,8 +125,8 @@ func (c *Cache[T, V]) add(key T, val V, d time.Duration) error {
 }
 
 // Get returns a cache item defined by it's key. If the item is expired an error is returned.
-// If the item is expired it's considered as unexistent and it will be evicted from the cache
-// when the purge method is invoked at a predifined interval.
+// If an item is expired it's considered as unexistent and it will be evicted from the cache
+// when the purge method is invoked at the predifined interval.
 func (c *Cache[T, V]) Get(key T) (*Item[V], error) {
 	c.mu.RLock()
 	if item, ok := c.items[key]; ok {
@@ -189,7 +191,7 @@ func (c *cache[T, V]) DeleteExpired() error {
 	// TODO replace multierr package when proposal https://github.com/golang/go/issues/53435
 	// will be accepted and integrated into the standard library.
 	for k, item := range c.items {
-		if now > item.expiration {
+		if now > item.expiration && item.expiration != int64(NoExpiration) {
 			if e := c.delete(k); e != nil {
 				err = multierr.Append(err, e)
 			}

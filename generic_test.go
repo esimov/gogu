@@ -16,7 +16,7 @@ func TestCompare(t *testing.T) {
 	assert.Equal(1, res)
 }
 
-func Example_Compare() {
+func Example_compare() {
 	res1 := Compare(1, 2, func(a, b int) bool {
 		return a < b
 	})

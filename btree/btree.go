@@ -19,14 +19,14 @@ const maxChildren = 4
 type entry[K constraints.Ordered, V any] struct {
 	key       K
 	value     V
-	isRemoved bool
 	next      *node[K, V]
+	isRemoved bool
 }
 
 // node is a data structure which defines how many children (leaves) each node has.
 type node[K constraints.Ordered, V any] struct {
-	m        int // number of children
 	children [maxChildren]entry[K, V]
+	m        int
 }
 
 // newNode instantiates a new node with no leaves.
@@ -38,9 +38,9 @@ func newNode[K constraints.Ordered, V any](m int) *node[K, V] {
 
 // BTree defines a data structure with one node, which is the root node.
 type BTree[K constraints.Ordered, V any] struct {
-	n      int // the size of the tree (the number of nodes)
-	height int // the height of the tree
 	root   *node[K, V]
+	n      int
+	height int
 }
 
 // New creates a new B-tree.

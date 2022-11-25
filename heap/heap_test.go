@@ -46,7 +46,7 @@ func TestHeap_MinHeap(t *testing.T) {
 	assert.Empty(heap.Size())
 }
 
-func Example_MinHeap() {
+func Example_minHeap() {
 	heap := NewHeap(func(a, b int) bool { return a < b })
 	fmt.Println(heap.IsEmpty())
 
@@ -115,7 +115,7 @@ func TestHeap_MaxHeap(t *testing.T) {
 	}
 }
 
-func Example_MaxHeap() {
+func Example_maxHeap() {
 	values := []int{9, 3, 20, 8, 6, 5, 12, 10, 9, 18}
 	heap := FromSlice(values, func(a, b int) bool { return a > b })
 	fmt.Println(heap.GetValues())
@@ -230,7 +230,7 @@ func TestHeap_Convert(t *testing.T) {
 	assert.Equal([]int{5, 4, 2, 1, 3}, heap.GetValues())
 }
 
-func Example_HeapConvert() {
+func Example_convert() {
 	input := []int{1, 4, 2, 3, 5}
 
 	heap := NewHeap(func(a, b int) bool { return a < b })
@@ -259,7 +259,7 @@ func TestHeap_Merge(t *testing.T) {
 	assert.Len(heap2.GetValues(), 5)
 }
 
-func Example_HeapMerge() {
+func Example_merge() {
 	slice1 := []int{1, 4, 2, 3, 5}
 	slice2 := []int{8, 6, 9, 10, 7}
 
@@ -294,7 +294,7 @@ func TestHeap_Meld(t *testing.T) {
 	assert.Len(heap2.GetValues(), 0)
 }
 
-func Example_HeapMeld() {
+func Example_meld() {
 	slice1 := []int{1, 4, 2, 3, 5}
 	slice2 := []int{8, 6, 9, 10, 7}
 

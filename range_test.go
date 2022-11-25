@@ -57,7 +57,7 @@ func TestRangeRight(t *testing.T) {
 	assert.Equal(rangeR2, []int{5, 3, 1})
 }
 
-func Example_Range() {
+func Example_range() {
 	r1, _ := Range(5)
 	r2, _ := Range(1, 5)
 	r3, _ := Range(0, 2, 10)

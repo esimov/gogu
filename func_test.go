@@ -24,7 +24,7 @@ func TestFunc_Flip(t *testing.T) {
 	assert.Equal([]int{3, 2, 1}, flipped(1, 2, 3))
 }
 
-func Example_FuncFlip() {
+func Example_flip() {
 	flipped := Flip(func(args ...int) []int {
 		return ToSlice(args...)
 	})
@@ -54,12 +54,11 @@ func TestFunc_Delay(t *testing.T) {
 	r1 = atomic.LoadUint32(&value)
 	assert.Equal(1, int(r1))
 	after := time.Since(now).Milliseconds()
-	assert.LessOrEqual(int(after), 30)
+	assert.LessOrEqual(int(after), 200)
 }
 
-func Example_FuncDelay() {
+func Example_delay() {
 	ch := make(chan struct{})
-	now := time.Now()
 
 	var value uint32
 	timer := Delay(20*time.Millisecond, func() {
@@ -74,13 +73,10 @@ func Example_FuncDelay() {
 	}
 	r1 = atomic.LoadUint32(&value)
 	fmt.Println(r1)
-	after := time.Since(now).Milliseconds()
-	fmt.Println(after)
 
 	// Output:
 	// 0
 	// 1
-	// 20
 }
 func TestFunc_After(t *testing.T) {
 	assert := assert.New(t)
@@ -99,7 +95,7 @@ func TestFunc_After(t *testing.T) {
 			<-time.After(10 * time.Millisecond)
 			initVal = cb(initVal)
 			after := time.Since(now).Milliseconds()
-			assert.LessOrEqual(int(after), 20)
+			assert.LessOrEqual(int(after), 100)
 		})
 	})
 	assert.Equal(-1, length)
@@ -135,7 +131,7 @@ func TestFunc_Before(t *testing.T) {
 	})
 }
 
-func Example_FuncBefore() {
+func Example_before() {
 	c := cache.New[string, int](cache.DefaultExpiration, cache.NoExpiration)
 
 	var n = 3
@@ -192,7 +188,7 @@ func TestFunc_Once(t *testing.T) {
 	c.Flush()
 }
 
-func Example_FuncOnce() {
+func Example_once() {
 	c := cache.New[string, int](cache.DefaultExpiration, cache.NoExpiration)
 
 	ForEach([]int{1, 2, 3, 4, 5}, func(val int) {
@@ -260,7 +256,7 @@ func TestFunc_Retry(t *testing.T) {
 	})
 }
 
-func Example_FuncRetry() {
+func Example_retry() {
 	n := 2
 	idx := 0
 	ForEach([]string{"one", "two", "three"}, func(val string) {
@@ -426,7 +422,7 @@ func TestFunc_Debounce(t *testing.T) {
 		for j := 0; j < 50; j++ {
 			debounce(f2)
 		}
-		<-time.After(20 * time.Millisecond)
+		<-time.After(50 * time.Millisecond)
 	}
 	cancel()
 
@@ -446,7 +442,7 @@ func TestFunc_Debounce(t *testing.T) {
 		}()
 	}
 	wg.Wait()
-	<-time.After(20 * time.Millisecond)
+	<-time.After(100 * time.Millisecond)
 
 	c3 := atomic.LoadUint64(&counter3)
 	assert.Equal(1, int(c3))
@@ -463,14 +459,14 @@ func TestFunc_Debounce(t *testing.T) {
 		if i == 1 {
 			cancel()
 		}
-		<-time.After(20 * time.Millisecond)
+		<-time.After(50 * time.Millisecond)
 	}
 
 	c3 = atomic.LoadUint64(&counter3)
 	assert.Equal(1, int(c3))
 }
 
-func Example_FuncDebounce() {
+func Example_debounce() {
 	var (
 		counter1 uint64
 		counter2 uint64
@@ -489,7 +485,7 @@ func Example_FuncDebounce() {
 		for j := 0; j < 100; j++ {
 			debounce(f1)
 		}
-		<-time.After(20 * time.Millisecond)
+		<-time.After(100 * time.Millisecond)
 	}
 	cancel()
 
@@ -501,7 +497,7 @@ func Example_FuncDebounce() {
 		for j := 0; j < 50; j++ {
 			debounce(f2)
 		}
-		<-time.After(20 * time.Millisecond)
+		<-time.After(100 * time.Millisecond)
 	}
 	cancel()
 

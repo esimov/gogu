@@ -113,9 +113,9 @@ func (v RType[T]) RetryWithDelay(n int, delay time.Duration, fn func(time.Durati
 }
 
 type debouncer struct {
-	duration time.Duration
-	timer    *time.Timer
 	mu       sync.Mutex
+	timer    *time.Timer
+	duration time.Duration
 }
 
 // NewDebounce creates a new debounced version of the invoked function which
@@ -154,9 +154,9 @@ func (d *debouncer) cancel() {
 
 // The throttle implementation is based on this package: https://github.com/boz/go-throttle.
 type throttler struct {
-	duration time.Duration
-	cond     *sync.Cond
 	last     time.Time
+	cond     *sync.Cond
+	duration time.Duration
 	waiting  bool
 	trailing bool
 	stop     bool
