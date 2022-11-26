@@ -8,6 +8,65 @@ import "github.com/esimov/torx/cache"
 
 Package cache implements a basic in memory key\-value storage system using map as storing mechanism. The cache and the cache items also have an expiration time. The cache will be invalidated once the expiration time is reached. On cache initialization a cleanup interval is also required. The scope of the cleanup method is to run at a predefined interval and to remove all the expired cache items.
 
+<details><summary>Example</summary>
+<p>
+
+```go
+{
+	c := New[string, string](DefaultExpiration, 1*time.Minute)
+	item, err := c.Get("foo")
+	fmt.Println(err)
+	fmt.Println(item)
+
+	c.Set("foo", "bar", DefaultExpiration)
+	item, _ = c.Get("foo")
+	fmt.Println(item.Val())
+
+	err = c.Set("foo", "", DefaultExpiration)
+	fmt.Println(err)
+	fmt.Println(c.IsExpired("foo"))
+
+	c.Update("foo", "baz", DefaultExpiration)
+	item, _ = c.Get("foo")
+	fmt.Println(item.Val())
+
+	list := c.List()
+	fmt.Println(len(list))
+
+	c.Flush()
+	fmt.Println(c.Count())
+
+	c.Set("foo", "bar", DefaultExpiration)
+	item, _ = c.Get("foo")
+	fmt.Println(item.Val())
+
+	err = c.Delete("foo")
+	fmt.Println(err)
+	fmt.Println(c.Count())
+
+}
+```
+
+#### Output
+
+```
+item with key 'foo' not found
+<nil>
+bar
+item with key 'foo' already exists. Use the Update method
+false
+baz
+1
+0
+bar
+<nil>
+0
+```
+
+</p>
+</details>
+
+
 <details><summary>Example (Expiration Time)</summary>
 <p>
 
@@ -106,64 +165,6 @@ type Cache[T ~string, V any] struct {
     // contains filtered or unexported fields
 }
 ```
-
-<details><summary>Example</summary>
-<p>
-
-```go
-{
-	c := New[string, string](DefaultExpiration, 1*time.Minute)
-	item, err := c.Get("foo")
-	fmt.Println(err)
-	fmt.Println(item)
-
-	c.Set("foo", "bar", DefaultExpiration)
-	item, _ = c.Get("foo")
-	fmt.Println(item.Val())
-
-	err = c.Set("foo", "", DefaultExpiration)
-	fmt.Println(err)
-	fmt.Println(c.IsExpired("foo"))
-
-	c.Update("foo", "baz", DefaultExpiration)
-	item, _ = c.Get("foo")
-	fmt.Println(item.Val())
-
-	list := c.List()
-	fmt.Println(len(list))
-
-	c.Flush()
-	fmt.Println(c.Count())
-
-	c.Set("foo", "bar", DefaultExpiration)
-	item, _ = c.Get("foo")
-	fmt.Println(item.Val())
-
-	err = c.Delete("foo")
-	fmt.Println(err)
-	fmt.Println(c.Count())
-
-}
-```
-
-#### Output
-
-```
-item with key 'foo' not found
-<nil>
-bar
-item with key 'foo' already exists. Use the Update method
-false
-baz
-1
-0
-bar
-<nil>
-0
-```
-
-</p>
-</details>
 
 ### func New
 
