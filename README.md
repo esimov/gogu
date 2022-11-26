@@ -1,5 +1,7 @@
 # torx
 ![Coverage](https://img.shields.io/badge/Coverage-94.0%25-brightgreen)
+[![CI](https://github.com/esimov/torx/actions/workflows/ci.yml/badge.svg)](https://github.com/esimov/torx/actions/workflows/ci.yml)
+[![License](https://img.shields.io/github/license/esimov/torx)](./LICENSE)
 
 Torx is a versatile, comprehensive, reusable and efficient concurrent-safe utility functions and data structures library taking advantage of the Go generics. It was inspired by other well established and consecrated frameworks like [underscore.js](https://underscorejs.org/), [lodash](https://lodash.com/) and some concepts being more closer to the functional programming paradigms. 
 
@@ -8,12 +10,12 @@ Its main purpose is to help developers in their day-to-day jobs to ease up their
 ## Features
 **In what's different this library from other Go libraries exploring Go generics?** 
 - [x] It's concurrent-safe (with the exception of B-tree package)
-- [x] Supports thread-safe utility functions like: [`before`](<#func-before>), [`after`](<#func-after>), [`delay`](<#func-delay>), [`memoize`](<#func-memoizert-v-memoize>), [`debounce`](<#func-newdebounce>), [`once`](<#func-once>), [`retry`](<#func-rtypet-retry>)
+- [x] Supports thread-safe, time related functions like: [`before`](<#func-before>), [`after`](<#func-after>), [`delay`](<#func-delay>), [`memoize`](<#func-memoizert-v-memoize>), [`debounce`](<#func-newdebounce>), [`once`](<#func-once>), [`retry`](<#func-rtypet-retry>)
 - [x] Rich utility functions to operate with strings
-- [x] Very wide range of supported functions for dealing with slice and map operations
-- [x] Extensive test coverage (**> 90%**)
+- [x] Very wide range of supported functions to deal with slice and map operations
+- [x] Extensive test coverage (**~94%**)
 - [x] Implements the most used data structures
-- [x] Thourough documentation
+- [x] Thourough documentation with examples
 
 ## Installation
 
