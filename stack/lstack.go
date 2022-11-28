@@ -14,7 +14,7 @@ import (
 // LStack implements the linked-list version of the LIFO stack.
 type LStack[T comparable] struct {
 	list *list.DList[T]
-	mu   *sync.RWMutex
+	mu   sync.RWMutex
 	n    int
 }
 
@@ -22,7 +22,7 @@ type LStack[T comparable] struct {
 func NewLinked[T comparable](t T) *LStack[T] {
 	return &LStack[T]{
 		list: list.InitDList(t),
-		mu:   &sync.RWMutex{},
+		mu:   sync.RWMutex{},
 		n:    1,
 	}
 }

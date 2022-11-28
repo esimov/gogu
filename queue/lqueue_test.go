@@ -64,7 +64,7 @@ func TestLinkedQueue_Concurrency(t *testing.T) {
 	assert.Equal(0, q.Size())
 }
 
-func Example_LinkedQueue() {
+func Example_linkedQueue() {
 	q := NewLinked(1)
 	q.Enqueue(2)
 	q.Enqueue(3)

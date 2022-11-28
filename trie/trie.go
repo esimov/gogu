@@ -53,14 +53,14 @@ func newNode[K ~string, V any](key K, val V) *node[K, V] {
 type Trie[K ~string, V any] struct {
 	q    Queuer[K]
 	root *node[K, V]
-	mu   *sync.RWMutex
+	mu   sync.RWMutex
 	n    int
 }
 
 // New initializes a new Trie data structure.
 func New[K ~string, V any](q Queuer[K]) *Trie[K, V] {
 	return &Trie[K, V]{
-		mu: &sync.RWMutex{},
+		mu: sync.RWMutex{},
 		q:  q,
 	}
 }

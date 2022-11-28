@@ -42,7 +42,7 @@ func NewNode[K constraints.Ordered, V any](key K, val V) *Node[K, V] {
 // It incorporates a thread safe mechanism using `sync.Mutex` to guarantee
 // the data consistency on concurrent read and write operation.
 type BsTree[K constraints.Ordered, V any] struct {
-	mu   *sync.RWMutex
+	mu   sync.RWMutex
 	comp torx.CompFn[K]
 	root *Node[K, V]
 	size int
@@ -52,7 +52,7 @@ type BsTree[K constraints.Ordered, V any] struct {
 // Depending on the comparator it sorts the tree in ascending or descending order.
 func New[K constraints.Ordered, V any](comp torx.CompFn[K]) *BsTree[K, V] {
 	return &BsTree[K, V]{
-		mu:   &sync.RWMutex{},
+		mu:   sync.RWMutex{},
 		comp: comp,
 	}
 }

@@ -54,7 +54,7 @@ func TestQueue_Concurrency(t *testing.T) {
 	assert.Equal(0, q.Size())
 }
 
-func Example_Queue() {
+func ExampleQueue() {
 	q := New[int]()
 	q.Enqueue(1)
 	q.Enqueue(2)

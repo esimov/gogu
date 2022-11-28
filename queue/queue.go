@@ -12,14 +12,14 @@ import (
 
 // Queue implements a FIFO Queue data structure.
 type Queue[T comparable] struct {
-	mu    *sync.RWMutex
+	mu    sync.RWMutex
 	items []T
 }
 
 // New creates a new FIFO queue where the items are stored in a plain slice.
 func New[T comparable]() *Queue[T] {
 	return &Queue[T]{
-		mu: &sync.RWMutex{},
+		mu: sync.RWMutex{},
 	}
 }
 

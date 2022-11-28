@@ -4,14 +4,14 @@ import "sync"
 
 // Stack implements the LIFO Stack.
 type Stack[T comparable] struct {
-	mu    *sync.RWMutex
+	mu    sync.RWMutex
 	items []T
 }
 
 // New creates a new LIFO stack where the items are stored in a plain slice.
 func New[T comparable]() *Stack[T] {
 	return &Stack[T]{
-		mu: &sync.RWMutex{},
+		mu: sync.RWMutex{},
 	}
 }
 

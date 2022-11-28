@@ -9,7 +9,7 @@ import (
 // LQueue implements the linked-list version of the FIFO queue.
 type LQueue[T comparable] struct {
 	list *list.DList[T]
-	mu   *sync.RWMutex
+	mu   sync.RWMutex
 	n    int
 }
 
@@ -17,7 +17,7 @@ type LQueue[T comparable] struct {
 func NewLinked[T comparable](t T) *LQueue[T] {
 	return &LQueue[T]{
 		list: list.InitDList(t),
-		mu:   &sync.RWMutex{},
+		mu:   sync.RWMutex{},
 		n:    1,
 	}
 }

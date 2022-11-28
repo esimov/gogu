@@ -26,7 +26,7 @@ type Item[V any] struct {
 }
 
 type cache[T ~string, V any] struct {
-	mu         *sync.RWMutex
+	mu         sync.RWMutex
 	items      map[T]*Item[V]
 	done       chan struct{}
 	expTime    time.Duration
@@ -42,7 +42,7 @@ type Cache[T ~string, V any] struct {
 // newCache has a local scope only. `New` will be used for the cache instantiation outside of this package.
 func newCache[T ~string, V any](expTime, cleanupInt time.Duration, item map[T]*Item[V]) *cache[T, V] {
 	c := &cache[T, V]{
-		mu:         &sync.RWMutex{},
+		mu:         sync.RWMutex{},
 		items:      item,
 		expTime:    expTime,
 		cleanupInt: cleanupInt,
