@@ -1,11 +1,11 @@
-# gogu
+# gogu (Go Generics Utility)
 ![Coverage](https://img.shields.io/badge/Coverage-94.1%25-brightgreen)
 [![CI](https://github.com/esimov/gogu/actions/workflows/ci.yml/badge.svg)](https://github.com/esimov/gogu/actions/workflows/ci.yml)
 [![Go Reference](https://img.shields.io/badge/pkg.go.dev-reference-007d9c?logo=go)](https://pkg.go.dev/github.com/esimov/gogu)
 [![release](https://img.shields.io/badge/Release-v1.0.1-blue.svg)](https://github.com/esimov/gogu/releases/tag/v1.0.1)
 [![license](https://img.shields.io/github/license/esimov/pigo)](./LICENSE)
 
-`Gogu` is a versatile, comprehensive, reusable and efficient concurrent-safe utility functions and data structures library taking advantage of the Go generics. It was inspired by other well established and consecrated frameworks like [lodash](https://lodash.com/) or [Apache Commons](https://commons.apache.org/) and some concepts being more closer to the functional programming paradigms.
+**Gogu** is a versatile, comprehensive, reusable and efficient concurrent-safe utility functions and data structures library taking advantage of the Go generics. It was inspired by other well established and consecrated frameworks like [lodash](https://lodash.com/) or [Apache Commons](https://commons.apache.org/) and some concepts being more closer to the functional programming paradigms.
 
 Its main purpose is to facilitate the ease of working with common data structures like slices, maps and strings, through the implementation of many utility functions commonly used in the day-by-day jobs, but also integrating some of the most used data structure algorithms.
 
