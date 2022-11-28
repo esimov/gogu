@@ -1,4 +1,4 @@
-package torx
+package gogu
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/esimov/torx/cache"
+	"github.com/esimov/gogu/cache"
 	"github.com/stretchr/testify/assert"
 )
 

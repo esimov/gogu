@@ -1,11 +1,11 @@
-# torx
+# gogu
 ![Coverage](https://img.shields.io/badge/Coverage-94.1%25-brightgreen)
-[![CI](https://github.com/esimov/torx/actions/workflows/ci.yml/badge.svg)](https://github.com/esimov/torx/actions/workflows/ci.yml)
-[![Go Reference](https://img.shields.io/badge/pkg.go.dev-reference-007d9c?logo=go)](https://pkg.go.dev/github.com/esimov/torx)
-[![release](https://img.shields.io/badge/Release-v1.0.1-blue.svg)](https://github.com/esimov/torx/releases/tag/v1.0.1)
+[![CI](https://github.com/esimov/gogu/actions/workflows/ci.yml/badge.svg)](https://github.com/esimov/gogu/actions/workflows/ci.yml)
+[![Go Reference](https://img.shields.io/badge/pkg.go.dev-reference-007d9c?logo=go)](https://pkg.go.dev/github.com/esimov/gogu)
+[![release](https://img.shields.io/badge/Release-v1.0.1-blue.svg)](https://github.com/esimov/gogu/releases/tag/v1.0.1)
 [![license](https://img.shields.io/github/license/esimov/pigo)](./LICENSE)
 
-Torx is a versatile, comprehensive, reusable and efficient concurrent-safe utility functions and data structures library taking advantage of the Go generics. It was inspired by other well established and consecrated frameworks like [underscore.js](https://underscorejs.org/), [lodash](https://lodash.com/) and some concepts being more closer to the functional programming paradigms. 
+`Gogu` is a versatile, comprehensive, reusable and efficient concurrent-safe utility functions and data structures library taking advantage of the Go generics. It was inspired by other well established and consecrated frameworks like [lodash](https://lodash.com/) or [Apache Commons](https://commons.apache.org/) and some concepts being more closer to the functional programming paradigms.
 
 Its main purpose is to facilitate the ease of working with common data structures like slices, maps and strings, through the implementation of many utility functions commonly used in the day-by-day jobs, but also integrating some of the most used data structure algorithms.
 
@@ -22,14 +22,14 @@ Its main purpose is to facilitate the ease of working with common data structure
 ## 🚀 Installation
 
 ```bash
-$ go install github.com/esimov/torx@latest
+$ go install github.com/esimov/gogu@latest
 ```
 
 ## 🛠 Usage
 ```go
 package main
 
-import "github.com/esimov/torx"
+import "github.com/esimov/gogu"
 
 func main() {
   // main program
@@ -38,13 +38,13 @@ func main() {
 
 ## 📖 Specifications
 - **Generic Data Structures**
-  - [`bst`](https://github.com/esimov/torx/tree/master/bstree): Binary Search Tree data structure implementation, where each node has at most two child nodes and the key of its internal node is greater than all the keys in the respective node's left subtree and less than the ones in the right subtree
-  - [`btree`](https://github.com/esimov/torx/tree/master/btree): B-tree data structure implementation which is a self-balancing tree data structure maintaining its values in sorted order
-  - [`cache`](https://github.com/esimov/torx/tree/master/cache): a basic in-memory key-value storage system
-  - [`heap`](https://github.com/esimov/torx/tree/master/heap): Binary Heap data structure implementation where each node of the subtree is greather or equal then the parent node
-  - [`list`](https://github.com/esimov/torx/tree/master/list): implements a singly and doubly linked list data structure
-  - [`queue`](https://github.com/esimov/torx/tree/master/queue): package queue implements a FIFO (First-In-First-Out) data structure in two forms: using as storage system a resizing array and a doubly linked list
-  - [`stack`](https://github.com/esimov/torx/tree/master/stack): package stack implements a LIFO (Last-In-First-Out) data structure where the last element added to the stack is processed first
+  - [`bst`](https://github.com/esimov/gogu/tree/master/bstree): Binary Search Tree data structure implementation, where each node has at most two child nodes and the key of its internal node is greater than all the keys in the respective node's left subtree and less than the ones in the right subtree
+  - [`btree`](https://github.com/esimov/gogu/tree/master/btree): B-tree data structure implementation which is a self-balancing tree data structure maintaining its values in sorted order
+  - [`cache`](https://github.com/esimov/gogu/tree/master/cache): a basic in-memory key-value storage system
+  - [`heap`](https://github.com/esimov/gogu/tree/master/heap): Binary Heap data structure implementation where each node of the subtree is greather or equal then the parent node
+  - [`list`](https://github.com/esimov/gogu/tree/master/list): implements a singly and doubly linked list data structure
+  - [`queue`](https://github.com/esimov/gogu/tree/master/queue): package queue implements a FIFO (First-In-First-Out) data structure in two forms: using as storage system a resizing array and a doubly linked list
+  - [`stack`](https://github.com/esimov/gogu/tree/master/stack): package stack implements a LIFO (Last-In-First-Out) data structure where the last element added to the stack is processed first
 
 - **General utility functions**
   - [Abs](<#func-abs>)
@@ -2436,8 +2436,8 @@ RetryWithDelay tries to invoke the callback function n times, but with a delay b
 </details>
 
 ## 🤝 Contributing
-- Request new features or fix [open issues](https://github.com/esimov/torx/issues)
-- Fork the project and make [pull requests](https://github.com/esimov/torx/pulls)
+- Request new features or fix [open issues](https://github.com/esimov/gogu/issues)
+- Fork the project and make [pull requests](https://github.com/esimov/gogu/pulls)
 
 ## Author
 * Endre Simo ([@simo_endre](https://twitter.com/simo_endre))
@@ -2445,4 +2445,4 @@ RetryWithDelay tries to invoke the callback function n times, but with a delay b
 ## License
 Copyright © 2022 Endre Simo
 
-This software is distributed under the MIT license. See the [LICENSE](https://github.com/esimov/torx/blob/master/LICENSE) file for the full license text.
+This software is distributed under the MIT license. See the [LICENSE](https://github.com/esimov/gogu/blob/master/LICENSE) file for the full license text.

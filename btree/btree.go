@@ -8,7 +8,7 @@
 package btree
 
 import (
-	"github.com/esimov/torx"
+	"github.com/esimov/gogu"
 	"golang.org/x/exp/constraints"
 )
 
@@ -76,14 +76,14 @@ func (n *node[K, V]) search(t *BTree[K, V], key K, height int) (V, bool) {
 	// external node
 	if height == 0 {
 		for i := 0; i < n.m; i++ {
-			if torx.Equal(key, n.children[i].key) {
+			if gogu.Equal(key, n.children[i].key) {
 				return n.children[i].value, true
 			}
 		}
 	} else {
 		// internal node
 		for i := 0; i < n.m; i++ {
-			if i+1 == n.m || torx.Less(key, n.children[i+1].key) {
+			if i+1 == n.m || gogu.Less(key, n.children[i+1].key) {
 				return n.children[i].next.search(t, key, height-1)
 			}
 		}
@@ -128,19 +128,19 @@ func (n *node[K, V]) insert(t *BTree[K, V], key K, val V, height int, isRemoved 
 	if height == 0 {
 		for j = 0; j < n.m; j++ {
 			// If the value already exists in the B-tree this will be overwritten.
-			if torx.Equal(key, n.children[j].key) {
+			if gogu.Equal(key, n.children[j].key) {
 				n.children[j].value = val
 				// This signals that we are invoking the Put or Remove method.
 				n.children[j].isRemoved = isRemoved
 				return nil
-			} else if torx.Less(key, n.children[j].key) {
+			} else if gogu.Less(key, n.children[j].key) {
 				break
 			}
 		}
 	} else {
 		// internal node
 		for j = 0; j < n.m; j++ {
-			if j+1 == n.m || torx.Less(key, n.children[j+1].key) {
+			if j+1 == n.m || gogu.Less(key, n.children[j+1].key) {
 				node := n.children[j].next.insert(t, key, val, height-1, isRemoved)
 				if node == nil {
 					return nil

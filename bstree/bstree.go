@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/esimov/torx"
+	"github.com/esimov/gogu"
 	"golang.org/x/exp/constraints"
 )
 
@@ -43,14 +43,14 @@ func NewNode[K constraints.Ordered, V any](key K, val V) *Node[K, V] {
 // the data consistency on concurrent read and write operation.
 type BsTree[K constraints.Ordered, V any] struct {
 	mu   sync.RWMutex
-	comp torx.CompFn[K]
+	comp gogu.CompFn[K]
 	root *Node[K, V]
 	size int
 }
 
 // New initializes a new BST data structure together with a comparison operator.
 // Depending on the comparator it sorts the tree in ascending or descending order.
-func New[K constraints.Ordered, V any](comp torx.CompFn[K]) *BsTree[K, V] {
+func New[K constraints.Ordered, V any](comp gogu.CompFn[K]) *BsTree[K, V] {
 	return &BsTree[K, V]{
 		mu:   sync.RWMutex{},
 		comp: comp,
@@ -79,9 +79,9 @@ func (n *Node[K, V]) get(b *BsTree[K, V], key K) (Item[K, V], error) {
 		return it, ErrorNotFound
 	}
 
-	if torx.Compare(key, n.Key, b.comp) == 1 {
+	if gogu.Compare(key, n.Key, b.comp) == 1 {
 		return n.Left.get(b, key)
-	} else if torx.Compare(key, n.Key, b.comp) == -1 {
+	} else if gogu.Compare(key, n.Key, b.comp) == -1 {
 		return n.Right.get(b, key)
 	}
 
@@ -103,14 +103,14 @@ func (b *BsTree[K, V]) Upsert(key K, val V) {
 }
 
 func (n *Node[K, V]) upsert(b *BsTree[K, V], key K, val V) {
-	if torx.Compare(key, n.Key, b.comp) == 1 {
+	if gogu.Compare(key, n.Key, b.comp) == 1 {
 		if n.Left == nil {
 			n.Left = NewNode(key, val)
 			b.size++
 		} else {
 			n.Left.upsert(b, key, val)
 		}
-	} else if torx.Compare(key, n.Key, b.comp) == -1 {
+	} else if gogu.Compare(key, n.Key, b.comp) == -1 {
 		if n.Right == nil {
 			n.Right = NewNode(key, val)
 			b.size++
@@ -147,10 +147,10 @@ func (n *Node[K, V]) delete(b *BsTree[K, V], key K) (*Node[K, V], error) {
 		return nil, ErrorNotFound
 	}
 
-	if torx.Compare(key, n.Key, b.comp) == 1 {
+	if gogu.Compare(key, n.Key, b.comp) == 1 {
 		n.Left, err = n.Left.delete(b, key)
 		return n, err
-	} else if torx.Compare(key, n.Key, b.comp) == -1 {
+	} else if gogu.Compare(key, n.Key, b.comp) == -1 {
 		n.Right, err = n.Right.delete(b, key)
 		return n, err
 	} else {

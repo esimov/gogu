@@ -3,7 +3,7 @@
 # bstree
 
 ```go
-import "github.com/esimov/torx/bstree"
+import "github.com/esimov/gogu/bstree"
 ```
 
 Package bstree provides an implementation of the Binary Search Tree \(BST\) data structure algorithm, where each node has at most two child nodes and the key of its internal node is greater than all the keys in the respective node's left subtree and less than the ones in the right subtree.
@@ -55,7 +55,7 @@ Package bstree provides an implementation of the Binary Search Tree \(BST\) data
 
 - [Variables](<#variables>)
 - [type BsTree](<#type-bstree>)
-  - [func New[K constraints.Ordered, V any](comp torx.CompFn[K]) *BsTree[K, V]](<#func-new>)
+  - [func New[K constraints.Ordered, V any](comp gogu.CompFn[K]) *BsTree[K, V]](<#func-new>)
   - [func (b *BsTree[K, V]) Delete(key K) error](<#func-bstreek-v-delete>)
   - [func (b *BsTree[K, V]) Get(key K) (Item[K, V], error)](<#func-bstreek-v-get>)
   - [func (b *BsTree[K, V]) Size() int](<#func-bstreek-v-size>)
@@ -85,7 +85,7 @@ type BsTree[K constraints.Ordered, V any] struct {
 ### func New
 
 ```go
-func New[K constraints.Ordered, V any](comp torx.CompFn[K]) *BsTree[K, V]
+func New[K constraints.Ordered, V any](comp gogu.CompFn[K]) *BsTree[K, V]
 ```
 
 New initializes a new BST data structure together with a comparison operator. Depending on the comparator it sorts the tree in ascending or descending order.

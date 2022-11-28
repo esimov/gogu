@@ -3,7 +3,7 @@ package queue
 import (
 	"sync"
 
-	"github.com/esimov/torx/list"
+	"github.com/esimov/gogu/list"
 )
 
 // LQueue implements the linked-list version of the FIFO queue.

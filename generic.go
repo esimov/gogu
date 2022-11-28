@@ -1,4 +1,4 @@
-package torx
+package gogu
 
 import (
 	"golang.org/x/exp/constraints"

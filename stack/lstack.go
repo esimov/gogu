@@ -8,7 +8,7 @@ package stack
 import (
 	"sync"
 
-	"github.com/esimov/torx/list"
+	"github.com/esimov/gogu/list"
 )
 
 // LStack implements the linked-list version of the LIFO stack.

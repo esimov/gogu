@@ -3,7 +3,7 @@
 # list
 
 ```go
-import "github.com/esimov/torx/list"
+import "github.com/esimov/gogu/list"
 ```
 
 Package list provides an implementation of the linked list data structure. It comes with two version: singly and doubly linked list. The singly linked list version has a data element storing the node value and a pointer to the next element of the list. The doubly linked list version has an additional pointer to previous node.

@@ -3,7 +3,7 @@
 # heap
 
 ```go
-import "github.com/esimov/torx/heap"
+import "github.com/esimov/gogu/heap"
 ```
 
 Package heap provides a thread\-safe implementation of the binary heap data structure. A common implementation of the heap is the binary tree, where each node of the subtree satisfies the heap property: each node of the subtree is greather or equal then the parent node in case of min heap, and less or equal than the parent node in case of max heap. The conditional operator used on the heap initialization defines the heap type
@@ -214,12 +214,12 @@ true
 
 ## Index
 
-- [func Sort[T comparable](data []T, comp torx.CompFn[T]) []T](<#func-sort>)
+- [func Sort[T comparable](data []T, comp gogu.CompFn[T]) []T](<#func-sort>)
 - [type Heap](<#type-heap>)
-  - [func FromSlice[T comparable](data []T, comp torx.CompFn[T]) *Heap[T]](<#func-fromslice>)
-  - [func NewHeap[T comparable](comp torx.CompFn[T]) *Heap[T]](<#func-newheap>)
+  - [func FromSlice[T comparable](data []T, comp gogu.CompFn[T]) *Heap[T]](<#func-fromslice>)
+  - [func NewHeap[T comparable](comp gogu.CompFn[T]) *Heap[T]](<#func-newheap>)
   - [func (h *Heap[T]) Clear()](<#func-heapt-clear>)
-  - [func (h *Heap[T]) Convert(comp torx.CompFn[T])](<#func-heapt-convert>)
+  - [func (h *Heap[T]) Convert(comp gogu.CompFn[T])](<#func-heapt-convert>)
   - [func (h *Heap[T]) Delete(val T) (bool, error)](<#func-heapt-delete>)
   - [func (h *Heap[T]) GetValues() []T](<#func-heapt-getvalues>)
   - [func (h *Heap[T]) IsEmpty() bool](<#func-heapt-isempty>)
@@ -234,7 +234,7 @@ true
 ## func Sort
 
 ```go
-func Sort[T comparable](data []T, comp torx.CompFn[T]) []T
+func Sort[T comparable](data []T, comp gogu.CompFn[T]) []T
 ```
 
 Sort sorts the heap in ascending or descening order depending on the heap type. In case the heap is a max heap, the heap is sorted in ascending order, otherwise in descending order.
@@ -250,7 +250,7 @@ type Heap[T comparable] struct {
 ### func FromSlice
 
 ```go
-func FromSlice[T comparable](data []T, comp torx.CompFn[T]) *Heap[T]
+func FromSlice[T comparable](data []T, comp gogu.CompFn[T]) *Heap[T]
 ```
 
 FromSlice imports the slice elements into a new heap using the comparator function.
@@ -258,7 +258,7 @@ FromSlice imports the slice elements into a new heap using the comparator functi
 ### func NewHeap
 
 ```go
-func NewHeap[T comparable](comp torx.CompFn[T]) *Heap[T]
+func NewHeap[T comparable](comp gogu.CompFn[T]) *Heap[T]
 ```
 
 NewHeap creates a new heap data structure having two components: a data slice holding the concrete values and a comparison function. The sign of the comparison function defines if we are dealing with a min or max heap.
@@ -274,7 +274,7 @@ Clear removes all the elements from the heap.
 ### func \(\*Heap\[T\]\) Convert
 
 ```go
-func (h *Heap[T]) Convert(comp torx.CompFn[T])
+func (h *Heap[T]) Convert(comp gogu.CompFn[T])
 ```
 
 Convert converts a min heap to max heap and vice versa.

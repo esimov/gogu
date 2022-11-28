@@ -9,12 +9,12 @@ package heap
 import (
 	"sync"
 
-	"github.com/esimov/torx"
+	"github.com/esimov/gogu"
 )
 
 // Sort sorts the heap in ascending or descening order depending on the heap type.
 // In case the heap is a max heap, the heap is sorted in ascending order, otherwise in descending order.
-func Sort[T comparable](data []T, comp torx.CompFn[T]) []T {
+func Sort[T comparable](data []T, comp gogu.CompFn[T]) []T {
 	mu := &sync.Mutex{}
 	heap := FromSlice(data, comp)
 
