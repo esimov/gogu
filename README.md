@@ -1,7 +1,8 @@
 # torx
 ![Coverage](https://img.shields.io/badge/Coverage-94.0%25-brightgreen)
 [![CI](https://github.com/esimov/torx/actions/workflows/ci.yml/badge.svg)](https://github.com/esimov/torx/actions/workflows/ci.yml)
-[![License](https://img.shields.io/github/license/esimov/torx)](./LICENSE)
+[![release](https://img.shields.io/badge/Release-v1.0.1-blue.svg)](https://github.com/esimov/torx/releases/tag/v1.0.1)
+[![license](https://img.shields.io/github/license/esimov/pigo)](./LICENSE)
 
 Torx is a versatile, comprehensive, reusable and efficient concurrent-safe utility functions and data structures library taking advantage of the Go generics. It was inspired by other well established and consecrated frameworks like [underscore.js](https://underscorejs.org/), [lodash](https://lodash.com/) and some concepts being more closer to the functional programming paradigms. 
 
