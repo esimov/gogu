@@ -21,8 +21,8 @@ type Heap[T comparable] struct {
 }
 
 // NewHeap creates a new heap data structure having two components:
-// a data slice holding the concrete values and a comparision function.
-// The sign of the comparision function defines if we are dealing with a min or max heap.
+// a data slice holding the concrete values and a comparison function.
+// The sign of the comparison function defines if we are dealing with a min or max heap.
 func NewHeap[T comparable](comp torx.CompFn[T]) *Heap[T] {
 	return &Heap[T]{
 		mu:   new(sync.RWMutex),

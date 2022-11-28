@@ -42,7 +42,7 @@ func FindAll[T any](s []T, fn func(T) bool) map[int]T {
 	return m
 }
 
-// FindMin finds the minumum value of a slice.
+// FindMin finds the minimum value of a slice.
 func FindMin[T constraints.Ordered](s []T) T {
 	var min T
 	if len(s) > 0 {

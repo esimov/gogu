@@ -83,7 +83,7 @@ type Item[K ~string, V any] struct {
 
 ## type Queuer
 
-Queuer exposes the basic interface methods for querying the trie data structure both for searching and for retrieving the existing keys. These are generic methods having the same signature as the correspondig concrete methods from the queue package. Because both the plain array and the linked listed version of the queue package has the same method signature, each of them could be plugged in on the method invocation.
+Queuer exposes the basic interface methods for querying the trie data structure both for searching and for retrieving the existing keys. These are generic methods having the same signature as the corresponding concrete methods from the queue package. Because both the plain array and the linked listed version of the queue package has the same method signature, each of them could be plugged in on the method invocation.
 
 ```go
 type Queuer[K ~string] interface {

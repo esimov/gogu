@@ -13,7 +13,7 @@ var ErrorNotFound = fmt.Errorf("trie node not found")
 
 // Queuer exposes the basic interface methods for querying the trie data structure
 // both for searching and for retrieving the existing keys. These are generic methods
-// having the same signature as the correspondig concrete methods from the queue package.
+// having the same signature as the corresponding concrete methods from the queue package.
 // Because both the plain array and the linked listed version of the queue package
 // has the same method signature, each of them could be plugged in on the method invocation.
 type Queuer[K ~string] interface {
@@ -24,12 +24,12 @@ type Queuer[K ~string] interface {
 }
 
 type node[K ~string, V any] struct {
-	c       byte
+	Item[K, V]
 	left    *node[K, V]
 	mid     *node[K, V]
 	right   *node[K, V]
+	c       byte
 	isValid bool
-	Item[K, V]
 }
 
 // Item is a key-value struct pair used for storing the node values.
@@ -51,10 +51,10 @@ func newNode[K ~string, V any](key K, val V) *node[K, V] {
 // Trie is a lock-free tree data structure having the root as the first node.
 // It's guarded with a mutex for concurrent-safe data access.
 type Trie[K ~string, V any] struct {
-	n    int
+	q    Queuer[K]
 	root *node[K, V]
 	mu   *sync.RWMutex
-	q    Queuer[K]
+	n    int
 }
 
 // New initializes a new Trie data structure.

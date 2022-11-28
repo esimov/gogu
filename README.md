@@ -763,7 +763,7 @@ FindMaxByKey finds the maximum value from a map by using some existing key as a 
 func FindMin[T constraints.Ordered](s []T) T
 ```
 
-FindMin finds the minumum value of a slice.
+FindMin finds the minimum value of a slice.
 
 ## func FindMinBy
 
@@ -1612,7 +1612,7 @@ func Range[T Number](args ...T) ([]T, error)
 
 Range creates a slice of integers progressing from start up to, but not including end. This method can accept 1, 2 or 3 arguments. Depending on the number of provided parameters, \`start\`, \`step\` and \`end\` has the following meaning:
 
-\[start=0\]: The start of the range. If ommited it defaults to 0.
+\[start=0\]: The start of the range. If omitted it defaults to 0.
 
 \[step=1\]: The value to increment or decrement by.
 
@@ -1765,7 +1765,7 @@ Shuffle implements the Fisher\-Yates shuffle algorithm applied to a slice.
 func SliceToMap[K comparable, T any](s1 []K, s2 []T) map[K]T
 ```
 
-SliceToMap converts a slice to a map. It panic in case the parameter slices lenght are not identical. The map keys will be the items from the first slice and the values the items from the second slice.
+SliceToMap converts a slice to a map. It panic in case the parameter slices length are not identical. The map keys will be the items from the first slice and the values the items from the second slice.
 
 ## func SnakeCase
 

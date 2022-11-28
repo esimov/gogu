@@ -217,16 +217,10 @@ func (l *DList[T]) Pop() *doubleNode[T] {
 // It returns the node in case the element is found otherwise nil.
 func (l *DList[T]) Find(val T) (*doubleNode[T], bool) {
 	head := l.doubleNode
-	var found bool
 
 	for n := &l.doubleNode; n != nil; n = n.next {
-		if found {
-			break
-		}
 		if n.data == val {
 			l.doubleNode = head
-			found = true
-
 			return n, true
 		}
 	}

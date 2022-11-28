@@ -172,16 +172,10 @@ func (l *SList[T]) Pop() *singleNode[T] {
 // It returns the node in case the element is found otherwise nil.
 func (l *SList[T]) Find(val T) (*singleNode[T], bool) {
 	head := l.singleNode
-	var found bool
 
 	for n := &l.singleNode; n != nil; n = n.next {
-		if found {
-			break
-		}
 		if n.data == val {
 			l.singleNode = head
-			found = true
-
 			return n, true
 		}
 	}
