@@ -14,7 +14,7 @@ func Sum[T Number](slice []T) T {
 	return acc
 }
 
-// SumBy is like Sum except the it accept a callback function which is invoked
+// SumBy is like Sum except it accept a callback function which is invoked
 // for each element in the slice to generate the value to be summed.
 func SumBy[T1 any, T2 Number](slice []T1, fn func(T1) T2) T2 {
 	var acc T2
@@ -33,7 +33,7 @@ func Mean[T Number](slice []T) T {
 	return result / T(len(slice))
 }
 
-// IndexOf returns the index of the firs orccurrence of a value
+// IndexOf returns the index of the firs occurrence of a value
 // in the slice, or -1 if value is not present in the slice.
 func IndexOf[T comparable](s []T, val T) int {
 	for k, v := range s {
@@ -132,7 +132,7 @@ func UniqueBy[T comparable](slice []T, fn func(T) T) []T {
 	return result
 }
 
-// Every returns true if all of the elements of a slice satisfies the criteria of the callback function.
+// Every returns true if all the elements of a slice satisfies the criteria of the callback function.
 func Every[T any](slice []T, fn func(T) bool) bool {
 	for _, v := range slice {
 		if !fn(v) {
@@ -142,7 +142,7 @@ func Every[T any](slice []T, fn func(T) bool) bool {
 	return true
 }
 
-// Some returns true if some of the elements of a slice satisfies the criteria of the callback function.
+// Some returns true if some elements of a slice satisfies the criteria of the callback function.
 func Some[T any](slice []T, fn func(T) bool) bool {
 	for _, v := range slice {
 		if fn(v) {
@@ -153,7 +153,7 @@ func Some[T any](slice []T, fn func(T) bool) bool {
 }
 
 // Partition splits the collection elements into two, the ones which satisfies the condition
-// expressed in the callback function (fn) and those which does not satisfies the condition.
+// expressed in the callback function (fn) and those which does not satisfy the condition.
 func Partition[T comparable](slice []T, fn func(T) bool) [2][]T {
 	var result = [2][]T{}
 
@@ -202,7 +202,7 @@ func Duplicate[T comparable](slice []T) []T {
 }
 
 // DuplicateWithIndex puts the duplicated values of a collection into a map as a key value pair,
-// where the key is the collection element and the value is it's position.
+// where the key is the collection element and the value is its position.
 func DuplicateWithIndex[T comparable](slice []T) map[T]int {
 	var count int
 	kvMap := make(map[T][]int)
@@ -511,8 +511,8 @@ func Zip[T any](slices ...[]T) [][]T {
 }
 
 // Unzip is the opposite of Zip: given a slice of slices it returns a series of new slices,
-// the first of which contains all of the first elements in the input slices,
-// the second of which contains all of the second elements, and so on.
+// the first of which contains all the first elements in the input slices,
+// the second of which contains all the second elements, and so on.
 func Unzip[T any](slices ...[]T) [][]T {
 	var result = make([][]T, len(slices))
 	var sliceLen int

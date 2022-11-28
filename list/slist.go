@@ -79,7 +79,7 @@ func (l *SList[T]) InsertAfter(prev *singleNode[T], data T) error {
 }
 
 // Replace replaces a node's value with a new one.
-// It returns an error in case the requested node does not exists.
+// It returns an error in case the requested node does not exist.
 func (l *SList[T]) Replace(oldVal, newVal T) (*singleNode[T], error) {
 	head := &l.singleNode
 
@@ -187,7 +187,7 @@ func (l *SList[T]) Find(val T) (*singleNode[T], bool) {
 }
 
 // Each iterates over the elements of the linked list and invokes
-// the callback function, having as parameter the nodes data.
+// the callback function, having as parameter the nodes' data.
 func (l *SList[T]) Each(fn func(data T)) {
 	head := &l.singleNode
 	node := l.singleNode

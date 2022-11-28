@@ -91,7 +91,7 @@ func (v RType[T]) Retry(n int, fn func(T) error) (int, error) {
 	return attempt, err
 }
 
-// RetryWithDelay tries to invoke the callback function `n` times, but with a delay between each calls.
+// RetryWithDelay tries to invoke the callback function `n` times, but with a delay between each call.
 // It runs until the number of attempts is reached or the error return value of the callback function is nil.
 func (v RType[T]) RetryWithDelay(n int, delay time.Duration, fn func(time.Duration, T) error) (time.Duration, int, error) {
 	var (
@@ -197,7 +197,7 @@ func (t *throttler) Call() {
 	}
 }
 
-// next returns true at most once per time period. It runs until the throttled function is not canceled.
+// Next returns true at most once per time period. It runs until the throttled function is not canceled.
 func (t *throttler) Next() bool {
 	t.cond.L.Lock()
 	defer t.cond.L.Unlock()
@@ -214,7 +214,7 @@ func (t *throttler) Next() bool {
 	return !t.stop
 }
 
-// cancel the execution of a scheduled throttle function.
+// Cancel cancels the execution of a scheduled throttle function.
 func (t *throttler) Cancel() {
 	t.cond.L.Lock()
 	defer t.cond.L.Unlock()

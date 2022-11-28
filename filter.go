@@ -42,7 +42,7 @@ func FilterMap[K comparable, V any](m map[K]V, fn func(V) bool) map[K]V {
 	return filtered
 }
 
-// FilterMapCollection filter out a one dimmensional collection of map items
+// FilterMapCollection filter out a one dimensional collection of map items
 // by applying the conditional logic of the callback function.
 func FilterMapCollection[K comparable, V any](collection []map[K]V, fn func(V) bool) []map[K]V {
 	filtered := []map[K]V{}
@@ -58,7 +58,7 @@ func FilterMapCollection[K comparable, V any](collection []map[K]V, fn func(V) b
 	return filtered
 }
 
-// Filter2DMapCollection filter out a two dimmensional collection of map items
+// Filter2DMapCollection filter out a two-dimensional collection of map items
 // by applying the conditional logic of the callback function.
 func Filter2DMapCollection[K comparable, V any](collection []map[K]map[K]V, fn func(map[K]V) bool) []map[K]map[K]V {
 	filtered := []map[K]map[K]V{}

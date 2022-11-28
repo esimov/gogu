@@ -1,7 +1,7 @@
 // Package trie provides a concurrent safe implementation of the ternary search tree data structure.
 // Trie is similar to binary search tree, but it has up to three children rather than two as of BST.
 // Tries are used for locating specific keys from within a set or
-// for quick lookup searches within a text like auto completion or spell checking.
+// for quick lookup searches within a text like auto-completion or spell checking.
 package trie
 
 import (
@@ -119,7 +119,7 @@ func (n *node[K, V]) put(t *Trie[K, V], key K, val V, d int, isValid bool) *node
 }
 
 // Get retrieves a node's value based on the key.
-// If the key does not exists it returns false.
+// If the key does not exist it returns false.
 func (t *Trie[K, V]) Get(key K) (v V, ok bool) {
 	t.mu.RLock()
 	defer t.mu.RUnlock()
@@ -154,7 +154,7 @@ func (n *node[K, V]) get(key K, d int) (*node[K, V], error) {
 	return n, nil
 }
 
-// LongestPrefix returns the longest prefix of query in the symbol table or empty if such string does not exists.
+// LongestPrefix returns the longest prefix of query in the symbol table or empty if such string does not exist.
 func (t *Trie[K, V]) LongestPrefix(query K) (K, error) {
 	t.mu.RLock()
 	defer t.mu.RUnlock()
@@ -184,7 +184,7 @@ func (t *Trie[K, V]) LongestPrefix(query K) (K, error) {
 	return query[:length], nil
 }
 
-// StartsWith returns all of the keys in the set that start with prefix.
+// StartsWith returns all the keys in the set that start with prefix.
 func (t *Trie[K, V]) StartsWith(prefix K) (Queuer[K], error) {
 	t.mu.RLock()
 	defer t.mu.RUnlock()

@@ -39,7 +39,7 @@ type Cache[T ~string, V any] struct {
 	*cache[T, V]
 }
 
-// newCache has a local scope only. `New` will be used for the cache instantiation outside of this package.
+// newCache has a local scope only. `New` will be used for the cache instantiation outside this package.
 func newCache[T ~string, V any](expTime, cleanupInt time.Duration, item map[T]*Item[V]) *cache[T, V] {
 	c := &cache[T, V]{
 		mu:         sync.RWMutex{},
@@ -54,7 +54,7 @@ func newCache[T ~string, V any](expTime, cleanupInt time.Duration, item map[T]*I
 // New instantiates a cache struct which requires an expiration time and a cleanup interval.
 // The cache will be invalidated once the expiration time is reached.
 // If the expiration time is less than zero (or NoExpiration) the cache items will never expire and should be deleted manually.
-// A cleanup method is running in the background and removes the expired caches at a predifined interval.
+// A cleanup method is running in the background and removes the expired caches at a predefined interval.
 func New[T ~string, V any](expTime, cleanupTime time.Duration) *Cache[T, V] {
 	items := make(map[T]*Item[V])
 	c := newCache(expTime, cleanupTime, items)
@@ -124,9 +124,9 @@ func (c *Cache[T, V]) add(key T, val V, d time.Duration) error {
 	return nil
 }
 
-// Get returns a cache item defined by it's key. If the item is expired an error is returned.
-// If an item is expired it's considered as unexistent and it will be evicted from the cache
-// when the purge method is invoked at the predifined interval.
+// Get returns a cache item defined by its key. If the item is expired an error is returned.
+// If an item is expired it's considered as nonexistent, it will be evicted from the cache
+// when the purge method is invoked at the predefined interval.
 func (c *Cache[T, V]) Get(key T) (*Item[V], error) {
 	c.mu.RLock()
 	if item, ok := c.items[key]; ok {
