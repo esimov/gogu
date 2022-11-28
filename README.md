@@ -5,25 +5,25 @@
 
 Torx is a versatile, comprehensive, reusable and efficient concurrent-safe utility functions and data structures library taking advantage of the Go generics. It was inspired by other well established and consecrated frameworks like [underscore.js](https://underscorejs.org/), [lodash](https://lodash.com/) and some concepts being more closer to the functional programming paradigms. 
 
-Its main purpose is to help developers in their day-to-day jobs to ease up their work with slices, maps and strings, but also implementing some of the most used data structures.
+Its main purpose is to facilitate the ease of working with common data structures like slices, maps and strings, through the implementation of many utility functions commonly used in the day-by-day jobs, but also integrating some of the most used data structure algorithms.
 
-## Features
+## ✨ Features
 **In what's different this library from other Go libraries exploring Go generics?** 
 - [x] It's concurrent-safe (with the exception of B-tree package)
-- [x] Supports thread-safe, time related functions like: [`before`](<#func-before>), [`after`](<#func-after>), [`delay`](<#func-delay>), [`memoize`](<#func-memoizert-v-memoize>), [`debounce`](<#func-newdebounce>), [`once`](<#func-once>), [`retry`](<#func-rtypet-retry>)
+- [x] Implements a dozens of time related functions like: [`before`](<#func-before>), [`after`](<#func-after>), [`delay`](<#func-delay>), [`memoize`](<#func-memoizert-v-memoize>), [`debounce`](<#func-newdebounce>), [`once`](<#func-once>), [`retry`](<#func-rtypet-retry>)
 - [x] Rich utility functions to operate with strings
 - [x] Very wide range of supported functions to deal with slice and map operations
-- [x] Extensive test coverage (**~94%**)
+- [x] Extensive test coverage
 - [x] Implements the most used data structures
-- [x] Thourough documentation with examples
+- [x] Thourough documentation accompanied with examples
 
-## Installation
+## 🚀 Installation
 
 ```bash
 $ go install github.com/esimov/torx@latest
 ```
 
-## Usage
+## 🛠 Usage
 ```go
 package main
 
@@ -34,7 +34,7 @@ func main() {
 }
 ```
 
-## Specifications
+## 📖 Specifications
 - **Generic Data Structures**
   - [`bst`](https://github.com/esimov/torx/tree/master/bstree): Binary Search Tree data structure implementation, where each node has at most two child nodes and the key of its internal node is greater than all the keys in the respective node's left subtree and less than the ones in the right subtree
   - [`btree`](https://github.com/esimov/torx/tree/master/btree): B-tree data structure implementation which is a self-balancing tree data structure maintaining its values in sorted order
@@ -2432,6 +2432,10 @@ RetryWithDelay tries to invoke the callback function n times, but with a delay b
 
 </p>
 </details>
+
+## 🤝 Contributing
+- Request new features or fix [open issues](https://github.com/esimov/torx/issues)
+- Fork the project and make [pull requests](https://github.com/esimov/torx/pulls)
 
 ## Author
 * Endre Simo ([@simo_endre](https://twitter.com/simo_endre))
