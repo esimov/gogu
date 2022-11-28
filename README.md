@@ -1,5 +1,5 @@
 # torx
-![Coverage](https://img.shields.io/badge/Coverage-94.0%25-brightgreen)
+![Coverage](https://img.shields.io/badge/Coverage-94.1%25-brightgreen)
 [![CI](https://github.com/esimov/torx/actions/workflows/ci.yml/badge.svg)](https://github.com/esimov/torx/actions/workflows/ci.yml)
 [![Go Reference](https://img.shields.io/badge/pkg.go.dev-reference-007d9c?logo=go)](https://pkg.go.dev/github.com/esimov/torx)
 [![release](https://img.shields.io/badge/Release-v1.0.1-blue.svg)](https://github.com/esimov/torx/releases/tag/v1.0.1)
