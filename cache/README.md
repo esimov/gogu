@@ -66,7 +66,6 @@ bar
 </p>
 </details>
 
-
 <details><summary>Example (Expiration Time)</summary>
 <p>
 
@@ -99,14 +98,14 @@ bar
 	c1.DeleteExpired()
 	fmt.Println(c1.Count())
 
-	c2 := New[string, int](5*time.Millisecond, 1*time.Millisecond)
+	c2 := New[string, int](5*time.Millisecond, 100*time.Millisecond)
 	c2.Set("a", 1, DefaultExpiration)
 	c2.Set("b", 2, NoExpiration)
-	c2.Set("c", 3, 10*time.Millisecond)
-	c2.Set("d", 4, 50*time.Millisecond)
-	<-time.After(30 * time.Millisecond)
+	c2.Set("c", 3, 50*time.Millisecond)
+	c2.Set("d", 4, 200*time.Millisecond)
+	<-time.After(150 * time.Millisecond)
 	fmt.Println(c2.Count())
-	<-time.After(100 * time.Millisecond)
+	<-time.After(300 * time.Millisecond)
 	fmt.Println(c2.Count())
 
 }
@@ -156,7 +155,7 @@ const (
 )
 ```
 
-## type Cache
+## type [Cache](<https://github.com/esimov/gogu/blob/master/cache/cache.go#L38-L40>)
 
 Cache is a publicly available struct type, which incorporates the unexported cache struct type holding the cache components.
 
@@ -166,15 +165,15 @@ type Cache[T ~string, V any] struct {
 }
 ```
 
-### func New
+### func [New](<https://github.com/esimov/gogu/blob/master/cache/cache.go#L58>)
 
 ```go
 func New[T ~string, V any](expTime, cleanupTime time.Duration) *Cache[T, V]
 ```
 
-New instantiates a cache struct which requires an expiration time and a cleanup interval. The cache will be invalidated once the expiration time is reached. If the expiration time is less than zero \(or NoExpiration\) the cache items will never expire and should be deleted manually. A cleanup method is running in the background and removes the expired caches at a predifined interval.
+New instantiates a cache struct which requires an expiration time and a cleanup interval. The cache will be invalidated once the expiration time is reached. If the expiration time is less than zero \(or NoExpiration\) the cache items will never expire and should be deleted manually. A cleanup method is running in the background and removes the expired caches at a predefined interval.
 
-### func \(\*Cache\[T, V\]\) Count
+### func \(\*Cache\[T, V\]\) [Count](<https://github.com/esimov/gogu/blob/master/cache/cache.go#L222>)
 
 ```go
 func (c *Cache[T, V]) Count() int
@@ -182,7 +181,7 @@ func (c *Cache[T, V]) Count() int
 
 Count returns the number of existing items in the cache.
 
-### func \(\*Cache\[T, V\]\) Delete
+### func \(\*Cache\[T, V\]\) [Delete](<https://github.com/esimov/gogu/blob/master/cache/cache.go#L166>)
 
 ```go
 func (c *Cache[T, V]) Delete(key T) error
@@ -190,7 +189,7 @@ func (c *Cache[T, V]) Delete(key T) error
 
 Delete removes a cache item.
 
-### func \(\*Cache\[T, V\]\) Flush
+### func \(\*Cache\[T, V\]\) [Flush](<https://github.com/esimov/gogu/blob/master/cache/cache.go#L207>)
 
 ```go
 func (c *Cache[T, V]) Flush()
@@ -198,15 +197,15 @@ func (c *Cache[T, V]) Flush()
 
 Flush removes all the existing items in the cache.
 
-### func \(\*Cache\[T, V\]\) Get
+### func \(\*Cache\[T, V\]\) [Get](<https://github.com/esimov/gogu/blob/master/cache/cache.go#L130>)
 
 ```go
 func (c *Cache[T, V]) Get(key T) (*Item[V], error)
 ```
 
-Get returns a cache item defined by it's key. If the item is expired an error is returned. If an item is expired it's considered as unexistent and it will be evicted from the cache when the purge method is invoked at the predifined interval.
+Get returns a cache item defined by its key. If the item is expired an error is returned. If an item is expired it's considered as nonexistent, it will be evicted from the cache when the purge method is invoked at the predefined interval.
 
-### func \(\*Cache\[T, V\]\) IsExpired
+### func \(\*Cache\[T, V\]\) [IsExpired](<https://github.com/esimov/gogu/blob/master/cache/cache.go#L243>)
 
 ```go
 func (c *Cache[T, V]) IsExpired(key T) bool
@@ -214,7 +213,7 @@ func (c *Cache[T, V]) IsExpired(key T) bool
 
 IsExpired checks if a cache item is expired.
 
-### func \(\*Cache\[T, V\]\) List
+### func \(\*Cache\[T, V\]\) [List](<https://github.com/esimov/gogu/blob/master/cache/cache.go#L214>)
 
 ```go
 func (c *Cache[T, V]) List() map[T]*Item[V]
@@ -222,7 +221,7 @@ func (c *Cache[T, V]) List() map[T]*Item[V]
 
 List returns the cache items which are not expired.
 
-### func \(\*Cache\[T, V\]\) MapToCache
+### func \(\*Cache\[T, V\]\) [MapToCache](<https://github.com/esimov/gogu/blob/master/cache/cache.go#L231>)
 
 ```go
 func (c *Cache[T, V]) MapToCache(m map[T]V, d time.Duration) error
@@ -230,7 +229,7 @@ func (c *Cache[T, V]) MapToCache(m map[T]V, d time.Duration) error
 
 MapToCache transfers the map values into the cache.
 
-### func \(\*Cache\[T, V\]\) Set
+### func \(\*Cache\[T, V\]\) [Set](<https://github.com/esimov/gogu/blob/master/cache/cache.go#L75>)
 
 ```go
 func (c *Cache[T, V]) Set(key T, val V, d time.Duration) error
@@ -238,7 +237,7 @@ func (c *Cache[T, V]) Set(key T, val V, d time.Duration) error
 
 Set inserts a new item into the cache, but first verifies if an item with the same key already exists in the cache. In case an item with the specified key already exists in the cache it will return an error.
 
-### func \(\*Cache\[T, V\]\) SetDefault
+### func \(\*Cache\[T, V\]\) [SetDefault](<https://github.com/esimov/gogu/blob/master/cache/cache.go#L86>)
 
 ```go
 func (c *Cache[T, V]) SetDefault(key T, val V) error
@@ -246,7 +245,7 @@ func (c *Cache[T, V]) SetDefault(key T, val V) error
 
 SetDefault adds a new item into the cache with the default expiration time.
 
-### func \(\*Cache\[T, V\]\) Update
+### func \(\*Cache\[T, V\]\) [Update](<https://github.com/esimov/gogu/blob/master/cache/cache.go#L157>)
 
 ```go
 func (c *Cache[T, V]) Update(key T, val V, d time.Duration) error
@@ -254,7 +253,7 @@ func (c *Cache[T, V]) Update(key T, val V, d time.Duration) error
 
 Update replaces a cache item with the new value.
 
-## type Item
+## type [Item](<https://github.com/esimov/gogu/blob/master/cache/cache.go#L23-L26>)
 
 Item holds the cache object \(which could be of any type\) and an expiration time. The expiration time defines the object lifetime.
 
@@ -264,7 +263,7 @@ type Item[V any] struct {
 }
 ```
 
-### func \(\*Item\[V\]\) Val
+### func \(\*Item\[V\]\) [Val](<https://github.com/esimov/gogu/blob/master/cache/cache.go#L148>)
 
 ```go
 func (it *Item[V]) Val() V

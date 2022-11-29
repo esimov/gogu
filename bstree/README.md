@@ -72,7 +72,7 @@ Package bstree provides an implementation of the Binary Search Tree \(BST\) data
 var ErrorNotFound = fmt.Errorf("BST node not found")
 ```
 
-## type BsTree
+## type [BsTree](<https://github.com/esimov/gogu/blob/master/bstree/bstree.go#L44-L49>)
 
 BsTree is the basic component for the BST data structure initialization. It incorporates a thread safe mechanism using `sync.Mutex` to guarantee the data consistency on concurrent read and write operation.
 
@@ -82,7 +82,7 @@ type BsTree[K constraints.Ordered, V any] struct {
 }
 ```
 
-### func New
+### func [New](<https://github.com/esimov/gogu/blob/master/bstree/bstree.go#L53>)
 
 ```go
 func New[K constraints.Ordered, V any](comp gogu.CompFn[K]) *BsTree[K, V]
@@ -90,7 +90,7 @@ func New[K constraints.Ordered, V any](comp gogu.CompFn[K]) *BsTree[K, V]
 
 New initializes a new BST data structure together with a comparison operator. Depending on the comparator it sorts the tree in ascending or descending order.
 
-### func \(\*BsTree\[K, V\]\) Delete
+### func \(\*BsTree\[K, V\]\) [Delete](<https://github.com/esimov/gogu/blob/master/bstree/bstree.go#L134>)
 
 ```go
 func (b *BsTree[K, V]) Delete(key K) error
@@ -98,7 +98,7 @@ func (b *BsTree[K, V]) Delete(key K) error
 
 Delete removes a node defined by its key from the tree structure.
 
-### func \(\*BsTree\[K, V\]\) Get
+### func \(\*BsTree\[K, V\]\) [Get](<https://github.com/esimov/gogu/blob/master/bstree/bstree.go#L69>)
 
 ```go
 func (b *BsTree[K, V]) Get(key K) (Item[K, V], error)
@@ -106,7 +106,7 @@ func (b *BsTree[K, V]) Get(key K) (Item[K, V], error)
 
 Get retrieves the node item and an error in case the requested node does not exists.
 
-### func \(\*BsTree\[K, V\]\) Size
+### func \(\*BsTree\[K, V\]\) [Size](<https://github.com/esimov/gogu/blob/master/bstree/bstree.go#L61>)
 
 ```go
 func (b *BsTree[K, V]) Size() int
@@ -114,7 +114,7 @@ func (b *BsTree[K, V]) Size() int
 
 Size returns the size of the tree.
 
-### func \(\*BsTree\[K, V\]\) Traverse
+### func \(\*BsTree\[K, V\]\) [Traverse](<https://github.com/esimov/gogu/blob/master/bstree/bstree.go#L183>)
 
 ```go
 func (b *BsTree[K, V]) Traverse(fn func(Item[K, V]))
@@ -122,7 +122,7 @@ func (b *BsTree[K, V]) Traverse(fn func(Item[K, V]))
 
 Traverse iterates over the tree structure and invokes the callback function provided as a parameter.
 
-### func \(\*BsTree\[K, V\]\) Upsert
+### func \(\*BsTree\[K, V\]\) [Upsert](<https://github.com/esimov/gogu/blob/master/bstree/bstree.go#L92>)
 
 ```go
 func (b *BsTree[K, V]) Upsert(key K, val V)
@@ -130,7 +130,7 @@ func (b *BsTree[K, V]) Upsert(key K, val V)
 
 Upsert insert a new node or update an existing node in case the key is found in the tree list.
 
-## type Item
+## type [Item](<https://github.com/esimov/gogu/blob/master/bstree/bstree.go#L18-L21>)
 
 Item contains the node's data as a key\-value pair data structure.
 
@@ -141,7 +141,7 @@ type Item[K constraints.Ordered, V any] struct {
 }
 ```
 
-## type Node
+## type [Node](<https://github.com/esimov/gogu/blob/master/bstree/bstree.go#L25-L29>)
 
 Node represents the BST internal Node, having as components the Node item defined as a key\-value pair and two separate pointers to the left and right child nodes.
 
@@ -153,7 +153,7 @@ type Node[K constraints.Ordered, V any] struct {
 }
 ```
 
-### func NewNode
+### func [NewNode](<https://github.com/esimov/gogu/blob/master/bstree/bstree.go#L32>)
 
 ```go
 func NewNode[K constraints.Ordered, V any](key K, val V) *Node[K, V]

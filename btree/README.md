@@ -21,7 +21,7 @@ Package btree provides an implementation of the B\-tree data structure, which is
   - [func (t *BTree[K, V]) Traverse(fn func(key K, val V))](<#func-btreek-v-traverse>)
 
 
-## type BTree
+## type [BTree](<https://github.com/esimov/gogu/blob/master/btree/btree.go#L40-L44>)
 
 BTree defines a data structure with one node, which is the root node.
 
@@ -67,7 +67,7 @@ true
 </p>
 </details>
 
-### func New
+### func [New](<https://github.com/esimov/gogu/blob/master/btree/btree.go#L47>)
 
 ```go
 func New[K constraints.Ordered, V any]() *BTree[K, V]
@@ -75,15 +75,15 @@ func New[K constraints.Ordered, V any]() *BTree[K, V]
 
 New creates a new B\-tree.
 
-### func \(\*BTree\[K, V\]\) Get
+### func \(\*BTree\[K, V\]\) [Get](<https://github.com/esimov/gogu/blob/master/btree/btree.go#L70>)
 
 ```go
 func (t *BTree[K, V]) Get(key K) (V, bool)
 ```
 
-Get searches for a key and in case it's found it returns the key's value together with a boolean flag signalig the key existence in the tree data structure.
+Get searches for a key and in case it's found it returns the key's value together with a boolean flag signaling the key existence in the tree data structure.
 
-### func \(\*BTree\[K, V\]\) Height
+### func \(\*BTree\[K, V\]\) [Height](<https://github.com/esimov/gogu/blob/master/btree/btree.go#L64>)
 
 ```go
 func (t *BTree[K, V]) Height() int
@@ -91,7 +91,7 @@ func (t *BTree[K, V]) Height() int
 
 Height returns the B\-tree size \(how many levels it has\).
 
-### func \(\*BTree\[K, V\]\) IsEmpty
+### func \(\*BTree\[K, V\]\) [IsEmpty](<https://github.com/esimov/gogu/blob/master/btree/btree.go#L59>)
 
 ```go
 func (t *BTree[K, V]) IsEmpty() bool
@@ -99,7 +99,7 @@ func (t *BTree[K, V]) IsEmpty() bool
 
 IsEmpty checks if a B\-tree is empty or not.
 
-### func \(\*BTree\[K, V\]\) Put
+### func \(\*BTree\[K, V\]\) [Put](<https://github.com/esimov/gogu/blob/master/btree/btree.go#L97>)
 
 ```go
 func (t *BTree[K, V]) Put(key K, val V)
@@ -107,7 +107,7 @@ func (t *BTree[K, V]) Put(key K, val V)
 
 Put inserts a new value into the B\-tree.
 
-### func \(\*BTree\[K, V\]\) Remove
+### func \(\*BTree\[K, V\]\) [Remove](<https://github.com/esimov/gogu/blob/master/btree/btree.go#L179>)
 
 ```go
 func (t *BTree[K, V]) Remove(key K)
@@ -115,7 +115,7 @@ func (t *BTree[K, V]) Remove(key K)
 
 Remove deletes a node from the B\-tree.
 
-### func \(\*BTree\[K, V\]\) Size
+### func \(\*BTree\[K, V\]\) [Size](<https://github.com/esimov/gogu/blob/master/btree/btree.go#L54>)
 
 ```go
 func (t *BTree[K, V]) Size() int
@@ -123,7 +123,7 @@ func (t *BTree[K, V]) Size() int
 
 Size returns the B\-tree size \(the number of elements\).
 
-### func \(\*BTree\[K, V\]\) Traverse
+### func \(\*BTree\[K, V\]\) [Traverse](<https://github.com/esimov/gogu/blob/master/btree/btree.go#L189>)
 
 ```go
 func (t *BTree[K, V]) Traverse(fn func(key K, val V))

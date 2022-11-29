@@ -6,7 +6,11 @@
 import "github.com/esimov/gogu/stack"
 ```
 
-Package queue implements a concurrent safe LIFO \(Last\-In\-First\-Out\) data structure where the last element added to the stack is processed first. It's implemented in two versions: 1.\) where the storage system is a resizing array, 2.\) where the storage system is a doubly linked list.
+Package stack Package queue implements a concurrent safe LIFO \(Last\-In\-First\-Out\) data structure where the last element added to the stack is processed first. It's implemented in two versions:
+
+1.\) where the storage system is a resizing array,
+
+2.\) where the storage system is a doubly linked list.
 
 <details><summary>Example</summary>
 <p>
@@ -91,7 +95,7 @@ true
   - [func (s *Stack[T]) Size() int](<#func-stackt-size>)
 
 
-## type LStack
+## type [LStack](<https://github.com/esimov/gogu/blob/master/stack/lstack.go#L17-L21>)
 
 LStack implements the linked\-list version of the LIFO stack.
 
@@ -101,7 +105,7 @@ type LStack[T comparable] struct {
 }
 ```
 
-### func NewLinked
+### func [NewLinked](<https://github.com/esimov/gogu/blob/master/stack/lstack.go#L24>)
 
 ```go
 func NewLinked[T comparable](t T) *LStack[T]
@@ -109,7 +113,7 @@ func NewLinked[T comparable](t T) *LStack[T]
 
 NewLinked creates a new LIFO stack where the items are stored in a linked\-list.
 
-### func \(\*LStack\[T\]\) Peek
+### func \(\*LStack\[T\]\) [Peek](<https://github.com/esimov/gogu/blob/master/stack/lstack.go#L56>)
 
 ```go
 func (s *LStack[T]) Peek() T
@@ -117,7 +121,7 @@ func (s *LStack[T]) Peek() T
 
 Peek returns the last element of the stack without removing it.
 
-### func \(\*LStack\[T\]\) Pop
+### func \(\*LStack\[T\]\) [Pop](<https://github.com/esimov/gogu/blob/master/stack/lstack.go#L43>)
 
 ```go
 func (s *LStack[T]) Pop() (item T)
@@ -125,7 +129,7 @@ func (s *LStack[T]) Pop() (item T)
 
 Pop retrieves and removes the last element pushed into the stack. The stack size will be decreased by one.
 
-### func \(\*LStack\[T\]\) Push
+### func \(\*LStack\[T\]\) [Push](<https://github.com/esimov/gogu/blob/master/stack/lstack.go#L33>)
 
 ```go
 func (s *LStack[T]) Push(item T)
@@ -133,7 +137,7 @@ func (s *LStack[T]) Push(item T)
 
 Push inserts a new element at the end of the stack.
 
-### func \(\*LStack\[T\]\) Search
+### func \(\*LStack\[T\]\) [Search](<https://github.com/esimov/gogu/blob/master/stack/lstack.go#L64>)
 
 ```go
 func (s *LStack[T]) Search(item T) bool
@@ -141,7 +145,7 @@ func (s *LStack[T]) Search(item T) bool
 
 Search searches for an element in the stack.
 
-### func \(\*LStack\[T\]\) Size
+### func \(\*LStack\[T\]\) [Size](<https://github.com/esimov/gogu/blob/master/stack/lstack.go#L76>)
 
 ```go
 func (s *LStack[T]) Size() int
@@ -149,7 +153,7 @@ func (s *LStack[T]) Size() int
 
 Size returns the stack size.
 
-## type Stack
+## type [Stack](<https://github.com/esimov/gogu/blob/master/stack/stack.go#L6-L9>)
 
 Stack implements the LIFO Stack.
 
@@ -159,7 +163,7 @@ type Stack[T comparable] struct {
 }
 ```
 
-### func New
+### func [New](<https://github.com/esimov/gogu/blob/master/stack/stack.go#L12>)
 
 ```go
 func New[T comparable]() *Stack[T]
@@ -167,7 +171,7 @@ func New[T comparable]() *Stack[T]
 
 New creates a new LIFO stack where the items are stored in a plain slice.
 
-### func \(\*Stack\[T\]\) Peek
+### func \(\*Stack\[T\]\) [Peek](<https://github.com/esimov/gogu/blob/master/stack/stack.go#L42>)
 
 ```go
 func (s *Stack[T]) Peek() (item T)
@@ -175,7 +179,7 @@ func (s *Stack[T]) Peek() (item T)
 
 Peek returns the last element of the stack without removing it.
 
-### func \(\*Stack\[T\]\) Pop
+### func \(\*Stack\[T\]\) [Pop](<https://github.com/esimov/gogu/blob/master/stack/stack.go#L27>)
 
 ```go
 func (s *Stack[T]) Pop() (item T)
@@ -183,7 +187,7 @@ func (s *Stack[T]) Pop() (item T)
 
 Pop retrieves and removes the last element pushed into the stack. The stack size will be decreased by one.
 
-### func \(\*Stack\[T\]\) Push
+### func \(\*Stack\[T\]\) [Push](<https://github.com/esimov/gogu/blob/master/stack/stack.go#L19>)
 
 ```go
 func (s *Stack[T]) Push(item T)
@@ -191,7 +195,7 @@ func (s *Stack[T]) Push(item T)
 
 Push inserts a new element at the end of the stack.
 
-### func \(\*Stack\[T\]\) Search
+### func \(\*Stack\[T\]\) [Search](<https://github.com/esimov/gogu/blob/master/stack/stack.go#L55>)
 
 ```go
 func (s *Stack[T]) Search(item T) bool
@@ -199,7 +203,7 @@ func (s *Stack[T]) Search(item T) bool
 
 Search searches for an element in the stack.
 
-### func \(\*Stack\[T\]\) Size
+### func \(\*Stack\[T\]\) [Size](<https://github.com/esimov/gogu/blob/master/stack/stack.go#L71>)
 
 ```go
 func (s *Stack[T]) Size() int

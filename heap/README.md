@@ -6,93 +6,9 @@
 import "github.com/esimov/gogu/heap"
 ```
 
-Package heap provides a thread\-safe implementation of the binary heap data structure. A common implementation of the heap is the binary tree, where each node of the subtree satisfies the heap property: each node of the subtree is greather or equal then the parent node in case of min heap, and less or equal than the parent node in case of max heap. The conditional operator used on the heap initialization defines the heap type
+Package heap provides a thread\-safe implementation of the binary heap data structure. A common implementation of the heap is the binary tree, where each node of the subtree satisfies the heap property: each node of the subtree is greater or equal then the parent node in case of min heap, and less or equal than the parent node in case of max heap. The conditional operator used on the heap initialization defines the heap type
 
-<details><summary>Example (Heap Convert)</summary>
-<p>
-
-```go
-{
-	input := []int{1, 4, 2, 3, 5}
-
-	heap := NewHeap(func(a, b int) bool { return a < b })
-	heap.Push(input...)
-	heap.Convert(func(a, b int) bool { return a > b })
-	fmt.Println(heap.GetValues())
-
-}
-```
-
-#### Output
-
-```
-[5 4 2 1 3]
-```
-
-</p>
-</details>
-
-<details><summary>Example (Heap Meld)</summary>
-<p>
-
-```go
-{
-	slice1 := []int{1, 4, 2, 3, 5}
-	slice2 := []int{8, 6, 9, 10, 7}
-
-	heap1 := FromSlice(slice1, func(a, b int) bool { return a < b })
-	heap2 := FromSlice(slice2, func(a, b int) bool { return a < b })
-
-	mergedHeap := heap1.Meld(heap2)
-	fmt.Println(mergedHeap.Size())
-	fmt.Println(heap1.Size())
-	fmt.Println(heap2.Size())
-
-}
-```
-
-#### Output
-
-```
-10
-0
-0
-```
-
-</p>
-</details>
-
-<details><summary>Example (Heap Merge)</summary>
-<p>
-
-```go
-{
-	slice1 := []int{1, 4, 2, 3, 5}
-	slice2 := []int{8, 6, 9, 10, 7}
-
-	heap1 := FromSlice(slice1, func(a, b int) bool { return a < b })
-	heap2 := FromSlice(slice2, func(a, b int) bool { return a < b })
-
-	mergedHeap := heap1.Merge(heap2)
-	fmt.Println(mergedHeap.Size())
-	fmt.Println(heap1.Size())
-	fmt.Println(heap2.Size())
-
-}
-```
-
-#### Output
-
-```
-10
-5
-5
-```
-
-</p>
-</details>
-
-<details><summary>Example (Heap Sort)</summary>
+<details><summary>Example</summary>
 <p>
 
 ```go
@@ -113,6 +29,30 @@ Package heap provides a thread\-safe implementation of the binary heap data stru
 ```
 [1 2 3 4 5 6 7 8 9 10]
 [10 9 8 7 6 5 4 3 2 1]
+```
+
+</p>
+</details>
+
+<details><summary>Example (Convert)</summary>
+<p>
+
+```go
+{
+	input := []int{1, 4, 2, 3, 5}
+
+	heap := NewHeap(func(a, b int) bool { return a < b })
+	heap.Push(input...)
+	heap.Convert(func(a, b int) bool { return a > b })
+	fmt.Println(heap.GetValues())
+
+}
+```
+
+#### Output
+
+```
+[5 4 2 1 3]
 ```
 
 </p>
@@ -155,6 +95,66 @@ true
 9
 []
 [20 18 10 9 9 8 6 5 3]
+```
+
+</p>
+</details>
+
+<details><summary>Example (Meld)</summary>
+<p>
+
+```go
+{
+	slice1 := []int{1, 4, 2, 3, 5}
+	slice2 := []int{8, 6, 9, 10, 7}
+
+	heap1 := FromSlice(slice1, func(a, b int) bool { return a < b })
+	heap2 := FromSlice(slice2, func(a, b int) bool { return a < b })
+
+	mergedHeap := heap1.Meld(heap2)
+	fmt.Println(mergedHeap.Size())
+	fmt.Println(heap1.Size())
+	fmt.Println(heap2.Size())
+
+}
+```
+
+#### Output
+
+```
+10
+0
+0
+```
+
+</p>
+</details>
+
+<details><summary>Example (Merge)</summary>
+<p>
+
+```go
+{
+	slice1 := []int{1, 4, 2, 3, 5}
+	slice2 := []int{8, 6, 9, 10, 7}
+
+	heap1 := FromSlice(slice1, func(a, b int) bool { return a < b })
+	heap2 := FromSlice(slice2, func(a, b int) bool { return a < b })
+
+	mergedHeap := heap1.Merge(heap2)
+	fmt.Println(mergedHeap.Size())
+	fmt.Println(heap1.Size())
+	fmt.Println(heap2.Size())
+
+}
+```
+
+#### Output
+
+```
+10
+5
+5
 ```
 
 </p>
@@ -231,15 +231,15 @@ true
   - [func (h *Heap[T]) Size() int](<#func-heapt-size>)
 
 
-## func Sort
+## func [Sort](<https://github.com/esimov/gogu/blob/master/heap/heapsort.go#L17>)
 
 ```go
 func Sort[T comparable](data []T, comp gogu.CompFn[T]) []T
 ```
 
-Sort sorts the heap in ascending or descening order depending on the heap type. In case the heap is a max heap, the heap is sorted in ascending order, otherwise in descending order.
+Sort sorts the heap in ascending or descending order depending on the heap type. In case the heap is a max heap, the heap is sorted in ascending order, otherwise in descending order.
 
-## type Heap
+## type [Heap](<https://github.com/esimov/gogu/blob/master/heap/heap.go#L17-L21>)
 
 ```go
 type Heap[T comparable] struct {
@@ -247,7 +247,7 @@ type Heap[T comparable] struct {
 }
 ```
 
-### func FromSlice
+### func [FromSlice](<https://github.com/esimov/gogu/blob/master/heap/heap.go#L152>)
 
 ```go
 func FromSlice[T comparable](data []T, comp gogu.CompFn[T]) *Heap[T]
@@ -255,7 +255,7 @@ func FromSlice[T comparable](data []T, comp gogu.CompFn[T]) *Heap[T]
 
 FromSlice imports the slice elements into a new heap using the comparator function.
 
-### func NewHeap
+### func [NewHeap](<https://github.com/esimov/gogu/blob/master/heap/heap.go#L26>)
 
 ```go
 func NewHeap[T comparable](comp gogu.CompFn[T]) *Heap[T]
@@ -263,7 +263,7 @@ func NewHeap[T comparable](comp gogu.CompFn[T]) *Heap[T]
 
 NewHeap creates a new heap data structure having two components: a data slice holding the concrete values and a comparison function. The sign of the comparison function defines if we are dealing with a min or max heap.
 
-### func \(\*Heap\[T\]\) Clear
+### func \(\*Heap\[T\]\) [Clear](<https://github.com/esimov/gogu/blob/master/heap/heap.go#L51>)
 
 ```go
 func (h *Heap[T]) Clear()
@@ -271,7 +271,7 @@ func (h *Heap[T]) Clear()
 
 Clear removes all the elements from the heap.
 
-### func \(\*Heap\[T\]\) Convert
+### func \(\*Heap\[T\]\) [Convert](<https://github.com/esimov/gogu/blob/master/heap/heap.go#L140>)
 
 ```go
 func (h *Heap[T]) Convert(comp gogu.CompFn[T])
@@ -279,15 +279,15 @@ func (h *Heap[T]) Convert(comp gogu.CompFn[T])
 
 Convert converts a min heap to max heap and vice versa.
 
-### func \(\*Heap\[T\]\) Delete
+### func \(\*Heap\[T\]\) [Delete](<https://github.com/esimov/gogu/blob/master/heap/heap.go#L118>)
 
 ```go
 func (h *Heap[T]) Delete(val T) (bool, error)
 ```
 
-Delete removes an element from the heap. It returns false in case the element does not exists. After removal it reorders the heap structure based on the heap\-specific rules.
+Delete removes an element from the heap. It returns false in case the element does not exists. After removal, it reorders the heap structure based on the heap\-specific rules.
 
-### func \(\*Heap\[T\]\) GetValues
+### func \(\*Heap\[T\]\) [GetValues](<https://github.com/esimov/gogu/blob/master/heap/heap.go#L77>)
 
 ```go
 func (h *Heap[T]) GetValues() []T
@@ -295,7 +295,7 @@ func (h *Heap[T]) GetValues() []T
 
 GetValues returns the heap values.
 
-### func \(\*Heap\[T\]\) IsEmpty
+### func \(\*Heap\[T\]\) [IsEmpty](<https://github.com/esimov/gogu/blob/master/heap/heap.go#L43>)
 
 ```go
 func (h *Heap[T]) IsEmpty() bool
@@ -303,7 +303,7 @@ func (h *Heap[T]) IsEmpty() bool
 
 IsEmpty checks if the heap is empty or not.
 
-### func \(\*Heap\[T\]\) Meld
+### func \(\*Heap\[T\]\) [Meld](<https://github.com/esimov/gogu/blob/master/heap/heap.go#L202>)
 
 ```go
 func (h *Heap[T]) Meld(h2 *Heap[T]) *Heap[T]
@@ -311,7 +311,7 @@ func (h *Heap[T]) Meld(h2 *Heap[T]) *Heap[T]
 
 Meld merge two heaps into a new one containing all the elements of both and destroying the original ones.
 
-### func \(\*Heap\[T\]\) Merge
+### func \(\*Heap\[T\]\) [Merge](<https://github.com/esimov/gogu/blob/master/heap/heap.go#L186>)
 
 ```go
 func (h *Heap[T]) Merge(h2 *Heap[T]) *Heap[T]
@@ -319,7 +319,7 @@ func (h *Heap[T]) Merge(h2 *Heap[T]) *Heap[T]
 
 Merge joins two heaps into a new one preserving the original ones.
 
-### func \(\*Heap\[T\]\) Peek
+### func \(\*Heap\[T\]\) [Peek](<https://github.com/esimov/gogu/blob/master/heap/heap.go#L63>)
 
 ```go
 func (h *Heap[T]) Peek() T
@@ -327,7 +327,7 @@ func (h *Heap[T]) Peek() T
 
 Peek returns the first element of the heap. This can be the minimum or maximum value depending on the heap type.
 
-### func \(\*Heap\[T\]\) Pop
+### func \(\*Heap\[T\]\) [Pop](<https://github.com/esimov/gogu/blob/master/heap/heap.go#L98>)
 
 ```go
 func (h *Heap[T]) Pop() T
@@ -335,7 +335,7 @@ func (h *Heap[T]) Pop() T
 
 Pop removes the first element from the heap and reorder the existing elements. The removed element is the minimum or maximum depending on the heap type.
 
-### func \(\*Heap\[T\]\) Push
+### func \(\*Heap\[T\]\) [Push](<https://github.com/esimov/gogu/blob/master/heap/heap.go#L86>)
 
 ```go
 func (h *Heap[T]) Push(val ...T)
@@ -343,7 +343,7 @@ func (h *Heap[T]) Push(val ...T)
 
 Push inserts new elements at the end of the heap and calls the heapify algorithm to reorder the existing elements in ascending or descending order, depending on the heap type.
 
-### func \(\*Heap\[T\]\) Size
+### func \(\*Heap\[T\]\) [Size](<https://github.com/esimov/gogu/blob/master/heap/heap.go#L35>)
 
 ```go
 func (h *Heap[T]) Size() int

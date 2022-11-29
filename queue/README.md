@@ -6,7 +6,11 @@
 import "github.com/esimov/gogu/queue"
 ```
 
-Package queue implements a concurrent safe FIFO \(First\-In\-First\-Out\) data structure where the first element added to the queue is processed first. It's implemented in two versions: 1.\) where the storage system is a resizing array, 2.\) where the storage system is a doubly linked list.
+Package queue implements a concurrent safe FIFO \(First\-In\-First\-Out\) data structure where the first element added to the queue is processed first. It's implemented in two versions:
+
+1.\) where the storage system is a resizing array,
+
+2.\) where the storage system is a doubly linked list.
 
 <details><summary>Example (Linked Queue)</summary>
 <p>
@@ -46,7 +50,103 @@ true
 </p>
 </details>
 
-<details><summary>Example (Queue)</summary>
+## Index
+
+- [type LQueue](<#type-lqueue>)
+  - [func NewLinked[T comparable](t T) *LQueue[T]](<#func-newlinked>)
+  - [func (l *LQueue[T]) Clear()](<#func-lqueuet-clear>)
+  - [func (l *LQueue[T]) Dequeue() (item T)](<#func-lqueuet-dequeue>)
+  - [func (l *LQueue[T]) Enqueue(item T)](<#func-lqueuet-enqueue>)
+  - [func (l *LQueue[T]) Peek() T](<#func-lqueuet-peek>)
+  - [func (l *LQueue[T]) Search(item T) bool](<#func-lqueuet-search>)
+  - [func (l *LQueue[T]) Size() int](<#func-lqueuet-size>)
+- [type Queue](<#type-queue>)
+  - [func New[T comparable]() *Queue[T]](<#func-new>)
+  - [func (q *Queue[T]) Clear()](<#func-queuet-clear>)
+  - [func (q *Queue[T]) Dequeue() (item T, err error)](<#func-queuet-dequeue>)
+  - [func (q *Queue[T]) Enqueue(item T)](<#func-queuet-enqueue>)
+  - [func (q *Queue[T]) Peek() (item T)](<#func-queuet-peek>)
+  - [func (q *Queue[T]) Search(item T) bool](<#func-queuet-search>)
+  - [func (q *Queue[T]) Size() int](<#func-queuet-size>)
+
+
+## type [LQueue](<https://github.com/esimov/gogu/blob/master/queue/lqueue.go#L10-L14>)
+
+LQueue implements the linked\-list version of the FIFO queue.
+
+```go
+type LQueue[T comparable] struct {
+    // contains filtered or unexported fields
+}
+```
+
+### func [NewLinked](<https://github.com/esimov/gogu/blob/master/queue/lqueue.go#L17>)
+
+```go
+func NewLinked[T comparable](t T) *LQueue[T]
+```
+
+NewLinked creates a new FIFO queue where the items are stored in a linked\-list.
+
+### func \(\*LQueue\[T\]\) [Clear](<https://github.com/esimov/gogu/blob/master/queue/lqueue.go#L74>)
+
+```go
+func (l *LQueue[T]) Clear()
+```
+
+Clear erase all the items from the queue.
+
+### func \(\*LQueue\[T\]\) [Dequeue](<https://github.com/esimov/gogu/blob/master/queue/lqueue.go#L36>)
+
+```go
+func (l *LQueue[T]) Dequeue() (item T)
+```
+
+Dequeue retrieves and removes the first element from the queue. The queue size will be decreased by one.
+
+### func \(\*LQueue\[T\]\) [Enqueue](<https://github.com/esimov/gogu/blob/master/queue/lqueue.go#L26>)
+
+```go
+func (l *LQueue[T]) Enqueue(item T)
+```
+
+Enqueue inserts a new element at the end of the queue.
+
+### func \(\*LQueue\[T\]\) [Peek](<https://github.com/esimov/gogu/blob/master/queue/lqueue.go#L46>)
+
+```go
+func (l *LQueue[T]) Peek() T
+```
+
+Peek returns the first element of the queue. It does not remove it.
+
+### func \(\*LQueue\[T\]\) [Search](<https://github.com/esimov/gogu/blob/master/queue/lqueue.go#L54>)
+
+```go
+func (l *LQueue[T]) Search(item T) bool
+```
+
+Search searches for an element in the queue.
+
+### func \(\*LQueue\[T\]\) [Size](<https://github.com/esimov/gogu/blob/master/queue/lqueue.go#L66>)
+
+```go
+func (l *LQueue[T]) Size() int
+```
+
+Size returns the queue size.
+
+## type [Queue](<https://github.com/esimov/gogu/blob/master/queue/queue.go#L16-L19>)
+
+Queue implements a FIFO Queue data structure.
+
+```go
+type Queue[T comparable] struct {
+    // contains filtered or unexported fields
+}
+```
+
+<details><summary>Example</summary>
 <p>
 
 ```go
@@ -77,103 +177,7 @@ true
 </p>
 </details>
 
-## Index
-
-- [type LQueue](<#type-lqueue>)
-  - [func NewLinked[T comparable](t T) *LQueue[T]](<#func-newlinked>)
-  - [func (l *LQueue[T]) Clear()](<#func-lqueuet-clear>)
-  - [func (l *LQueue[T]) Dequeue() (item T)](<#func-lqueuet-dequeue>)
-  - [func (l *LQueue[T]) Enqueue(item T)](<#func-lqueuet-enqueue>)
-  - [func (l *LQueue[T]) Peek() T](<#func-lqueuet-peek>)
-  - [func (l *LQueue[T]) Search(item T) bool](<#func-lqueuet-search>)
-  - [func (l *LQueue[T]) Size() int](<#func-lqueuet-size>)
-- [type Queue](<#type-queue>)
-  - [func New[T comparable]() *Queue[T]](<#func-new>)
-  - [func (q *Queue[T]) Clear()](<#func-queuet-clear>)
-  - [func (q *Queue[T]) Dequeue() (item T, err error)](<#func-queuet-dequeue>)
-  - [func (q *Queue[T]) Enqueue(item T)](<#func-queuet-enqueue>)
-  - [func (q *Queue[T]) Peek() (item T)](<#func-queuet-peek>)
-  - [func (q *Queue[T]) Search(item T) bool](<#func-queuet-search>)
-  - [func (q *Queue[T]) Size() int](<#func-queuet-size>)
-
-
-## type LQueue
-
-LQueue implements the linked\-list version of the FIFO queue.
-
-```go
-type LQueue[T comparable] struct {
-    // contains filtered or unexported fields
-}
-```
-
-### func NewLinked
-
-```go
-func NewLinked[T comparable](t T) *LQueue[T]
-```
-
-NewLinked creates a new FIFO queue where the items are stored in a linked\-list.
-
-### func \(\*LQueue\[T\]\) Clear
-
-```go
-func (l *LQueue[T]) Clear()
-```
-
-Clear erase all the items from the queue.
-
-### func \(\*LQueue\[T\]\) Dequeue
-
-```go
-func (l *LQueue[T]) Dequeue() (item T)
-```
-
-Dequeue retrieves and removes the first element from the queue. The queue size will be decreased by one.
-
-### func \(\*LQueue\[T\]\) Enqueue
-
-```go
-func (l *LQueue[T]) Enqueue(item T)
-```
-
-Enqueue inserts a new element at the end of the queue.
-
-### func \(\*LQueue\[T\]\) Peek
-
-```go
-func (l *LQueue[T]) Peek() T
-```
-
-Peek returns the first element of the queue. It does not remove it.
-
-### func \(\*LQueue\[T\]\) Search
-
-```go
-func (l *LQueue[T]) Search(item T) bool
-```
-
-Search searches for an element in the queue.
-
-### func \(\*LQueue\[T\]\) Size
-
-```go
-func (l *LQueue[T]) Size() int
-```
-
-Size returns the queue size.
-
-## type Queue
-
-Queue implements a FIFO Queue data structure.
-
-```go
-type Queue[T comparable] struct {
-    // contains filtered or unexported fields
-}
-```
-
-### func New
+### func [New](<https://github.com/esimov/gogu/blob/master/queue/queue.go#L22>)
 
 ```go
 func New[T comparable]() *Queue[T]
@@ -181,7 +185,7 @@ func New[T comparable]() *Queue[T]
 
 New creates a new FIFO queue where the items are stored in a plain slice.
 
-### func \(\*Queue\[T\]\) Clear
+### func \(\*Queue\[T\]\) [Clear](<https://github.com/esimov/gogu/blob/master/queue/queue.go#L88>)
 
 ```go
 func (q *Queue[T]) Clear()
@@ -189,7 +193,7 @@ func (q *Queue[T]) Clear()
 
 Clear erase all the items from the queue.
 
-### func \(\*Queue\[T\]\) Dequeue
+### func \(\*Queue\[T\]\) [Dequeue](<https://github.com/esimov/gogu/blob/master/queue/queue.go#L37>)
 
 ```go
 func (q *Queue[T]) Dequeue() (item T, err error)
@@ -197,7 +201,7 @@ func (q *Queue[T]) Dequeue() (item T, err error)
 
 Dequeue retrieves and removes the first element from the queue. The queue size will be decreased by one.
 
-### func \(\*Queue\[T\]\) Enqueue
+### func \(\*Queue\[T\]\) [Enqueue](<https://github.com/esimov/gogu/blob/master/queue/queue.go#L29>)
 
 ```go
 func (q *Queue[T]) Enqueue(item T)
@@ -205,7 +209,7 @@ func (q *Queue[T]) Enqueue(item T)
 
 Enqueue inserts a new element at the end of the queue.
 
-### func \(\*Queue\[T\]\) Peek
+### func \(\*Queue\[T\]\) [Peek](<https://github.com/esimov/gogu/blob/master/queue/queue.go#L51>)
 
 ```go
 func (q *Queue[T]) Peek() (item T)
@@ -213,7 +217,7 @@ func (q *Queue[T]) Peek() (item T)
 
 Peek returns the first element of the queue without removing it.
 
-### func \(\*Queue\[T\]\) Search
+### func \(\*Queue\[T\]\) [Search](<https://github.com/esimov/gogu/blob/master/queue/queue.go#L64>)
 
 ```go
 func (q *Queue[T]) Search(item T) bool
@@ -221,7 +225,7 @@ func (q *Queue[T]) Search(item T) bool
 
 Search searches for an element in the queue.
 
-### func \(\*Queue\[T\]\) Size
+### func \(\*Queue\[T\]\) [Size](<https://github.com/esimov/gogu/blob/master/queue/queue.go#L80>)
 
 ```go
 func (q *Queue[T]) Size() int
