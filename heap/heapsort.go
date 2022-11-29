@@ -1,7 +1,7 @@
 // Package heap provides a thread-safe implementation of the binary heap data structure.
 // A common implementation of the heap is the binary tree, where each node of the subtree
 // satisfies the heap property:
-// each node of the subtree is greather or equal then the parent node in case of min heap,
+// each node of the subtree is greater or equal then the parent node in case of min heap,
 // and less or equal than the parent node in case of max heap.
 // The conditional operator used on the heap initialization defines the heap type
 package heap
@@ -12,7 +12,7 @@ import (
 	"github.com/esimov/gogu"
 )
 
-// Sort sorts the heap in ascending or descening order depending on the heap type.
+// Sort sorts the heap in ascending or descending order depending on the heap type.
 // In case the heap is a max heap, the heap is sorted in ascending order, otherwise in descending order.
 func Sort[T comparable](data []T, comp gogu.CompFn[T]) []T {
 	mu := &sync.Mutex{}

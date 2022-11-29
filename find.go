@@ -28,7 +28,7 @@ func FindLastIndex[T any](s []T, fn func(T) bool) int {
 }
 
 // FindAll is like FindIndex, but returns into a map all the values
-// which stisfies the conditional logic of the callback function.
+// which satisfies the conditional logic of the callback function.
 // The map key represents the position of the found value and the value is the item itself.
 func FindAll[T any](s []T, fn func(T) bool) map[int]T {
 	m := make(map[int]T, len(s))

@@ -63,7 +63,7 @@ func MapKeys[K comparable, V any, R comparable](m map[K]V, fn func(K, V) R) map[
 	return newMap
 }
 
-// MapEvery returns true if all of the elements of a map satisfies the criteria of the callback function.
+// MapEvery returns true if all the elements of a map satisfies the criteria of the callback function.
 func MapEvery[K comparable, V any](m map[K]V, fn func(V) bool) bool {
 	for _, v := range m {
 		if !fn(v) {
@@ -74,7 +74,7 @@ func MapEvery[K comparable, V any](m map[K]V, fn func(V) bool) bool {
 	return true
 }
 
-// MapSome returns true if some of the elements of a map satisfies the criteria of the callback function.
+// MapSome returns true if some elements of a map satisfies the criteria of the callback function.
 func MapSome[K comparable, V any](m map[K]V, fn func(V) bool) bool {
 	for _, v := range m {
 		if fn(v) {
@@ -255,8 +255,8 @@ func OmitBy[K comparable, V any](collection map[K]V, fn func(key K, val V) bool)
 	return collection
 }
 
-// PartitionMap split the collection into two arrays, the one whose elements satisfies the condition
-// expressed in the callback function (fn) and one whose elements don't satisfies the condition.
+// PartitionMap split the collection into two arrays, the one whose elements satisfy the condition
+// expressed in the callback function (fn) and one whose elements don't satisfy the condition.
 func PartitionMap[K comparable, V any](mapSlice []map[K]V, fn func(map[K]V) bool) [2][]map[K]V {
 	var result = [2][]map[K]V{}
 
@@ -276,7 +276,7 @@ func PartitionMap[K comparable, V any](mapSlice []map[K]V, fn func(map[K]V) bool
 	return result
 }
 
-// SliceToMap converts a slice to a map. It panic in case the parameter slices length are not identical.
+// SliceToMap converts a slice to a map. It panics in case the parameter slices length are not identical.
 // The map keys will be the items from the first slice and the values the items from the second slice.
 func SliceToMap[K comparable, T any](s1 []K, s2 []T) map[K]T {
 	var result = make(map[K]T)

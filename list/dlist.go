@@ -118,7 +118,7 @@ func (l *DList[T]) InsertAfter(prev *doubleNode[T], data T) error {
 }
 
 // Replace replaces a node's value with the new one.
-// It returns an error in case the requested node does not exists.
+// It returns an error in case the requested node does not exist.
 func (l *DList[T]) Replace(oldVal, newVal T) (*doubleNode[T], error) {
 	head := &l.doubleNode
 
@@ -255,7 +255,7 @@ func (l *DList[T]) Last() T {
 }
 
 // Each iterates over the elements of the linked list and invokes
-// the callback function having as parameter the nodes data.
+// the callback function having as parameter the nodes' data.
 func (l *DList[T]) Each(fn func(data T)) {
 	head := &l.doubleNode
 	node := l.doubleNode

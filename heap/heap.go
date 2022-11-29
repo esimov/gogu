@@ -1,7 +1,7 @@
 // Package heap provides a thread-safe implementation of the binary heap data structure.
 // A common implementation of the heap is the binary tree, where each node of the subtree
 // satisfies the heap property:
-// each node of the subtree is greather or equal then the parent node in case of min heap,
+// each node of the subtree is greater or equal then the parent node in case of min heap,
 // and less or equal than the parent node in case of max heap.
 // The conditional operator used on the heap initialization defines the heap type.
 
@@ -114,7 +114,7 @@ func (h *Heap[T]) Pop() T {
 }
 
 // Delete removes an element from the heap. It returns false in case the element does not exists.
-// After removal it reorders the heap structure based on the heap-specific rules.
+// After removal, it reorders the heap structure based on the heap-specific rules.
 func (h *Heap[T]) Delete(val T) (bool, error) {
 	len := h.Size()
 	if len == 0 {

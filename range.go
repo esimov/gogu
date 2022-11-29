@@ -11,7 +11,7 @@ import (
 // This method can accept 1, 2 or 3 arguments.
 // Depending on the number of provided parameters, `start`, `step` and `end` has the following meaning:
 //
-// [start=0]: The start of the range. If ommited it defaults to 0.
+// [start=0]: The start of the range. If omitted it defaults to 0.
 //
 // [step=1]: The value to increment or decrement by.
 //

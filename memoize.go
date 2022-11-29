@@ -8,7 +8,7 @@ import (
 )
 
 // Memoizer is a two component struct type used to memoize the results of a function execution.
-// It holds an exported Cache storage and a singleflight.Group which is used
+// It holds an exported Cache storage and a singleflight group which is used
 // to guarantee that only one function execution is in flight for a given key.
 type Memoizer[T ~string, V any] struct {
 	Cache *cache.Cache[T, V]
@@ -27,7 +27,7 @@ func NewMemoizer[T ~string, V any](expiration, cleanup time.Duration) *Memoizer[
 // otherwise returns the results of the given function, making sure that only one execution
 // is in-flight for a given key at a time.
 //
-// This method is useful for caching the result of a time consuming operation when is more important
+// This method is useful for caching the result of a time-consuming operation when is more important
 // to return a slightly outdated result, than to wait for an operation to complete before serving it.
 func (m Memoizer[T, V]) Memoize(key T, fn func() (*cache.Item[V], error)) (*cache.Item[V], error) {
 	item, _ := m.Cache.Get(key)
