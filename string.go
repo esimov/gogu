@@ -231,7 +231,7 @@ func PadRight[T ~string](str T, size int, token string) T {
 	return T(str) + T(tokenStr)
 }
 
-// Pad Pads string on the left and right sides if it's shorter than length.
+// Pad pads string on the left and right sides if it's shorter than length.
 // Padding characters are truncated if they can't be evenly divided by length.
 func Pad[T ~string](str T, size int, token string) T {
 	var (

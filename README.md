@@ -166,13 +166,15 @@ func main() {
 
 ## func Abs
 
+## func [Abs](<https://github.com/esimov/gogu/blob/master/math.go#L30>)
+
 ```go
 func Abs[T Number](x T) T
 ```
 
 Abs returns the absolut value of x.
 
-## func After
+## func [After](<https://github.com/esimov/gogu/blob/master/func.go#L29>)
 
 ```go
 func After[V constraints.Signed](n *V, fn func())
@@ -214,7 +216,7 @@ After creates a function wrapper that does nothing at first. From the nth call o
 </p>
 </details>
 
-## func Before
+## func [Before](<https://github.com/esimov/gogu/blob/master/func.go#L39>)
 
 ```go
 func Before[S ~string, T any, V constraints.Signed](n *V, c *cache.Cache[S, T], fn func() T) T
@@ -269,7 +271,7 @@ Before creates a function wrapper that memoizes its return value. From the nth c
 </p>
 </details>
 
-## func CamelCase
+## func [CamelCase](<https://github.com/esimov/gogu/blob/master/string.go#L96>)
 
 ```go
 func CamelCase[T ~string](str T) T
@@ -307,7 +309,7 @@ fooBar
 </p>
 </details>
 
-## func Capitalize
+## func [Capitalize](<https://github.com/esimov/gogu/blob/master/string.go#L81>)
 
 ```go
 func Capitalize[T ~string](str T) T
@@ -315,7 +317,7 @@ func Capitalize[T ~string](str T) T
 
 Capitalize converts the first letter of the string to uppercase and the remaining letters to lowercase.
 
-## func Chunk
+## func [Chunk](<https://github.com/esimov/gogu/blob/master/slice.go#L405>)
 
 ```go
 func Chunk[T comparable](slice []T, size int) [][]T
@@ -346,7 +348,7 @@ Chunk split the slice into groups of slices each having the length of size. In c
 </p>
 </details>
 
-## func Clamp
+## func [Clamp](<https://github.com/esimov/gogu/blob/master/math.go#L38>)
 
 ```go
 func Clamp[T Number](num, min, max T) T
@@ -354,7 +356,7 @@ func Clamp[T Number](num, min, max T) T
 
 Clamp returns a range\-limited number between min and max.
 
-## func Compare
+## func [Compare](<https://github.com/esimov/gogu/blob/master/generic.go#L11>)
 
 ```go
 func Compare[T comparable](a, b T, comp CompFn[T]) int
@@ -390,7 +392,7 @@ Compare compares two values using as comparator the callback function argument.
 </p>
 </details>
 
-## func Contains
+## func [Contains](<https://github.com/esimov/gogu/blob/master/slice.go#L172>)
 
 ```go
 func Contains[T comparable](slice []T, value T) bool
@@ -398,7 +400,7 @@ func Contains[T comparable](slice []T, value T) bool
 
 Contains returns true if the value is present in the collection.
 
-## func Delay
+## func [Delay](<https://github.com/esimov/gogu/blob/master/func.go#L20>)
 
 ```go
 func Delay(delay time.Duration, fn func()) *time.Timer
@@ -444,7 +446,7 @@ Delay invokes the callback function with a predefined delay.
 </p>
 </details>
 
-## func Difference
+## func [Difference](<https://github.com/esimov/gogu/blob/master/slice.go#L363>)
 
 ```go
 func Difference[T comparable](s1, s2 []T) []T
@@ -452,7 +454,7 @@ func Difference[T comparable](s1, s2 []T) []T
 
 Difference is similar to Without, but returns the values from the first slice that are not present in the second slice.
 
-## func DifferenceBy
+## func [DifferenceBy](<https://github.com/esimov/gogu/blob/master/slice.go#L384>)
 
 ```go
 func DifferenceBy[T comparable](s1, s2 []T, fn func(T) T) []T
@@ -460,7 +462,7 @@ func DifferenceBy[T comparable](s1, s2 []T, fn func(T) T) []T
 
 DifferenceBy is like Difference, except that invokes a callback function on each element of the slice, applying the criteria by which the difference is computed.
 
-## func Drop
+## func [Drop](<https://github.com/esimov/gogu/blob/master/slice.go#L425>)
 
 ```go
 func Drop[T any](slice []T, n int) []T
@@ -468,7 +470,7 @@ func Drop[T any](slice []T, n int) []T
 
 Drop creates a new slice with n elements dropped from the beginning. If n \< 0 the elements will be dropped from the back of the collection.
 
-## func DropWhile
+## func [DropWhile](<https://github.com/esimov/gogu/blob/master/slice.go#L438>)
 
 ```go
 func DropWhile[T any](slice []T, fn func(T) bool) []T
@@ -498,7 +500,7 @@ DropWhile creates a new slice excluding the elements dropped from the beginning.
 </p>
 </details>
 
-## func DropRightWhile
+## func [DropRightWhile](<https://github.com/esimov/gogu/blob/master/slice.go#L452>)
 
 ```go
 func DropRightWhile[T any](slice []T, fn func(T) bool) []T
@@ -506,7 +508,7 @@ func DropRightWhile[T any](slice []T, fn func(T) bool) []T
 
 DropRightWhile creates a new slice excluding the elements dropped from the end. Elements are dropped by applying the condition invoked in the callback function.
 
-## func Duplicate
+## func [Duplicate](<https://github.com/esimov/gogu/blob/master/slice.go#L182>)
 
 ```go
 func Duplicate[T comparable](slice []T) []T
@@ -514,23 +516,13 @@ func Duplicate[T comparable](slice []T) []T
 
 Duplicate returns the duplicated values of a collection.
 
-## func DuplicateWithIndex
-
-```go
-func DuplicateWithIndex[T comparable](slice []T) map[T]int
-```
-
-DuplicateWithIndex puts the duplicated values of a collection into a map as a key value pair, where the key is the collection element and the value is it's position.
-
 <details><summary>Example</summary>
 <p>
 
 ```go
 {
-	input1 := []int{-1, -1, 0, 1, 2, 3, 2, 5, 1, 6}
-	fmt.Println(Duplicate(input1))
-	fmt.Println(DuplicateWithIndex(input1))
-
+	input := []int{-1, -1, 0, 1, 2, 3, 2, 5, 1, 6}
+	fmt.Println(Duplicate(input))
 }
 ```
 
@@ -538,13 +530,40 @@ DuplicateWithIndex puts the duplicated values of a collection into a map as a ke
 
 ```
 [-1 1 2]
+```
+
+</p>
+</details>
+
+## func [DuplicateWithIndex](<https://github.com/esimov/gogu/blob/master/slice.go#L206>)
+
+```go
+func DuplicateWithIndex[T comparable](slice []T) map[T]int
+```
+
+DuplicateWithIndex puts the duplicated values of a collection into a map as a key value pair, where the key is the collection element and the value is its position.
+
+<details><summary>Example</summary>
+<p>
+
+```go
+{
+	input := []int{-1, -1, 0, 1, 2, 3, 2, 5, 1, 6}
+	fmt.Println(DuplicateWithIndex(input))
+
+}
+```
+
+#### Output
+
+```
 map[-1:0 1:3 2:4]
 ```
 
 </p>
 </details>
 
-## func Equal
+## func [Equal](<https://github.com/esimov/gogu/blob/master/generic.go#L21>)
 
 ```go
 func Equal[T comparable](a, b T) bool
@@ -552,15 +571,15 @@ func Equal[T comparable](a, b T) bool
 
 Equal checks if two values are equal.
 
-## func Every
+## func [Every](<https://github.com/esimov/gogu/blob/master/slice.go#L136>)
 
 ```go
 func Every[T any](slice []T, fn func(T) bool) bool
 ```
 
-Every returns true if all of the elements of a slice satisfies the criteria of the callback function.
+Every returns true if all the elements of a slice satisfies the criteria of the callback function.
 
-## func Filter
+## func [Filter](<https://github.com/esimov/gogu/blob/master/filter.go#L4>)
 
 ```go
 func Filter[T any](slice []T, fn func(T) bool) []T
@@ -590,15 +609,15 @@ Filter returns all the elements from the collection which satisfies the conditio
 </p>
 </details>
 
-## func Filter2DMapCollection
+## func [Filter2DMapCollection](<https://github.com/esimov/gogu/blob/master/filter.go#L63>)
 
 ```go
 func Filter2DMapCollection[K comparable, V any](collection []map[K]map[K]V, fn func(map[K]V) bool) []map[K]map[K]V
 ```
 
-Filter2DMapCollection filter out a two dimmensional collection of map items by applying the conditional logic of the callback function.
+Filter2DMapCollection filter out a two\-dimensional collection of map items by applying the conditional logic of the callback function.
 
-## func FilterMap
+## func [FilterMap](<https://github.com/esimov/gogu/blob/master/filter.go#L33>)
 
 ```go
 func FilterMap[K comparable, V any](m map[K]V, fn func(V) bool) map[K]V
@@ -628,13 +647,13 @@ map[1:John]
 </p>
 </details>
 
-## func FilterMapCollection
+## func [FilterMapCollection](<https://github.com/esimov/gogu/blob/master/filter.go#L47>)
 
 ```go
 func FilterMapCollection[K comparable, V any](collection []map[K]V, fn func(V) bool) []map[K]V
 ```
 
-FilterMapCollection filter out a one dimmensional collection of map items by applying the conditional logic of the callback function.
+FilterMapCollection filter out a one dimensional collection of map items by applying the conditional logic of the callback function.
 
 <details><summary>Example</summary>
 <p>
@@ -662,7 +681,7 @@ FilterMapCollection filter out a one dimmensional collection of map items by app
 </p>
 </details>
 
-## func Find
+## func [Find](<https://github.com/esimov/gogu/blob/master/map.go#L128>)
 
 ```go
 func Find[K constraints.Ordered, V any](m map[K]V, fn func(V) bool) map[K]V
@@ -670,13 +689,13 @@ func Find[K constraints.Ordered, V any](m map[K]V, fn func(V) bool) map[K]V
 
 Find iterates over the elements of a map and returns the first item for which the callback function returns true.
 
-## func FindAll
+## func [FindAll](<https://github.com/esimov/gogu/blob/master/find.go#L33>)
 
 ```go
 func FindAll[T any](s []T, fn func(T) bool) map[int]T
 ```
 
-FindAll is like FindIndex, but returns into a map all the values which stisfies the conditional logic of the callback function. The map key represents the position of the found value and the value is the item itself.
+FindAll is like FindIndex, but returns into a map all the values which satisfies the conditional logic of the callback function. The map key represents the position of the found value and the value is the item itself.
 
 <details><summary>Example</summary>
 <p>
@@ -701,7 +720,7 @@ map[1:2 4:2 7:2]
 </p>
 </details>
 
-## func FindByKey
+## func [FindByKey](<https://github.com/esimov/gogu/blob/master/map.go#L167>)
 
 ```go
 func FindByKey[K comparable, V any](m map[K]V, fn func(K) bool) map[K]V
@@ -709,7 +728,7 @@ func FindByKey[K comparable, V any](m map[K]V, fn func(K) bool) map[K]V
 
 FindByKey is like Find, but returns the first item for which the callback function returns true.
 
-## func FindIndex
+## func [FindIndex](<https://github.com/esimov/gogu/blob/master/find.go#L11>)
 
 ```go
 func FindIndex[T any](s []T, fn func(T) bool) int
@@ -717,7 +736,7 @@ func FindIndex[T any](s []T, fn func(T) bool) int
 
 FindIndex returns the index of the first found element.
 
-## func FindKey
+## func [FindKey](<https://github.com/esimov/gogu/blob/master/map.go#L155>)
 
 ```go
 func FindKey[K comparable, V any](m map[K]V, fn func(V) bool) K
@@ -725,7 +744,7 @@ func FindKey[K comparable, V any](m map[K]V, fn func(V) bool) K
 
 FindKey is like Find, but returns the first item key position for which the callback function returns true.
 
-## func FindLastIndex
+## func [FindLastIndex](<https://github.com/esimov/gogu/blob/master/find.go#L21>)
 
 ```go
 func FindLastIndex[T any](s []T, fn func(T) bool) int
@@ -733,7 +752,7 @@ func FindLastIndex[T any](s []T, fn func(T) bool) int
 
 FindLastIndex is like FindIndex, only that returns the index of last found element.
 
-## func FindMax
+## func [FindMax](<https://github.com/esimov/gogu/blob/master/find.go#L103>)
 
 ```go
 func FindMax[T constraints.Ordered](s []T) T
@@ -741,7 +760,7 @@ func FindMax[T constraints.Ordered](s []T) T
 
 FindMax finds the maximum value of a slice.
 
-## func FindMaxBy
+## func [FindMaxBy](<https://github.com/esimov/gogu/blob/master/find.go#L120>)
 
 ```go
 func FindMaxBy[T constraints.Ordered](s []T, fn func(val T) T) T
@@ -749,7 +768,7 @@ func FindMaxBy[T constraints.Ordered](s []T, fn func(val T) T) T
 
 FindMaxBy is like FindMax except that it accept a callback function and the conditional logic is applied over the resulted value. If there are more than one identical values resulted from the callback function the first one is returned.
 
-## func FindMaxByKey
+## func [FindMaxByKey](<https://github.com/esimov/gogu/blob/master/find.go#L135>)
 
 ```go
 func FindMaxByKey[K comparable, T constraints.Ordered](mapSlice []map[K]T, key K) (T, error)
@@ -757,7 +776,7 @@ func FindMaxByKey[K comparable, T constraints.Ordered](mapSlice []map[K]T, key K
 
 FindMaxByKey finds the maximum value from a map by using some existing key as a parameter.
 
-## func FindMin
+## func [FindMin](<https://github.com/esimov/gogu/blob/master/find.go#L46>)
 
 ```go
 func FindMin[T constraints.Ordered](s []T) T
@@ -765,15 +784,15 @@ func FindMin[T constraints.Ordered](s []T) T
 
 FindMin finds the minimum value of a slice.
 
-## func FindMinBy
+## func [FindMinBy](<https://github.com/esimov/gogu/blob/master/find.go#L63>)
 
 ```go
 func FindMinBy[T constraints.Ordered](s []T, fn func(val T) T) T
 ```
 
-FindMinBy is like FindMin except that it accept a callback function and the conditional logic is applied over the resulted value. If there are more than one identical values resulted from the callback function the first one is returned.
+FindMinBy is like FindMin except that it accept a callback function and the conditional logic is applied over the resulted value. If there are more than one identical values resulted from the callback function the first one is used.
 
-## func FindMinByKey
+## func [FindMinByKey](<https://github.com/esimov/gogu/blob/master/find.go#L78>)
 
 ```go
 func FindMinByKey[K comparable, T constraints.Ordered](mapSlice []map[K]T, key K) (T, error)
@@ -781,7 +800,7 @@ func FindMinByKey[K comparable, T constraints.Ordered](mapSlice []map[K]T, key K
 
 FindMinByKey finds the minimum value from a map by using some existing key as a parameter.
 
-## func Flatten
+## func [Flatten](<https://github.com/esimov/gogu/blob/master/slice.go#L248>)
 
 ```go
 func Flatten[T any](slice any) ([]T, error)
@@ -810,7 +829,7 @@ Flatten flattens the slice all the way down to the deepest nesting level.
 </p>
 </details>
 
-## func Flip
+## func [Flip](<https://github.com/esimov/gogu/blob/master/func.go#L13>)
 
 ```go
 func Flip[T any](fn func(args ...T) []T) func(args ...T) []T
@@ -840,7 +859,7 @@ Flip creates a function that invokes fn with arguments reversed.
 </p>
 </details>
 
-## func ForEach
+## func [ForEach](<https://github.com/esimov/gogu/blob/master/slice.go#L69>)
 
 ```go
 func ForEach[T any](slice []T, fn func(T))
@@ -874,7 +893,7 @@ ForEach iterates over the elements of a collection and invokes the callback fn f
 </p>
 </details>
 
-## func ForEachRight
+## func [ForEachRight](<https://github.com/esimov/gogu/blob/master/slice.go#L76>)
 
 ```go
 func ForEachRight[T any](slice []T, fn func(T))
@@ -882,7 +901,7 @@ func ForEachRight[T any](slice []T, fn func(T))
 
 ForEachRight is the same as ForEach, but starts the iteration from the last element.
 
-## func GroupBy
+## func [GroupBy](<https://github.com/esimov/gogu/blob/master/slice.go#L481>)
 
 ```go
 func GroupBy[T1, T2 comparable](slice []T1, fn func(T1) T2) map[T2][]T1
@@ -913,7 +932,7 @@ map[1:[1.3 1.5] 2:[2.1 2.9]]
 </p>
 </details>
 
-## func InRange
+## func [InRange](<https://github.com/esimov/gogu/blob/master/math.go#L48>)
 
 ```go
 func InRange[T Number](num, lo, up T) bool
@@ -921,15 +940,15 @@ func InRange[T Number](num, lo, up T) bool
 
 InRange checks if a number is inside a range.
 
-## func IndexOf
+## func [IndexOf](<https://github.com/esimov/gogu/blob/master/slice.go#L38>)
 
 ```go
 func IndexOf[T comparable](s []T, val T) int
 ```
 
-IndexOf returns the index of the firs orccurrence of a value in the slice, or \-1 if value is not present in the slice.
+IndexOf returns the index of the firs occurrence of a value in the slice, or \-1 if value is not present in the slice.
 
-## func Intersection
+## func [Intersection](<https://github.com/esimov/gogu/blob/master/slice.go#L286>)
 
 ```go
 func Intersection[T comparable](params ...[]T) []T
@@ -961,7 +980,7 @@ Intersection computes the list of values that are the intersection of all the sl
 </p>
 </details>
 
-## func IntersectionBy
+## func [IntersectionBy](<https://github.com/esimov/gogu/blob/master/slice.go#L310>)
 
 ```go
 func IntersectionBy[T comparable](fn func(T) T, params ...[]T) []T
@@ -997,7 +1016,7 @@ IntersectionBy is like Intersection, except that it accepts and callback functio
 </p>
 </details>
 
-## func Invert
+## func [Invert](<https://github.com/esimov/gogu/blob/master/map.go#L180>)
 
 ```go
 func Invert[K, V comparable](m map[K]V) map[V]K
@@ -1005,7 +1024,7 @@ func Invert[K, V comparable](m map[K]V) map[V]K
 
 Invert returns a copy of the map where the keys become the values and the values the keys. For this to work, all of your map's values should be unique.
 
-## func KebabCase
+## func [KebabCase](<https://github.com/esimov/gogu/blob/master/string.go#L132>)
 
 ```go
 func KebabCase[T ~string](str T) T
@@ -1044,7 +1063,7 @@ func Keys[K comparable, V any](m map[K]V) []K
 
 Keys retrieve all the existing keys of a map.
 
-## func LastIndexOf
+## func [LastIndexOf](<https://github.com/esimov/gogu/blob/master/slice.go#L49>)
 
 ```go
 func LastIndexOf[T comparable](s []T, val T) int
@@ -1052,7 +1071,7 @@ func LastIndexOf[T comparable](s []T, val T) int
 
 LastIndexOf returns the index of the last occurrence of a value.
 
-## func Less
+## func [Less](<https://github.com/esimov/gogu/blob/master/generic.go#L26>)
 
 ```go
 func Less[T constraints.Ordered](a, b T) bool
@@ -1060,7 +1079,7 @@ func Less[T constraints.Ordered](a, b T) bool
 
 Less checks if the first value is less than the second.
 
-## func Map
+## func [Map](<https://github.com/esimov/gogu/blob/master/slice.go#L59>)
 
 ```go
 func Map[T1, T2 any](slice []T1, fn func(T1) T2) []T2
@@ -1089,7 +1108,7 @@ Map produces a new slice of values by mapping each value in the list through a t
 </p>
 </details>
 
-## func MapCollection
+## func [MapCollection](<https://github.com/esimov/gogu/blob/master/map.go#L116>)
 
 ```go
 func MapCollection[K comparable, V any](m map[K]V, fn func(V) V) []V
@@ -1097,7 +1116,7 @@ func MapCollection[K comparable, V any](m map[K]V, fn func(V) V) []V
 
 MapCollection is like the Map method, but applied to maps. It runs each element of the map over an iteratee function and saves the resulted values into a new map.
 
-## func MapContains
+## func [MapContains](<https://github.com/esimov/gogu/blob/master/map.go#L89>)
 
 ```go
 func MapContains[K, V comparable](m map[K]V, value V) bool
@@ -1105,15 +1124,15 @@ func MapContains[K, V comparable](m map[K]V, value V) bool
 
 MapContains returns true if the value is present in the list otherwise false.
 
-## func MapEvery
+## func [MapEvery](<https://github.com/esimov/gogu/blob/master/map.go#L67>)
 
 ```go
 func MapEvery[K comparable, V any](m map[K]V, fn func(V) bool) bool
 ```
 
-MapEvery returns true if all of the elements of a map satisfies the criteria of the callback function.
+MapEvery returns true if all the elements of a map satisfies the criteria of the callback function.
 
-## func MapKeys
+## func [MapKeys](<https://github.com/esimov/gogu/blob/master/map.go#L56>)
 
 ```go
 func MapKeys[K comparable, V any, R comparable](m map[K]V, fn func(K, V) R) map[R]V
@@ -1121,15 +1140,15 @@ func MapKeys[K comparable, V any, R comparable](m map[K]V, fn func(K, V) R) map[
 
 MapKeys is the opposite of MapValues. It creates a new map with the same number of elements as the original one, but this time the callback function \(fn\) is invoked over the map keys.
 
-## func MapSome
+## func [MapSome](<https://github.com/esimov/gogu/blob/master/map.go#L78>)
 
 ```go
 func MapSome[K comparable, V any](m map[K]V, fn func(V) bool) bool
 ```
 
-MapSome returns true if some of the elements of a map satisfies the criteria of the callback function.
+MapSome returns true if some elements of a map satisfies the criteria of the callback function.
 
-## func MapUnique
+## func [MapUnique](<https://github.com/esimov/gogu/blob/master/map.go#L99>)
 
 ```go
 func MapUnique[K, V comparable](m map[K]V) map[K]V
@@ -1137,7 +1156,7 @@ func MapUnique[K, V comparable](m map[K]V) map[K]V
 
 MapUnique removes the duplicate values from a map.
 
-## func MapValues
+## func [MapValues](<https://github.com/esimov/gogu/blob/master/map.go#L44>)
 
 ```go
 func MapValues[K comparable, V, R any](m map[K]V, fn func(V) R) map[K]R
@@ -1145,7 +1164,7 @@ func MapValues[K comparable, V, R any](m map[K]V, fn func(V) R) map[K]R
 
 MapValues creates a new map with the same number of elements as the original one, but running each map value through a callback function \(fn\).
 
-## func Max
+## func [Max](<https://github.com/esimov/gogu/blob/master/math.go#L18>)
 
 ```go
 func Max[T constraints.Ordered](values ...T) T
@@ -1153,7 +1172,7 @@ func Max[T constraints.Ordered](values ...T) T
 
 Max returns the biggest value from the provided parameters.
 
-## func Mean
+## func [Mean](<https://github.com/esimov/gogu/blob/master/slice.go#L28>)
 
 ```go
 func Mean[T Number](slice []T) T
@@ -1161,7 +1180,7 @@ func Mean[T Number](slice []T) T
 
 Mean computes the mean value of the slice elements.
 
-## func Merge
+## func [Merge](<https://github.com/esimov/gogu/blob/master/slice.go#L236>)
 
 ```go
 func Merge[T any](s []T, params ...[]T) []T
@@ -1169,7 +1188,7 @@ func Merge[T any](s []T, params ...[]T) []T
 
 Merge merges the first slice with the other slices defined as variadic parameter.
 
-## func Min
+## func [Min](<https://github.com/esimov/gogu/blob/master/math.go#L6>)
 
 ```go
 func Min[T constraints.Ordered](values ...T) T
@@ -1177,7 +1196,7 @@ func Min[T constraints.Ordered](values ...T) T
 
 Min returns the lowest value from the provided parameters.
 
-## func N
+## func [N](<https://github.com/esimov/gogu/blob/master/range.go#L79>)
 
 ```go
 func N[T Number](s string) (T, error)
@@ -1185,7 +1204,7 @@ func N[T Number](s string) (T, error)
 
 N converts a string to a generic number.
 
-## func NewDebounce
+## func [NewDebounce](<https://github.com/esimov/gogu/blob/master/func.go#L125>)
 
 ```go
 func NewDebounce(wait time.Duration) (func(f func()), func())
@@ -1250,7 +1269,7 @@ NewDebounce creates a new debounced version of the invoked function which postpo
 </p>
 </details>
 
-## func Nth
+## func [Nth](<https://github.com/esimov/gogu/blob/master/find.go#L162>)
 
 ```go
 func Nth[T any](slice []T, nth int) (T, error)
@@ -1258,13 +1277,13 @@ func Nth[T any](slice []T, nth int) (T, error)
 
 Nth returns the nth element of the collection. In case of negative value the nth element is returned from the end of the collection. In case nth is out of bounds an error is returned.
 
-## func Null
+## func [Null](<https://github.com/esimov/gogu/blob/master/string.go#L10>)
 
 ```go
 func Null[T any]() T
 ```
 
-## func NumToString
+## func [NumToString](<https://github.com/esimov/gogu/blob/master/range.go#L108>)
 
 ```go
 func NumToString[T Number](n T) string
@@ -1272,7 +1291,7 @@ func NumToString[T Number](n T) string
 
 NumToString converts a number to a string. In case of a number of type float \(float32|float64\) this will be rounded to 2 decimal places.
 
-## func Omit
+## func [Omit](<https://github.com/esimov/gogu/blob/master/map.go#L237>)
 
 ```go
 func Omit[K comparable, V any](collection map[K]V, keys ...K) map[K]V
@@ -1300,13 +1319,13 @@ map[active:false]
 </p>
 </details>
 
-## func OmitBy
+## func [OmitBy](<https://github.com/esimov/gogu/blob/master/map.go#L248>)
 
 ```go
 func OmitBy[K comparable, V any](collection map[K]V, fn func(key K, val V) bool) map[K]V
 ```
 
-OmitBy is the opposite of Omit, it removes all the map elements for which the callback function returns true.
+OmitBy is the opposite of PickBy, it removes all the map elements for which the callback function returns true.
 
 <details><summary>Example</summary>
 <p>
@@ -1330,10 +1349,10 @@ map[b:2]
 </p>
 </details>
 
-## func Once
+## func [Once](<https://github.com/esimov/gogu/blob/master/func.go#L56>)
 
 ```go
-func Once[S ~string, T any](c *cache.Cache[S, T], fn func() T) T
+func Once[S ~string, T comparable, V constraints.Signed](c *cache.Cache[S, T], fn func() T) T
 ```
 
 Once is like Before, but it's invoked only once. Repeated calls to the modified function will have no effect and the function invocation is returned from the cache.
@@ -1377,13 +1396,13 @@ Once is like Before, but it's invoked only once. Repeated calls to the modified 
 </p>
 </details>
 
-## func Pad
+## func [Pad](<https://github.com/esimov/gogu/blob/master/string.go#L236>)
 
 ```go
 func Pad[T ~string](str T, size int, token string) T
 ```
 
-Pads string on the left and right sides if it's shorter than length. Padding characters are truncated if they can't be evenly divided by length.
+Pad pads string on the left and right sides if it's shorter than length. Padding characters are truncated if they can't be evenly divided by length.
 
 <details><summary>Example</summary>
 <p>
@@ -1409,7 +1428,7 @@ abc.
 </p>
 </details>
 
-## func PadLeft
+## func [PadLeft](<https://github.com/esimov/gogu/blob/master/string.go#L194>)
 
 ```go
 func PadLeft[T ~string](str T, size int, token string) T
@@ -1440,7 +1459,7 @@ _-_abc
 </p>
 </details>
 
-## func PadRight
+## func [PadRight](<https://github.com/esimov/gogu/blob/master/string.go#L215>)
 
 ```go
 func PadRight[T ~string](str T, size int, token string) T
@@ -1468,13 +1487,13 @@ abc...
 </p>
 </details>
 
-## func Partition
+## func [Partition](<https://github.com/esimov/gogu/blob/master/slice.go#L157>)
 
 ```go
 func Partition[T comparable](slice []T, fn func(T) bool) [2][]T
 ```
 
-Partition splits the collection elements into two, the ones which satisfies the condition expressed in the callback function \(fn\) and those which does not satisfies the condition.
+Partition splits the collection elements into two, the ones which satisfies the condition expressed in the callback function (`fn`) and those which does not satisfy the condition.
 
 <details><summary>Example</summary>
 <p>
@@ -1505,15 +1524,15 @@ Partition splits the collection elements into two, the ones which satisfies the 
 </p>
 </details>
 
-## func PartitionMap
+## func [PartitionMap](<https://github.com/esimov/gogu/blob/master/map.go#L260>)
 
 ```go
 func PartitionMap[K comparable, V any](mapSlice []map[K]V, fn func(map[K]V) bool) [2][]map[K]V
 ```
 
-PartitionMap split the collection into two arrays, the one whose elements satisfies the condition expressed in the callback function \(fn\) and one whose elements don't satisfies the condition.
+PartitionMap split the collection into two arrays, the one whose elements satisfy the condition expressed in the callback function (`fn`) and one whose elements don't satisfy the condition.
 
-## func Pick
+## func [Pick](<https://github.com/esimov/gogu/blob/master/map.go#L208>)
 
 ```go
 func Pick[K comparable, V any](collection map[K]V, keys ...K) (map[K]V, error)
@@ -1540,7 +1559,7 @@ map[age:20 name:moe]
 </p>
 </details>
 
-## func PickBy
+## func [PickBy](<https://github.com/esimov/gogu/blob/master/map.go#L224>)
 
 ```go
 func PickBy[K comparable, V any](collection map[K]V, fn func(key K, val V) bool) map[K]V
@@ -1570,7 +1589,7 @@ map[b:2 c:3]
 </p>
 </details>
 
-## func Pluck
+## func [Pluck](<https://github.com/esimov/gogu/blob/master/map.go#L192>)
 
 ```go
 func Pluck[K comparable, V any](mapSlice []map[K]V, key K) []V
@@ -1604,7 +1623,7 @@ Pluck extracts all the values of a map by the key definition.
 </p>
 </details>
 
-## func Range
+## func [Range](<https://github.com/esimov/gogu/blob/master/range.go#L21>)
 
 ```go
 func Range[T Number](args ...T) ([]T, error)
@@ -1659,7 +1678,7 @@ In case you'd like negative values, use a negative step.
 </p>
 </details>
 
-## func RangeRight
+## func [RangeRight](<https://github.com/esimov/gogu/blob/master/range.go#L70>)
 
 ```go
 func RangeRight[T Number](params ...T) ([]T, error)
@@ -1667,7 +1686,7 @@ func RangeRight[T Number](params ...T) ([]T, error)
 
 RangeRight is like Range, only that it populates the slice in descending order.
 
-## func Reduce
+## func [Reduce](<https://github.com/esimov/gogu/blob/master/slice.go#L84>)
 
 ```go
 func Reduce[T1, T2 any](slice []T1, fn func(T1, T2) T2, initVal T2) T2
@@ -1705,7 +1724,7 @@ abcd
 </p>
 </details>
 
-## func Reject
+## func [Reject](<https://github.com/esimov/gogu/blob/master/filter.go#L18>)
 
 ```go
 func Reject[T any](slice []T, fn func(val T) bool) []T
@@ -1735,7 +1754,7 @@ Reject is the opposite of Filter. It returns the values from the collection with
 </p>
 </details>
 
-## func Reverse
+## func [Reverse](<https://github.com/esimov/gogu/blob/master/slice.go#L96>)
 
 ```go
 func Reverse[T any](sl []T) []T
@@ -1743,7 +1762,7 @@ func Reverse[T any](sl []T) []T
 
 Reverse reverses the order of elements, so that the first element becomes the last, the second element becomes the second to last, and so on.
 
-## func ReverseStr
+## func [ReverseStr](<https://github.com/esimov/gogu/blob/master/string.go#L322>)
 
 ```go
 func ReverseStr[T ~string](str T) T
@@ -1751,7 +1770,7 @@ func ReverseStr[T ~string](str T) T
 
 ReverseStr returns a new string with the characters in reverse order.
 
-## func Shuffle
+## func [Shuffle](<https://github.com/esimov/gogu/blob/master/shuffle.go#L8>)
 
 ```go
 func Shuffle[T any](src []T) []T
@@ -1759,15 +1778,15 @@ func Shuffle[T any](src []T) []T
 
 Shuffle implements the Fisher\-Yates shuffle algorithm applied to a slice.
 
-## func SliceToMap
+## func [SliceToMap](<https://github.com/esimov/gogu/blob/master/map.go#L281>)
 
 ```go
 func SliceToMap[K comparable, T any](s1 []K, s2 []T) map[K]T
 ```
 
-SliceToMap converts a slice to a map. It panic in case the parameter slices length are not identical. The map keys will be the items from the first slice and the values the items from the second slice.
+SliceToMap converts a slice to a map. It panics in case the parameter slices length are not identical. The map keys will be the items from the first slice and the values the items from the second slice.
 
-## func SnakeCase
+## func [SnakeCase](<https://github.com/esimov/gogu/blob/master/string.go#L127>)
 
 ```go
 func SnakeCase[T ~string](str T) T
@@ -1798,15 +1817,15 @@ foo_bar_baz
 </p>
 </details>
 
-## func Some
+## func [Some](<https://github.com/esimov/gogu/blob/master/slice.go#L146>)
 
 ```go
 func Some[T any](slice []T, fn func(T) bool) bool
 ```
 
-Some returns true if some of the elements of a slice satisfies the criteria of the callback function.
+Some returns true if some elements of a slice satisfies the criteria of the callback function.
 
-## func SplitAtIndex
+## func [SplitAtIndex](<https://github.com/esimov/gogu/blob/master/string.go#L265>)
 
 ```go
 func SplitAtIndex[T ~string](str T, index int) []T
@@ -1843,7 +1862,7 @@ SplitAtIndex split the string at the specified index and returns a slice with th
 </p>
 </details>
 
-## func Substr
+## func [Substr](<https://github.com/esimov/gogu/blob/master/string.go#L27>)
 
 ```go
 func Substr[T ~string](str T, offset, length int) T
@@ -1904,7 +1923,7 @@ bcd
 </p>
 </details>
 
-## func Sum
+## func [Sum](<https://github.com/esimov/gogu/blob/master/slice.go#L9>)
 
 ```go
 func Sum[T Number](slice []T) T
@@ -1912,15 +1931,15 @@ func Sum[T Number](slice []T) T
 
 Sum returns the sum of the slice items. These have to satisfy the type constraints declared as Number.
 
-## func SumBy
+## func [SumBy](<https://github.com/esimov/gogu/blob/master/slice.go#L19>)
 
 ```go
 func SumBy[T1 any, T2 Number](slice []T1, fn func(T1) T2) T2
 ```
 
-SumBy is like Sum except the it accept a callback function which is invoked for each element in the slice to generate the value to be summed.
+SumBy is like Sum except it accept a callback function which is invoked for each element in the slice to generate the value to be summed.
 
-## func ToLower
+## func [ToLower](<https://github.com/esimov/gogu/blob/master/string.go#L58>)
 
 ```go
 func ToLower[T ~string](str T) T
@@ -1928,7 +1947,7 @@ func ToLower[T ~string](str T) T
 
 ToLower converts a string to Lowercase.
 
-## func ToSlice
+## func [ToSlice](<https://github.com/esimov/gogu/blob/master/slice.go#L544>)
 
 ```go
 func ToSlice[T any](args ...T) []T
@@ -1936,7 +1955,7 @@ func ToSlice[T any](args ...T) []T
 
 ToSlice returns the function arguments as a slice.
 
-## func ToUpper
+## func [ToUpper](<https://github.com/esimov/gogu/blob/master/string.go#L69>)
 
 ```go
 func ToUpper[T ~string](str T) T
@@ -1950,7 +1969,7 @@ ToUpper converts a string to Uppercase.
 func Union[T comparable](slice any) ([]T, error)
 ```
 
-Union computes the union of the passed\-in slice and returns an ordered list of unique items that are present in one or more of the slices.
+Union computes the union of the passed\\\-in slice and returns an ordered list of unique items that are present in one or more of the slices.
 
 <details><summary>Example</summary>
 <p>
@@ -1973,7 +1992,7 @@ Union computes the union of the passed\-in slice and returns an ordered list of 
 </p>
 </details>
 
-## func Unique
+## func [Unique](<https://github.com/esimov/gogu/blob/master/slice.go#L105>)
 
 ```go
 func Unique[T comparable](slice []T) []T
@@ -1981,7 +2000,7 @@ func Unique[T comparable](slice []T) []T
 
 Unique returns the collection unique values.
 
-## func UniqueBy
+## func [UniqueBy](<https://github.com/esimov/gogu/blob/master/slice.go#L121>)
 
 ```go
 func UniqueBy[T comparable](slice []T, fn func(T) T) []T
@@ -1989,7 +2008,7 @@ func UniqueBy[T comparable](slice []T, fn func(T) T) []T
 
 UniqueBy is like Unique except that it accept a callback function which is invoked on each element of the slice applying the criteria by which the uniqueness is computed.
 
-## func Unwrap
+## func [Unwrap](<https://github.com/esimov/gogu/blob/master/string.go#L297>)
 
 ```go
 func Unwrap[T ~string](str T, token string) T
@@ -2024,13 +2043,13 @@ abc
 </p>
 </details>
 
-## func Unzip
+## func [Unzip](<https://github.com/esimov/gogu/blob/master/slice.go#L516>)
 
 ```go
 func Unzip[T any](slices ...[]T) [][]T
 ```
 
-Unzip is the opposite of Zip: given a slice of slices it returns a series of new slices, the first of which contains all of the first elements in the input slices, the second of which contains all of the second elements, and so on.
+Unzip is the opposite of Zip: given a slice of slices it returns a series of new slices, the first of which contains all the first elements in the input slices, the second of which contains all the second elements, and so on.
 
 <details><summary>Example</summary>
 <p>
@@ -2052,7 +2071,7 @@ Unzip is the opposite of Zip: given a slice of slices it returns a series of new
 </p>
 </details>
 
-## func Values
+## func [Values](<https://github.com/esimov/gogu/blob/master/map.go#L30>)
 
 ```go
 func Values[K comparable, V any](m map[K]V) []V
@@ -2060,7 +2079,7 @@ func Values[K comparable, V any](m map[K]V) []V
 
 Values retrieve all the existing values of a map.
 
-## func Without
+## func [Without](<https://github.com/esimov/gogu/blob/master/slice.go#L342>)
 
 ```go
 func Without[T1 comparable, T2 any](slice []T1, values ...T1) []T1
@@ -2093,7 +2112,7 @@ Without returns a copy of the slice with all the values defined in the variadic 
 </p>
 </details>
 
-## func Wrap
+## func [Wrap](<https://github.com/esimov/gogu/blob/master/string.go#L286>)
 
 ```go
 func Wrap[T ~string](str T, token string) T
@@ -2128,13 +2147,13 @@ abc
 </p>
 </details>
 
-## func WrapAllRune
+## func [WrapAllRune](<https://github.com/esimov/gogu/blob/master/string.go#L309>)
 
 ```go
 func WrapAllRune[T ~string](str T, token string) T
 ```
 
-WrapAllRune is like Wrap, only that instead of strings it's applied over runes.
+WrapAllRune is like Wrap, only that it's applied over runes instead of strings.
 
 <details><summary>Example</summary>
 <p>
@@ -2161,7 +2180,7 @@ abc
 </p>
 </details>
 
-## func Zip
+## func [Zip](<https://github.com/esimov/gogu/blob/master/slice.go#L486>)
 
 ```go
 func Zip[T any](slices ...[]T) [][]T
@@ -2189,7 +2208,7 @@ Zip iteratively merges together the values of the slice parameters with the valu
 </p>
 </details>
 
-## type Bound
+## type [Bound](<https://github.com/esimov/gogu/blob/master/find.go#L180-L182>)
 
 ```go
 type Bound[T constraints.Signed] struct {
@@ -2197,7 +2216,7 @@ type Bound[T constraints.Signed] struct {
 }
 ```
 
-### func \(Bound\[T\]\) Enclose
+### func \(Bound\[T\]\) [Enclose](<https://github.com/esimov/gogu/blob/master/find.go#L185>)
 
 ```go
 func (b Bound[T]) Enclose(nth T) bool
@@ -2205,7 +2224,7 @@ func (b Bound[T]) Enclose(nth T) bool
 
 Enclose checks if an element is inside the bounds.
 
-## type CompFn
+## type [CompFn](<https://github.com/esimov/gogu/blob/master/generic.go#L8>)
 
 CompFn is a generic function type for comparing two values.
 
@@ -2213,18 +2232,7 @@ CompFn is a generic function type for comparing two values.
 type CompFn[T any] func(a, b T) bool
 ```
 
-## type Memoizer
-
-Memoizer is a two component struct type used to memoize the results of a function execution. It holds an exported Cache storage and a singleflight.Group which is used to guarantee that only one function execution is in flight for a given key.
-
-```go
-type Memoizer[T ~string, V any] struct {
-    Cache *cache.Cache[T, V]
-    // contains filtered or unexported fields
-}
-```
-
-### func NewMemoizer
+### func [NewMemoizer](<https://github.com/esimov/gogu/blob/master/memoize.go#L19>)
 
 ```go
 func NewMemoizer[T ~string, V any](expiration, cleanup time.Duration) *Memoizer[T, V]
@@ -2232,7 +2240,7 @@ func NewMemoizer[T ~string, V any](expiration, cleanup time.Duration) *Memoizer[
 
 NewMemoizer instantiates a new Memoizer.
 
-### func \(Memoizer\[T, V\]\) Memoize
+### func \(Memoizer\[T, V\]\) [Memoize](<https://github.com/esimov/gogu/blob/master/memoize.go#L32>)
 
 ```go
 func (m Memoizer[T, V]) Memoize(key T, fn func() (*cache.Item[V], error)) (*cache.Item[V], error)
@@ -2240,7 +2248,8 @@ func (m Memoizer[T, V]) Memoize(key T, fn func() (*cache.Item[V], error)) (*cach
 
 Memoize returns the item under a specific key instantly in case the key exists, otherwise returns the results of the given function, making sure that only one execution is in\-flight for a given key at a time.
 
-This method is useful for caching the result of a time consuming operation when is more important to return a slightly outdated result, than to wait for an operation to complete before serving it.
+This method is useful for caching the result of a time\-consuming operation when is more important to return a slightly outdated result, than to wait for an operation to complete before serving it.
+
 <details><summary>Example</summary>
 <p>
 
@@ -2298,7 +2307,7 @@ one
 </p>
 </details>
 
-## type Number
+## type [Number](<https://github.com/esimov/gogu/blob/master/map.go#L12-L14>)
 
 Number is a custom type set of constraints extending the Float and Integer type set from the experimental constraints package.
 
@@ -2308,7 +2317,7 @@ type Number interface {
 }
 ```
 
-## type RType
+## type [RType](<https://github.com/esimov/gogu/blob/master/func.go#L68-L70>)
 
 RType is a generic struct type used as method receiver on retry operations.
 
@@ -2318,13 +2327,13 @@ type RType[T any] struct {
 }
 ```
 
-### func \(RType\[T\]\) Retry
+### func \(RType\[T\]\) [Retry](<https://github.com/esimov/gogu/blob/master/func.go#L74>)
 
 ```go
 func (v RType[T]) Retry(n int, fn func(T) error) (int, error)
 ```
 
-Retry tries to invoke the callback function n times. It runs until the number of attempts is reached or the returned value of the callback function is nil.
+Retry tries to invoke the callback function \`n\` times. It runs until the number of attempts is reached or the returned value of the callback function is nil.
 
 <details><summary>Example</summary>
 <p>
@@ -2368,13 +2377,13 @@ retry failed: number of 2 attempts exceeded
 </p>
 </details>
 
-### func \(RType\[T\]\) RetryWithDelay
+### func \(RType\[T\]\) [RetryWithDelay](<https://github.com/esimov/gogu/blob/master/func.go#L96>)
 
 ```go
 func (v RType[T]) RetryWithDelay(n int, delay time.Duration, fn func(time.Duration, T) error) (time.Duration, int, error)
 ```
 
-RetryWithDelay tries to invoke the callback function n times, but with a delay between each calls. It runs until the number of attempts is reached or the error return value of the callback function is nil.
+RetryWithDelay tries to invoke the callback function \`n\` times, but with a delay between each call. It runs until the number of attempts is reached or the error return value of the callback function is nil.
 
 <details><summary>Example</summary>
 <p>

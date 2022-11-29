@@ -102,6 +102,29 @@ func TestFunc_After(t *testing.T) {
 	assert.Equal(1, initVal)
 }
 
+func Example_after() {
+	sample := []int{1, 2, 3, 4, 5, 6}
+	length := len(sample) - 1
+
+	initVal := 0
+	fn := func(val int) int {
+		return val + 1
+	}
+
+	ForEach(sample, func(val int) {
+		now := time.Now()
+		After(&length, func() {
+			<-time.After(10 * time.Millisecond)
+			initVal = fn(initVal)
+			after := time.Since(now).Milliseconds()
+			fmt.Println(after)
+		})
+	})
+
+	// Output:
+	// 10
+}
+
 func TestFunc_Before(t *testing.T) {
 	assert := assert.New(t)
 	c := cache.New[string, int](cache.DefaultExpiration, cache.NoExpiration)
