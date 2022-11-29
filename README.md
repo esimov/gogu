@@ -19,10 +19,10 @@ Its main purpose is to facilitate the ease of working with common data structure
 - [x] Implements the most used data structures
 - [x] Thourough documentation accompanied with examples
 
-## 🚀 Installation
+## 🚀 Run
 
 ```bash
-$ go install github.com/esimov/gogu@latest
+$ go get github.com/esimov/gogu
 ```
 
 ## 🛠 Usage
