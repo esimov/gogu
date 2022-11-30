@@ -19,7 +19,7 @@ func TestLRUCache_Add(t *testing.T) {
 	_, _, oldest = lruCache.Add("key4", "value4")
 	assert.False(oldest)
 
-	assert.Equal(4, lruCache.GetLength())
+	assert.Equal(4, lruCache.Count())
 
 	oldestKey, oldestValue, removed := lruCache.Add("key5", "value5")
 	assert.True(removed)
@@ -31,7 +31,7 @@ func TestLRUCache_Add(t *testing.T) {
 	assert.Equal("key2", oldestKey)
 	assert.Equal("value2", oldestValue)
 
-	assert.Equal(4, lruCache.GetLength())
+	assert.Equal(4, lruCache.Count())
 }
 
 func TestLRUCache_Get(t *testing.T) {
@@ -43,7 +43,7 @@ func TestLRUCache_Get(t *testing.T) {
 	lruCache.Add("key3", "value3")
 	lruCache.Add("key4", "value4")
 
-	assert.Equal(4, lruCache.GetLength())
+	assert.Equal(4, lruCache.Count())
 
 	value, exists := lruCache.Get("key2")
 	assert.True(exists)
@@ -74,35 +74,35 @@ func TestLRUCache_Remove(t *testing.T) {
 	lruCache.Add("key3", "value3")
 	lruCache.Add("key4", "value4")
 
-	assert.Equal(4, lruCache.GetLength())
+	assert.Equal(4, lruCache.Count())
 
 	oldestKey, oldestValue, removed := lruCache.RemoveOldest()
 	assert.True(removed)
 	assert.Equal("key1", oldestKey)
 	assert.Equal("value1", oldestValue)
-	assert.Equal(3, lruCache.GetLength())
+	assert.Equal(3, lruCache.Count())
 
 	oldestKey, oldestValue, removed = lruCache.RemoveOldest()
 	assert.True(removed)
 	assert.Equal("key2", oldestKey)
 	assert.Equal("value2", oldestValue)
-	assert.Equal(2, lruCache.GetLength())
+	assert.Equal(2, lruCache.Count())
 
 	oldestKey, oldestValue, removed = lruCache.RemoveOldest()
 	assert.True(removed)
 	assert.Equal("key3", oldestKey)
 	assert.Equal("value3", oldestValue)
-	assert.Equal(1, lruCache.GetLength())
+	assert.Equal(1, lruCache.Count())
 
 	oldestKey, oldestValue, removed = lruCache.RemoveOldest()
 	assert.True(removed)
 	assert.Equal("key4", oldestKey)
 	assert.Equal("value4", oldestValue)
-	assert.Equal(0, lruCache.GetLength())
+	assert.Equal(0, lruCache.Count())
 
 	_, _, removed = lruCache.RemoveOldest()
 	assert.False(removed)
-	assert.Equal(0, lruCache.GetLength())
+	assert.Equal(0, lruCache.Count())
 
 	lruCache.Add("key1", "value1")
 	lruCache.Add("key2", "value2")
@@ -112,42 +112,46 @@ func TestLRUCache_Remove(t *testing.T) {
 	value, r := lruCache.Remove("key2")
 	assert.True(r)
 	assert.Equal("value2", value)
-	assert.Equal(3, lruCache.GetLength())
+	assert.Equal(3, lruCache.Count())
 
 	value, r = lruCache.Remove("key1")
 	assert.True(r)
 	assert.Equal("value1", value)
-	assert.Equal(2, lruCache.GetLength())
+	assert.Equal(2, lruCache.Count())
 
 	value, r = lruCache.Remove("nonexistent")
 	assert.False(r)
-	assert.Equal(2, lruCache.GetLength())
+	assert.Equal(2, lruCache.Count())
 
 	value, r = lruCache.Remove("key4")
 	assert.True(r)
 	assert.Equal("value4", value)
-	assert.Equal(1, lruCache.GetLength())
+	assert.Equal(1, lruCache.Count())
 
 	value, r = lruCache.Remove("key3")
 	assert.True(r)
 	assert.Equal("value3", value)
-	assert.Equal(0, lruCache.GetLength())
+	assert.Equal(0, lruCache.Count())
 
 	lruCache.Add("key1", "value1")
 	lruCache.Add("key2", "value2")
 	lruCache.Add("key3", "value3")
+	lruCache.Add("key4", "value4")
 
 	oldestKey, oldestValue, removed = lruCache.RemoveOldest()
 	assert.True(r)
 	assert.Equal("key1", oldestKey)
 	assert.Equal("value1", oldestValue)
-	assert.Equal(2, lruCache.GetLength())
+	assert.Equal(3, lruCache.Count())
 
 	youngestKey, youngestValue, r := lruCache.RemoveYoungest()
 	assert.True(r)
-	assert.Equal("key3", youngestKey)
-	assert.Equal("value3", youngestValue)
-	assert.Equal(1, lruCache.GetLength())
+	assert.Equal("key4", youngestKey)
+	assert.Equal("value4", youngestValue)
+	assert.Equal(2, lruCache.Count())
+
+	lruCache.Flush()
+	assert.Equal(0, lruCache.Count())
 }
 
 func TestLRUCache_GeneralUsage(t *testing.T) {
@@ -160,11 +164,11 @@ func TestLRUCache_GeneralUsage(t *testing.T) {
 	lruCache.Add("key4", "value4")
 	lruCache.Add("key5", "value5")
 
-	assert.Equal(5, lruCache.GetLength())
+	assert.Equal(5, lruCache.Count())
 
 	lruCache.Add("key6", "value6")
 
-	assert.Equal(5, lruCache.GetLength())
+	assert.Equal(5, lruCache.Count())
 
 	value, exists := lruCache.Get("key2")
 	assert.True(exists)
@@ -178,7 +182,7 @@ func TestLRUCache_GeneralUsage(t *testing.T) {
 	removedValue, removed := lruCache.Remove("key2")
 	assert.True(removed)
 	assert.Equal("value2", removedValue)
-	assert.Equal(4, lruCache.GetLength())
+	assert.Equal(4, lruCache.Count())
 
 	oldestKeyUpdated, oldestValueUpdated, oldestExistsUpdated := lruCache.GetOldest()
 	assert.True(oldestExistsUpdated)
@@ -200,7 +204,7 @@ func Example_lRUCache() {
 	c.Add("foo3", "bar3")
 	c.Add("foo4", "baz")
 
-	fmt.Println(c.GetLength())
+	fmt.Println(c.Count())
 	fmt.Println()
 
 	oldestKey, oldestValue, oldestAvailable := c.GetOldest()

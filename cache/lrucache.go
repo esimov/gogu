@@ -138,14 +138,14 @@ func (c *LRUCache[K, V]) Add(key K, value V) (oldestKey K, oldestValue V, remove
 	c.items[key] = item
 
 	// Remove the oldest element if the cache is full
-	if c.GetLength() > c.size {
+	if c.Count() > c.size {
 		return c.RemoveOldest()
 	}
 	return
 }
 
-// GetLength return the number of the current values from the cache. It should be LE then the initial size of the cache
-func (c *LRUCache[K, V]) GetLength() int {
+// Count return the number of the current values from the cache. It should be LE then the initial size of the cache
+func (c *LRUCache[K, V]) Count() int {
 	return c.evictList.len
 }
 
@@ -204,4 +204,10 @@ func (c *LRUCache[K, V]) RemoveYoungest() (key K, value V, removed bool) {
 		return item.key, item.value, c.evictList.removeLast()
 	}
 	return
+}
+
+// Flush clears all values from the cache
+func (c *LRUCache[K, V]) Flush() {
+	c.items = make(map[K]*node[K, V])
+	c.evictList = newLRUList[K, V]()
 }
