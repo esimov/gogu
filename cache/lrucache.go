@@ -32,7 +32,7 @@ func newLRUList[K comparable, V any]() *lruList[K, V] {
 
 // moveAfter moves nd node after the current node
 func (l *lruList[K, V]) moveAfter(current *node[K, V], nd *node[K, V]) {
-	if current.next == nd {
+	if current == nd {
 		return
 	}
 
@@ -41,7 +41,8 @@ func (l *lruList[K, V]) moveAfter(current *node[K, V], nd *node[K, V]) {
 
 	nd.prev = current
 	nd.next = current.next
-	current.next = nd
+	nd.prev.next = nd
+	nd.next.prev = nd
 }
 
 // moveFront moves nd at the front of the list (after the root element)
