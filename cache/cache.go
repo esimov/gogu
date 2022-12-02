@@ -61,7 +61,7 @@ func New[T ~string, V any](expTime, cleanupTime time.Duration) *Cache[T, V] {
 
 	if cleanupTime > 0 {
 		go c.cleanup()
-		// We need to make sure that the goroutine responsible for the cache purge stops after the cleanup.
+		// We need to make sure that the goroutine responsible for the cache eviction stops after the cleanup.
 		// This is the reason why runtime.SetFinalizer is used.
 		// This method is invoked when the garbage collector finds an unreachable block ready to be collected.
 		runtime.SetFinalizer(c, stopCleanup[T, V])

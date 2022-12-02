@@ -10,12 +10,12 @@ type singleNode[T comparable] struct {
 	next *singleNode[T]
 }
 
-// SList is a struct containing the individual nodes of the list.
+// SList contains the node elements of the singly linked list.
 type SList[T comparable] struct {
 	singleNode[T]
 }
 
-// newNode creates a new node.
+// newNode creates a new singly linked list node element.
 // It holds a pointer to the next node (which is nil on initialization) and the node data.
 func newNode[T comparable](data T) *singleNode[T] {
 	return &singleNode[T]{
@@ -42,7 +42,7 @@ func (l *SList[T]) Unshift(data T) {
 }
 
 // Append inserts a new node at the end of the list.
-func (l *SList[T]) Append(data T) *singleNode[T] {
+func (l *SList[T]) Append(data T) {
 	newNode := newNode(data)
 	head := &l.singleNode
 
@@ -56,12 +56,10 @@ func (l *SList[T]) Append(data T) *singleNode[T] {
 
 	head.next = newNode
 	newNode.next = nil
-
-	return newNode
 }
 
 // InsertAfter inserts a new node after the current node.
-// In case the requested node is not in the list it returns an error.
+// It returns an error in case the requested node does not exists.
 func (l *SList[T]) InsertAfter(prev *singleNode[T], data T) error {
 	if prev == nil {
 		return fmt.Errorf("the provided node does not exists")
@@ -79,8 +77,8 @@ func (l *SList[T]) InsertAfter(prev *singleNode[T], data T) error {
 }
 
 // Replace replaces a node's value with a new one.
-// It returns an error in case the requested node does not exist.
-func (l *SList[T]) Replace(oldVal, newVal T) (*singleNode[T], error) {
+// It returns an error in case the requested node does not exists.
+func (l *SList[T]) Replace(oldVal, newVal T) error {
 	head := &l.singleNode
 
 	// Go through the list until the requested node is reached.
@@ -90,7 +88,7 @@ func (l *SList[T]) Replace(oldVal, newVal T) (*singleNode[T], error) {
 				head.data = newVal
 				break
 			}
-			return nil, fmt.Errorf("requested node does not exists")
+			return fmt.Errorf("requested node does not exists")
 		}
 		if head.data == oldVal {
 			head.data = newVal
@@ -99,7 +97,7 @@ func (l *SList[T]) Replace(oldVal, newVal T) (*singleNode[T], error) {
 		head = head.next
 	}
 
-	return head, nil
+	return nil
 }
 
 // Delete removes the specified node from the list.
@@ -137,35 +135,28 @@ func (l *SList[T]) Delete(node *singleNode[T]) error {
 }
 
 // Shift removes the first node from the list.
-func (l *SList[T]) Shift() *singleNode[T] {
+func (l *SList[T]) Shift() {
 	head := &l.singleNode
-	node := l.singleNode
 
 	if head.next != nil {
 		head = head.next
 		l.singleNode = *head
 	}
-
-	return &node
 }
 
 // Pop removes the last node from the list.
-func (l *SList[T]) Pop() *singleNode[T] {
+func (l *SList[T]) Pop() {
 	head := &l.singleNode
-	node := singleNode[T]{}
 
 	if head.next == nil {
 		head = nil
 	} else {
 		tmp := head
-		node = *tmp
 		for tmp.next.next != nil {
 			tmp = tmp.next
-			node = *tmp
 		}
 		tmp.next = nil
 	}
-	return &node
 }
 
 // Find search for a node element in the linked list.

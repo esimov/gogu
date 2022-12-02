@@ -25,15 +25,18 @@ func TestSinglyLinkedList(t *testing.T) {
 	list.Unshift(1)
 	assert.Equal(1, list.singleNode.data)
 
-	last := list.Append(3)
+	list.Append(3)
+	last, _ := list.Find(3)
 	err = list.InsertAfter(last, 4)
 	assert.NoError(err)
 	list.Append(5)
 
-	last = list.Append(6)
+	list.Append(6)
+	last, _ = list.Find(6)
 	list.Append(8)
 	list.InsertAfter(last, 7)
-	last = list.Append(9)
+	list.Append(9)
+	last, _ = list.Find(9)
 
 	err = list.Delete(last)
 	assert.NoError(err)
@@ -45,8 +48,7 @@ func TestSinglyLinkedList(t *testing.T) {
 		i++
 	})
 
-	item := list.Pop()
-	assert.Equal(7, item.data)
+	list.Pop()
 
 	i = 0
 	expected = []int{1, 2, 3, 4, 5, 6, 7}
@@ -55,8 +57,7 @@ func TestSinglyLinkedList(t *testing.T) {
 		i++
 	})
 
-	item = list.Shift()
-	assert.Equal(1, item.data)
+	list.Shift()
 
 	i = 0
 	expected = []int{2, 3, 4, 5, 6, 7}
@@ -65,12 +66,14 @@ func TestSinglyLinkedList(t *testing.T) {
 		i++
 	})
 
-	item, err = list.Replace(20, 10)
+	err = list.Replace(20, 10)
 	assert.Error(err)
+	item, _ := list.Find(20)
 	assert.Nil(item)
 
-	item, err = list.Replace(7, 8)
+	err = list.Replace(7, 8)
 	assert.NoError(err)
+	item, _ = list.Find(8)
 	assert.Equal(8, item.data)
 
 	list.Unshift(1)
@@ -105,8 +108,7 @@ func Example_singlyLinkedList() {
 	})
 	fmt.Println(sl)
 
-	item := list.Pop()
-	fmt.Println(item.data)
+	list.Pop()
 
 	sl = nil
 	list.Each(func(val int) {
@@ -114,8 +116,7 @@ func Example_singlyLinkedList() {
 	})
 	fmt.Println(sl)
 
-	item = list.Shift()
-	fmt.Println(item.data)
+	list.Shift()
 
 	sl = nil
 	list.Each(func(val int) {
@@ -123,11 +124,13 @@ func Example_singlyLinkedList() {
 	})
 	fmt.Println(sl)
 
-	item, err := list.Replace(20, 10)
+	err := list.Replace(20, 10)
 	fmt.Println(err)
+	item, _ := list.Find(20)
 	fmt.Println(item)
 
-	item, _ = list.Replace(7, 8)
+	list.Replace(7, 8)
+	item, _ = list.Find(8)
 	fmt.Println(item.data)
 
 	item, _ = list.Find(8)
@@ -135,9 +138,7 @@ func Example_singlyLinkedList() {
 
 	// Output:
 	// [1 2 3 4 5 6 7 8]
-	// 7
 	// [1 2 3 4 5 6 7]
-	// 1
 	// [2 3 4 5 6 7]
 	// requested node does not exists
 	// <nil>

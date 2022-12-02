@@ -39,7 +39,7 @@ func InitDList[T comparable](data T) *DList[T] {
 }
 
 // Unshift inserts a new node at the beginning of the doubly linked list.
-func (l *DList[T]) Unshift(data T) *doubleNode[T] {
+func (l *DList[T]) Unshift(data T) {
 	newNode := newDNode(data)
 	head := l.doubleNode
 
@@ -48,12 +48,10 @@ func (l *DList[T]) Unshift(data T) *doubleNode[T] {
 
 	// Move the pointer to the new node.
 	l.doubleNode = *newNode
-
-	return newNode
 }
 
 // Append inserts a new node at the end of the doubly linked list.
-func (l *DList[T]) Append(data T) *doubleNode[T] {
+func (l *DList[T]) Append(data T) {
 	newNode := newDNode(data)
 	head := &l.doubleNode
 
@@ -68,13 +66,12 @@ func (l *DList[T]) Append(data T) *doubleNode[T] {
 	newNode.next = head.next
 	head.next = newNode
 	newNode.prev = head
-
-	return newNode
 }
 
 // InsertBefore inserts a new node before the current node.
-// In case the requested node is not in the list it returns an error.
+// It returns an error in case the requested node does not exists.
 func (l *DList[T]) InsertBefore(node *doubleNode[T], data T) error {
+	head := l.doubleNode
 	if node == nil {
 		return fmt.Errorf("the previous node does not exists")
 	}
@@ -84,31 +81,36 @@ func (l *DList[T]) InsertBefore(node *doubleNode[T], data T) error {
 	}
 	newNode := newDNode(data)
 
-	if node.prev != nil {
-		newNode = node.prev
-	}
-
+	newNode.prev = node.prev
+	node.prev = newNode
 	newNode.next = node
-	l.doubleNode = *newNode
+
+	if newNode.prev != nil {
+		newNode.prev.next = newNode
+	} else {
+		newNode.next = &head
+		// Move the pointer to the new node.
+		l.doubleNode = *newNode
+	}
 
 	return nil
 }
 
 // InsertAfter inserts a new node after the existing node.
-// In case the requested node is not in the list it returns an error.
-func (l *DList[T]) InsertAfter(prev *doubleNode[T], data T) error {
-	if prev == nil {
+// It returns an error in case the requested node does not exists.
+func (l *DList[T]) InsertAfter(node *doubleNode[T], data T) error {
+	if node == nil {
 		return fmt.Errorf("the previous node does not exists")
 	}
 
-	if _, found := l.Find(prev.data); !found {
+	if _, found := l.Find(node.data); !found {
 		return fmt.Errorf("the node to be deleted does not exists")
 	}
 
 	newNode := newDNode(data)
-	newNode.next = prev.next
-	prev.next = newNode
-	newNode.prev = prev
+	newNode.next = node.next
+	node.next = newNode
+	newNode.prev = node
 
 	if newNode.next != nil {
 		newNode.next.prev = newNode
@@ -119,7 +121,7 @@ func (l *DList[T]) InsertAfter(prev *doubleNode[T], data T) error {
 
 // Replace replaces a node's value with the new one.
 // It returns an error in case the requested node does not exist.
-func (l *DList[T]) Replace(oldVal, newVal T) (*doubleNode[T], error) {
+func (l *DList[T]) Replace(oldVal, newVal T) error {
 	head := &l.doubleNode
 
 	// Go through the list until the requested node is reached.
@@ -129,7 +131,7 @@ func (l *DList[T]) Replace(oldVal, newVal T) (*doubleNode[T], error) {
 				head.data = newVal
 				break
 			}
-			return nil, fmt.Errorf("requested node does not exists")
+			return fmt.Errorf("requested node does not exists")
 		}
 		if head.data == oldVal {
 			head.data = newVal
@@ -138,7 +140,7 @@ func (l *DList[T]) Replace(oldVal, newVal T) (*doubleNode[T], error) {
 		head = head.next
 	}
 
-	return head, nil
+	return nil
 }
 
 // Delete removes the specified node from the list.
@@ -213,20 +215,20 @@ func (l *DList[T]) Pop() *doubleNode[T] {
 	return &node
 }
 
-// Find search for a node element in the linked list.
+// Find searches for a node element in the linked list.
 // It returns the node in case the element is found otherwise nil.
 func (l *DList[T]) Find(val T) (*doubleNode[T], bool) {
-	head := l.doubleNode
+	head := &l.doubleNode
 
 	for n := &l.doubleNode; n != nil; n = n.next {
 		if n.data == val {
-			l.doubleNode = head
+			l.doubleNode = *head
 			return n, true
 		}
 	}
 
 	// Move the pointer to the head of the linked list.
-	l.doubleNode = head
+	l.doubleNode = *head
 
 	return nil, false
 }

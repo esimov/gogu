@@ -18,7 +18,8 @@ func TestDoublyLinkedList(t *testing.T) {
 	assert.Error(err)
 
 	list.Pop()
-	node := list.Unshift(2)
+	list.Unshift(2)
+	node, _ := list.Find(2)
 	list.InsertBefore(node, 3)
 
 	n := 3
@@ -27,7 +28,8 @@ func TestDoublyLinkedList(t *testing.T) {
 		n--
 	})
 
-	node = list.Append(4)
+	list.Append(4)
+	node, _ = list.Find(4)
 	assert.Equal(4, node.data)
 
 	n = 0
@@ -55,7 +57,8 @@ func TestDoublyLinkedList(t *testing.T) {
 		n++
 	})
 
-	n3 := list.Unshift(7)
+	list.Unshift(7)
+	n3, _ := list.Find(7)
 	assert.Equal(7, n3.data)
 
 	n = 0
@@ -92,7 +95,7 @@ func TestDoublyLinkedList(t *testing.T) {
 	err = list.InsertBefore(node, 11111)
 	assert.Error(err)
 
-	_, err = list.Replace(10, 0)
+	err = list.Replace(10, 0)
 	assert.Error(err)
 
 	list.Replace(2, 0)
@@ -109,8 +112,7 @@ func TestDoublyLinkedList(t *testing.T) {
 	}
 	list.Pop()
 	list.Pop()
-	last := list.Pop()
-	assert.Equal(6, last.data)
+	list.Pop()
 	assert.Equal(6, list.Last())
 	assert.Equal(0, list.First())
 
@@ -132,8 +134,7 @@ func Example_doublyLinkedList() {
 	})
 	fmt.Println(sl)
 
-	item := list.Pop()
-	fmt.Println(item.data)
+	list.Pop()
 
 	sl = nil
 	list.Each(func(val int) {
@@ -141,8 +142,7 @@ func Example_doublyLinkedList() {
 	})
 	fmt.Println(sl)
 
-	item = list.Shift()
-	fmt.Println(item.data)
+	list.Shift()
 
 	sl = nil
 	list.Each(func(val int) {
@@ -150,21 +150,27 @@ func Example_doublyLinkedList() {
 	})
 	fmt.Println(sl)
 
-	item, err := list.Replace(20, 10)
+	err := list.Replace(20, 10)
+	item, _ := list.Find(20)
 	fmt.Println(err)
 	fmt.Println(item)
 
-	item, _ = list.Replace(7, 8)
-	fmt.Println(item.data)
-	item, _ = list.Replace(8, 7)
-
-	n := list.Unshift(1)
-	fmt.Println(n.data)
-
-	last := list.Append(8)
+	list.Replace(7, 8)
 	item, _ = list.Find(8)
 	fmt.Println(item.data)
 
+	list.Replace(8, 7)
+	item, _ = list.Find(8)
+
+	list.Unshift(1)
+	n, _ := list.Find(1)
+	fmt.Println(n.data)
+
+	list.Append(8)
+	item, _ = list.Find(8)
+	fmt.Println(item.data)
+
+	last, _ := list.Find(8)
 	list.InsertAfter(last, 9)
 
 	sl = nil
@@ -186,9 +192,7 @@ func Example_doublyLinkedList() {
 
 	// Output:
 	// [1 2 3 4 5 6 7 8]
-	// 7
 	// [1 2 3 4 5 6 7]
-	// 1
 	// [2 3 4 5 6 7]
 	// requested node does not exists
 	// <nil>
