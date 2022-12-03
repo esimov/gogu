@@ -247,7 +247,7 @@ type Heap[T comparable] struct {
 }
 ```
 
-### func [FromSlice](<https://github.com/esimov/gogu/blob/master/heap/heap.go#L152>)
+### func [FromSlice](<https://github.com/esimov/gogu/blob/master/heap/heap.go#L155>)
 
 ```go
 func FromSlice[T comparable](data []T, comp gogu.CompFn[T]) *Heap[T]
@@ -263,7 +263,7 @@ func NewHeap[T comparable](comp gogu.CompFn[T]) *Heap[T]
 
 NewHeap creates a new heap data structure having two components: a data slice holding the concrete values and a comparison function. The sign of the comparison function defines if we are dealing with a min or max heap.
 
-### func \(\*Heap\[T\]\) [Clear](<https://github.com/esimov/gogu/blob/master/heap/heap.go#L51>)
+### func \(\*Heap\[T\]\) [Clear](<https://github.com/esimov/gogu/blob/master/heap/heap.go#L56>)
 
 ```go
 func (h *Heap[T]) Clear()
@@ -271,7 +271,7 @@ func (h *Heap[T]) Clear()
 
 Clear removes all the elements from the heap.
 
-### func \(\*Heap\[T\]\) [Convert](<https://github.com/esimov/gogu/blob/master/heap/heap.go#L140>)
+### func \(\*Heap\[T\]\) [Convert](<https://github.com/esimov/gogu/blob/master/heap/heap.go#L143>)
 
 ```go
 func (h *Heap[T]) Convert(comp gogu.CompFn[T])
@@ -279,7 +279,7 @@ func (h *Heap[T]) Convert(comp gogu.CompFn[T])
 
 Convert converts a min heap to max heap and vice versa.
 
-### func \(\*Heap\[T\]\) [Delete](<https://github.com/esimov/gogu/blob/master/heap/heap.go#L118>)
+### func \(\*Heap\[T\]\) [Delete](<https://github.com/esimov/gogu/blob/master/heap/heap.go#L121>)
 
 ```go
 func (h *Heap[T]) Delete(val T) (bool, error)
@@ -287,7 +287,7 @@ func (h *Heap[T]) Delete(val T) (bool, error)
 
 Delete removes an element from the heap. It returns false in case the element does not exists. After removal, it reorders the heap structure based on the heap\-specific rules.
 
-### func \(\*Heap\[T\]\) [GetValues](<https://github.com/esimov/gogu/blob/master/heap/heap.go#L77>)
+### func \(\*Heap\[T\]\) [GetValues](<https://github.com/esimov/gogu/blob/master/heap/heap.go#L81>)
 
 ```go
 func (h *Heap[T]) GetValues() []T
@@ -295,7 +295,7 @@ func (h *Heap[T]) GetValues() []T
 
 GetValues returns the heap values.
 
-### func \(\*Heap\[T\]\) [IsEmpty](<https://github.com/esimov/gogu/blob/master/heap/heap.go#L43>)
+### func \(\*Heap\[T\]\) [IsEmpty](<https://github.com/esimov/gogu/blob/master/heap/heap.go#L48>)
 
 ```go
 func (h *Heap[T]) IsEmpty() bool
@@ -303,7 +303,7 @@ func (h *Heap[T]) IsEmpty() bool
 
 IsEmpty checks if the heap is empty or not.
 
-### func \(\*Heap\[T\]\) [Meld](<https://github.com/esimov/gogu/blob/master/heap/heap.go#L202>)
+### func \(\*Heap\[T\]\) [Meld](<https://github.com/esimov/gogu/blob/master/heap/heap.go#L205>)
 
 ```go
 func (h *Heap[T]) Meld(h2 *Heap[T]) *Heap[T]
@@ -311,7 +311,7 @@ func (h *Heap[T]) Meld(h2 *Heap[T]) *Heap[T]
 
 Meld merge two heaps into a new one containing all the elements of both and destroying the original ones.
 
-### func \(\*Heap\[T\]\) [Merge](<https://github.com/esimov/gogu/blob/master/heap/heap.go#L186>)
+### func \(\*Heap\[T\]\) [Merge](<https://github.com/esimov/gogu/blob/master/heap/heap.go#L189>)
 
 ```go
 func (h *Heap[T]) Merge(h2 *Heap[T]) *Heap[T]
@@ -319,7 +319,7 @@ func (h *Heap[T]) Merge(h2 *Heap[T]) *Heap[T]
 
 Merge joins two heaps into a new one preserving the original ones.
 
-### func \(\*Heap\[T\]\) [Peek](<https://github.com/esimov/gogu/blob/master/heap/heap.go#L63>)
+### func \(\*Heap\[T\]\) [Peek](<https://github.com/esimov/gogu/blob/master/heap/heap.go#L68>)
 
 ```go
 func (h *Heap[T]) Peek() T
@@ -327,7 +327,7 @@ func (h *Heap[T]) Peek() T
 
 Peek returns the first element of the heap. This can be the minimum or maximum value depending on the heap type.
 
-### func \(\*Heap\[T\]\) [Pop](<https://github.com/esimov/gogu/blob/master/heap/heap.go#L98>)
+### func \(\*Heap\[T\]\) [Pop](<https://github.com/esimov/gogu/blob/master/heap/heap.go#L102>)
 
 ```go
 func (h *Heap[T]) Pop() T
@@ -335,7 +335,7 @@ func (h *Heap[T]) Pop() T
 
 Pop removes the first element from the heap and reorder the existing elements. The removed element is the minimum or maximum depending on the heap type.
 
-### func \(\*Heap\[T\]\) [Push](<https://github.com/esimov/gogu/blob/master/heap/heap.go#L86>)
+### func \(\*Heap\[T\]\) [Push](<https://github.com/esimov/gogu/blob/master/heap/heap.go#L90>)
 
 ```go
 func (h *Heap[T]) Push(val ...T)

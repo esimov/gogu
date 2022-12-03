@@ -185,7 +185,7 @@ func New[T comparable]() *Queue[T]
 
 New creates a new FIFO queue where the items are stored in a plain slice.
 
-### func \(\*Queue\[T\]\) [Clear](<https://github.com/esimov/gogu/blob/master/queue/queue.go#L88>)
+### func \(\*Queue\[T\]\) [Clear](<https://github.com/esimov/gogu/blob/master/queue/queue.go#L95>)
 
 ```go
 func (q *Queue[T]) Clear()
@@ -209,7 +209,7 @@ func (q *Queue[T]) Enqueue(item T)
 
 Enqueue inserts a new element at the end of the queue.
 
-### func \(\*Queue\[T\]\) [Peek](<https://github.com/esimov/gogu/blob/master/queue/queue.go#L51>)
+### func \(\*Queue\[T\]\) [Peek](<https://github.com/esimov/gogu/blob/master/queue/queue.go#L53>)
 
 ```go
 func (q *Queue[T]) Peek() (item T)
@@ -217,7 +217,7 @@ func (q *Queue[T]) Peek() (item T)
 
 Peek returns the first element of the queue without removing it.
 
-### func \(\*Queue\[T\]\) [Search](<https://github.com/esimov/gogu/blob/master/queue/queue.go#L64>)
+### func \(\*Queue\[T\]\) [Search](<https://github.com/esimov/gogu/blob/master/queue/queue.go#L66>)
 
 ```go
 func (q *Queue[T]) Search(item T) bool
@@ -225,7 +225,7 @@ func (q *Queue[T]) Search(item T) bool
 
 Search searches for an element in the queue.
 
-### func \(\*Queue\[T\]\) [Size](<https://github.com/esimov/gogu/blob/master/queue/queue.go#L80>)
+### func \(\*Queue\[T\]\) [Size](<https://github.com/esimov/gogu/blob/master/queue/queue.go#L82>)
 
 ```go
 func (q *Queue[T]) Size() int
