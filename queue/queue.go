@@ -35,28 +35,30 @@ func (q *Queue[T]) Enqueue(item T) {
 // Dequeue retrieves and removes the first element from the queue.
 // The queue size will be decreased by one.
 func (q *Queue[T]) Dequeue() (item T, err error) {
-	if q.Size() == 0 {
+	q.mu.Lock()
+	defer q.mu.Unlock()
+
+	len := q.size()
+	if len == 0 {
 		return item, fmt.Errorf("queue is empty")
 	}
 
-	q.mu.Lock()
 	item = q.items[0]
 	q.items = q.items[1:]
-	q.mu.Unlock()
 
 	return
 }
 
 // Peek returns the first element of the queue without removing it.
 func (q *Queue[T]) Peek() (item T) {
-	len := q.Size()
-
 	q.mu.RLock()
 	defer q.mu.RUnlock()
 
+	len := q.size()
 	if len == 0 {
 		return
 	}
+
 	return q.items[0]
 }
 
@@ -81,6 +83,11 @@ func (q *Queue[T]) Size() int {
 	q.mu.RLock()
 	defer q.mu.RUnlock()
 
+	return q.size()
+}
+
+// size has a local scope only to avoid blocking the thread when trying to acquire the lock.
+func (q *Queue[T]) size() int {
 	return len(q.items)
 }
 

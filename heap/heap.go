@@ -36,6 +36,11 @@ func (h *Heap[T]) Size() int {
 	h.mu.RLock()
 	defer h.mu.RUnlock()
 
+	return h.size()
+}
+
+// size has a local scope only to avoid blocking the thread when trying to acquire the lock.
+func (h *Heap[T]) size() int {
 	return len(h.data)
 }
 
@@ -44,12 +49,12 @@ func (h *Heap[T]) IsEmpty() bool {
 	h.mu.RLock()
 	defer h.mu.RUnlock()
 
-	return h.Size() == 0
+	return h.size() == 0
 }
 
 // Clear removes all the elements from the heap.
 func (h *Heap[T]) Clear() {
-	if h.Size() == 0 {
+	if h.size() == 0 {
 		return
 	}
 
@@ -64,8 +69,7 @@ func (h *Heap[T]) Peek() T {
 	h.mu.RLock()
 	defer h.mu.RUnlock()
 
-	if h.Size() == 0 {
-		h.mu.RUnlock()
+	if h.size() == 0 {
 		var t T
 		return t
 	}
@@ -97,18 +101,17 @@ func (h *Heap[T]) Push(val ...T) {
 // The removed element is the minimum or maximum depending on the heap type.
 func (h *Heap[T]) Pop() T {
 	var val T
-	len := h.Size()
-	if h.Size() == 0 {
+	if h.size() == 0 {
 		return val
 	}
 	val = h.Peek()
 
 	h.mu.Lock()
-	h.data[0] = h.data[len-1]
-	h.data = h.data[:len-1]
+	h.data[0] = h.data[h.size()-1]
+	h.data = h.data[:h.size()-1]
 	h.mu.Unlock()
 
-	h.moveDown(h.Size(), 0)
+	h.moveDown(h.size(), 0)
 
 	return val
 }
@@ -116,7 +119,7 @@ func (h *Heap[T]) Pop() T {
 // Delete removes an element from the heap. It returns false in case the element does not exists.
 // After removal, it reorders the heap structure based on the heap-specific rules.
 func (h *Heap[T]) Delete(val T) (bool, error) {
-	len := h.Size()
+	len := h.size()
 	if len == 0 {
 		return false, fmt.Errorf("heap empty")
 	}
@@ -143,7 +146,7 @@ func (h *Heap[T]) Convert(comp gogu.CompFn[T]) {
 	h.mu.Unlock()
 
 	// Start from bottom-rightmost internal mode and reorder all internal nodes.
-	for i := (h.Size() - 2) / 2; i >= 0; i-- {
+	for i := (h.size() - 2) / 2; i >= 0; i-- {
 		h.moveDown(h.Size(), i)
 	}
 }
@@ -186,11 +189,11 @@ func FromSlice[T comparable](data []T, comp gogu.CompFn[T]) *Heap[T] {
 func (h *Heap[T]) Merge(h2 *Heap[T]) *Heap[T] {
 	newHeap := NewHeap(h.comp)
 
-	for i := 0; i < h.Size(); i++ {
+	for i := 0; i < h.size(); i++ {
 		newHeap.Push(h.data[i])
 	}
 
-	for i := 0; i < h2.Size(); i++ {
+	for i := 0; i < h2.size(); i++ {
 		newHeap.Push(h2.data[i])
 	}
 
@@ -202,11 +205,11 @@ func (h *Heap[T]) Merge(h2 *Heap[T]) *Heap[T] {
 func (h *Heap[T]) Meld(h2 *Heap[T]) *Heap[T] {
 	newHeap := NewHeap(h.comp)
 
-	for i := 0; i < h.Size(); i++ {
+	for i := 0; i < h.size(); i++ {
 		newHeap.Push(h.data[i])
 	}
 
-	for i := 0; i < h2.Size(); i++ {
+	for i := 0; i < h2.size(); i++ {
 		newHeap.Push(h2.data[i])
 	}
 	h.data = nil

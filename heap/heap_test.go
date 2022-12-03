@@ -342,3 +342,19 @@ func TestHeap_Concurrency(t *testing.T) {
 	heap.Clear()
 	assert.Empty(heap.Size())
 }
+
+func TestHeap_Race(t *testing.T) {
+	const count = 10_000
+	heap := NewHeap(func(a, b int) bool { return a < b })
+	for i := 0; i < 64; i++ {
+		go func() {
+			for i := 0; i < count; i++ {
+				heap.Peek()
+			}
+		}()
+	}
+	for i := 0; i < count; i++ {
+		heap.Push(0)
+		heap.Pop()
+	}
+}

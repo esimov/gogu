@@ -176,7 +176,7 @@ func (l *DList[T]) Delete(node *doubleNode[T]) error {
 	return nil
 }
 
-// Shift removes the first node from the list.
+// Shift retrieves and removes the first node from the list.
 func (l *DList[T]) Shift() *doubleNode[T] {
 	head := &l.doubleNode
 	node := l.doubleNode

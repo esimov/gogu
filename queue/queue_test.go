@@ -72,3 +72,19 @@ func ExampleQueue() {
 	// 2
 	// true
 }
+
+func TestQueue_Race(t *testing.T) {
+	const count = 10_000
+	q := New[int]()
+	for i := 0; i < 64; i++ {
+		go func() {
+			for i := 0; i < count; i++ {
+				q.Peek()
+			}
+		}()
+	}
+	for i := 0; i < count; i++ {
+		q.Enqueue(0)
+		q.Dequeue()
+	}
+}

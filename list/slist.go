@@ -134,7 +134,7 @@ func (l *SList[T]) Delete(node *singleNode[T]) error {
 	return nil
 }
 
-// Shift removes the first node from the list.
+// Shift retrieves and removes the first node from the list.
 func (l *SList[T]) Shift() {
 	head := &l.singleNode
 
