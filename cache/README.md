@@ -8,64 +8,6 @@ import "github.com/esimov/gogu/cache"
 
 Package cache implements a basic in memory key\-value storage system using map as storing mechanism. The cache and the cache items also have an expiration time. The cache will be invalidated once the expiration time is reached. On cache initialization a cleanup interval is also required. The scope of the cleanup method is to run at a predefined interval and to remove all the expired cache items.
 
-<details><summary>Example</summary>
-<p>
-
-```go
-{
-	c := New[string, string](DefaultExpiration, 1*time.Minute)
-	item, err := c.Get("foo")
-	fmt.Println(err)
-	fmt.Println(item)
-
-	c.Set("foo", "bar", DefaultExpiration)
-	item, _ = c.Get("foo")
-	fmt.Println(item.Val())
-
-	err = c.Set("foo", "", DefaultExpiration)
-	fmt.Println(err)
-	fmt.Println(c.IsExpired("foo"))
-
-	c.Update("foo", "baz", DefaultExpiration)
-	item, _ = c.Get("foo")
-	fmt.Println(item.Val())
-
-	list := c.List()
-	fmt.Println(len(list))
-
-	c.Flush()
-	fmt.Println(c.Count())
-
-	c.Set("foo", "bar", DefaultExpiration)
-	item, _ = c.Get("foo")
-	fmt.Println(item.Val())
-
-	err = c.Delete("foo")
-	fmt.Println(err)
-	fmt.Println(c.Count())
-
-}
-```
-
-#### Output
-
-```
-item with key 'foo' not found
-<nil>
-bar
-item with key 'foo' already exists. Use the Update method
-false
-baz
-1
-0
-bar
-<nil>
-0
-```
-
-</p>
-</details>
-
 <details><summary>Example (Expiration Time)</summary>
 <p>
 
@@ -127,6 +69,72 @@ bar
 </p>
 </details>
 
+<details><summary>Example (LRU Cache)</summary>
+<p>
+
+```go
+{
+	c, _ := NewLRU[string, string](3)
+	item, available := c.Get("foo")
+	fmt.Println(available)
+
+	c.Add("foo", "bar")
+	item, available = c.Get("foo")
+	fmt.Println(available)
+	fmt.Println(item)
+
+	c.Add("foo2", "bar2")
+	c.Add("foo3", "bar3")
+	c.Add("foo4", "baz")
+
+	fmt.Println(c.Count())
+	fmt.Println()
+
+	oldestKey, oldestValue, oldestAvailable := c.GetOldest()
+	fmt.Println(oldestAvailable)
+	fmt.Println(oldestKey)
+	fmt.Println(oldestValue)
+	fmt.Println()
+
+	youngestKey, youngestValue, youngestAvailable := c.GetYoungest()
+	fmt.Println(youngestAvailable)
+	fmt.Println(youngestKey)
+	fmt.Println(youngestValue)
+	fmt.Println()
+
+	oldestKey, oldestValue, oldestAvailable = c.RemoveOldest()
+	fmt.Println(oldestAvailable)
+	fmt.Println(oldestKey)
+	fmt.Println(oldestValue)
+	fmt.Println()
+
+}
+```
+
+#### Output
+
+```
+false
+true
+bar
+3
+
+true
+foo2
+bar2
+
+true
+foo2
+bar2
+
+true
+foo3
+bar3
+```
+
+</p>
+</details>
+
 ## Index
 
 - [Constants](<#constants>)
@@ -144,6 +152,17 @@ bar
   - [func (c *Cache[T, V]) Update(key T, val V, d time.Duration) error](<#func-cachet-v-update>)
 - [type Item](<#type-item>)
   - [func (it *Item[V]) Val() V](<#func-itemv-val>)
+- [type LRUCache](<#type-lrucache>)
+  - [func NewLRU[K comparable, V any](size int) (*LRUCache[K, V], error)](<#func-newlru>)
+  - [func (c *LRUCache[K, V]) Add(key K, value V) (oldestKey K, oldestValue V, removed bool)](<#func-lrucachek-v-add>)
+  - [func (c *LRUCache[K, V]) Count() int](<#func-lrucachek-v-count>)
+  - [func (c *LRUCache[K, V]) Flush()](<#func-lrucachek-v-flush>)
+  - [func (c *LRUCache[K, V]) Get(key K) (value V, available bool)](<#func-lrucachek-v-get>)
+  - [func (c *LRUCache[K, V]) GetOldest() (key K, value V, available bool)](<#func-lrucachek-v-getoldest>)
+  - [func (c *LRUCache[K, V]) GetYoungest() (key K, value V, available bool)](<#func-lrucachek-v-getyoungest>)
+  - [func (c *LRUCache[K, V]) Remove(key K) (value V, removed bool)](<#func-lrucachek-v-remove>)
+  - [func (c *LRUCache[K, V]) RemoveOldest() (key K, value V, removed bool)](<#func-lrucachek-v-removeoldest>)
+  - [func (c *LRUCache[K, V]) RemoveYoungest() (key K, value V, removed bool)](<#func-lrucachek-v-removeyoungest>)
 
 
 ## Constants
@@ -164,6 +183,64 @@ type Cache[T ~string, V any] struct {
     // contains filtered or unexported fields
 }
 ```
+
+<details><summary>Example</summary>
+<p>
+
+```go
+{
+	c := New[string, string](DefaultExpiration, 1*time.Minute)
+	item, err := c.Get("foo")
+	fmt.Println(err)
+	fmt.Println(item)
+
+	c.Set("foo", "bar", DefaultExpiration)
+	item, _ = c.Get("foo")
+	fmt.Println(item.Val())
+
+	err = c.Set("foo", "", DefaultExpiration)
+	fmt.Println(err)
+	fmt.Println(c.IsExpired("foo"))
+
+	c.Update("foo", "baz", DefaultExpiration)
+	item, _ = c.Get("foo")
+	fmt.Println(item.Val())
+
+	list := c.List()
+	fmt.Println(len(list))
+
+	c.Flush()
+	fmt.Println(c.Count())
+
+	c.Set("foo", "bar", DefaultExpiration)
+	item, _ = c.Get("foo")
+	fmt.Println(item.Val())
+
+	err = c.Delete("foo")
+	fmt.Println(err)
+	fmt.Println(c.Count())
+
+}
+```
+
+#### Output
+
+```
+item with key 'foo' not found
+<nil>
+bar
+item with key 'foo' already exists. Use the Update method
+false
+baz
+1
+0
+bar
+<nil>
+0
+```
+
+</p>
+</details>
 
 ### func [New](<https://github.com/esimov/gogu/blob/master/cache/cache.go#L58>)
 
@@ -270,6 +347,96 @@ func (it *Item[V]) Val() V
 ```
 
 Val returns the effective value of the cache item.
+
+## type [LRUCache](<https://github.com/esimov/gogu/blob/master/cache/lrucache.go#L106-L110>)
+
+LRUCache implements a fixed size LRU cache using a map and a double linked list
+
+```go
+type LRUCache[K comparable, V any] struct {
+    // contains filtered or unexported fields
+}
+```
+
+### func [NewLRU](<https://github.com/esimov/gogu/blob/master/cache/lrucache.go#L113>)
+
+```go
+func NewLRU[K comparable, V any](size int) (*LRUCache[K, V], error)
+```
+
+NewLRU initializes a new LRU cache
+
+### func \(\*LRUCache\[K, V\]\) [Add](<https://github.com/esimov/gogu/blob/master/cache/lrucache.go#L128>)
+
+```go
+func (c *LRUCache[K, V]) Add(key K, value V) (oldestKey K, oldestValue V, removed bool)
+```
+
+Add adds a value to the cache. If the oldest value is evicted, this value and they key for it is returned.
+
+### func \(\*LRUCache\[K, V\]\) [Count](<https://github.com/esimov/gogu/blob/master/cache/lrucache.go#L148>)
+
+```go
+func (c *LRUCache[K, V]) Count() int
+```
+
+Count return the number of the current values from the cache. It should be LE then the initial size of the cache
+
+### func \(\*LRUCache\[K, V\]\) [Flush](<https://github.com/esimov/gogu/blob/master/cache/lrucache.go#L210>)
+
+```go
+func (c *LRUCache[K, V]) Flush()
+```
+
+Flush clears all values from the cache
+
+### func \(\*LRUCache\[K, V\]\) [Get](<https://github.com/esimov/gogu/blob/master/cache/lrucache.go#L163>)
+
+```go
+func (c *LRUCache[K, V]) Get(key K) (value V, available bool)
+```
+
+Get return the element for the key if the element is present in the cache
+
+### func \(\*LRUCache\[K, V\]\) [GetOldest](<https://github.com/esimov/gogu/blob/master/cache/lrucache.go#L153>)
+
+```go
+func (c *LRUCache[K, V]) GetOldest() (key K, value V, available bool)
+```
+
+GetOldest returns the oldest key/value pair from the cache if the cache has any values
+
+### func \(\*LRUCache\[K, V\]\) [GetYoungest](<https://github.com/esimov/gogu/blob/master/cache/lrucache.go#L173>)
+
+```go
+func (c *LRUCache[K, V]) GetYoungest() (key K, value V, available bool)
+```
+
+GetYoungest returns the youngest key/value pair from the cache if the cache has any values
+
+### func \(\*LRUCache\[K, V\]\) [Remove](<https://github.com/esimov/gogu/blob/master/cache/lrucache.go#L190>)
+
+```go
+func (c *LRUCache[K, V]) Remove(key K) (value V, removed bool)
+```
+
+Remove removes an element form the cache denoted by the key. The value removed is returned
+
+### func \(\*LRUCache\[K, V\]\) [RemoveOldest](<https://github.com/esimov/gogu/blob/master/cache/lrucache.go#L181>)
+
+```go
+func (c *LRUCache[K, V]) RemoveOldest() (key K, value V, removed bool)
+```
+
+RemoveOldest removes the oldest value from the cache. It returns he key/value pair which was removed
+
+### func \(\*LRUCache\[K, V\]\) [RemoveYoungest](<https://github.com/esimov/gogu/blob/master/cache/lrucache.go#L201>)
+
+```go
+func (c *LRUCache[K, V]) RemoveYoungest() (key K, value V, removed bool)
+```
+
+RemoveYoungest removes the youngest value from the cache. The key/value pair removed is returned
 
 
 
