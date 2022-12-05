@@ -25,26 +25,25 @@ func (s *Stack[T]) Push(item T) {
 // Pop retrieves and removes the last element pushed into the stack.
 // The stack size will be decreased by one.
 func (s *Stack[T]) Pop() (item T) {
-	if s.Size() == 0 {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	if s.size() == 0 {
 		return
 	}
-	len := s.Size()
 
-	s.mu.Lock()
-	item = s.items[len-1]
-	s.items = s.items[:len-1]
-	s.mu.Unlock()
+	item = s.items[s.size()-1]
+	s.items = s.items[:s.size()-1]
 
 	return
 }
 
 // Peek returns the last element of the stack without removing it.
 func (s *Stack[T]) Peek() (item T) {
-	len := s.Size()
-
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
+	len := s.size()
 	if len == 0 {
 		return
 	}
@@ -53,16 +52,14 @@ func (s *Stack[T]) Peek() (item T) {
 
 // Search searches for an element in the stack.
 func (s *Stack[T]) Search(item T) bool {
-	len := s.Size()
-
 	s.mu.RLock()
-	for i := 0; i < len; i++ {
+	defer s.mu.RUnlock()
+
+	for i := 0; i < s.size(); i++ {
 		if s.items[i] == item {
-			s.mu.RUnlock()
 			return true
 		}
 	}
-	s.mu.RUnlock()
 
 	return false
 }
@@ -72,5 +69,10 @@ func (s *Stack[T]) Size() int {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
+	return s.size()
+}
+
+// size has a local scope only to avoid blocking the thread when trying to acquire the lock.
+func (s *Stack[T]) size() int {
 	return len(s.items)
 }

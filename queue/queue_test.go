@@ -74,12 +74,15 @@ func ExampleQueue() {
 }
 
 func TestQueue_Race(t *testing.T) {
-	const count = 10_000
+	const count = 1000
 	q := New[int]()
 	for i := 0; i < 64; i++ {
 		go func() {
 			for i := 0; i < count; i++ {
+				q.Enqueue(i)
 				q.Peek()
+				q.Size()
+				q.Search(10)
 			}
 		}()
 	}

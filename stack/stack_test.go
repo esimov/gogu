@@ -11,21 +11,21 @@ import (
 func TestStack(t *testing.T) {
 	assert := assert.New(t)
 
-	s := New[int]()
-	s.Push(1)
-	assert.Equal(1, s.Peek())
-	s.Push(2)
-	assert.Equal(2, s.Peek())
-	s.Pop()
-	assert.Equal(1, s.Peek())
-	assert.True(s.Search(1))
-	s.Pop()
-	assert.False(s.Search(1))
-	assert.Empty(s.Size())
+	stack := New[int]()
+	stack.Push(1)
+	assert.Equal(1, stack.Peek())
+	stack.Push(2)
+	assert.Equal(2, stack.Peek())
+	stack.Pop()
+	assert.Equal(1, stack.Peek())
+	assert.True(stack.Search(1))
+	stack.Pop()
+	assert.False(stack.Search(1))
+	assert.Empty(stack.Size())
 
-	s.Push(1)
-	s.Pop()
-	assert.False(s.Search(1))
+	stack.Push(1)
+	stack.Pop()
+	assert.False(stack.Search(1))
 }
 
 func TestStack_Concurrency(t *testing.T) {
@@ -52,16 +52,16 @@ func TestStack_Concurrency(t *testing.T) {
 }
 
 func Example() {
-	l := New[string]()
+	stack := New[string]()
 
-	l.Push("foo")
-	fmt.Println(l.Size())
-	fmt.Println(l.Peek())
-	l.Push("bar")
+	stack.Push("foo")
+	fmt.Println(stack.Size())
+	fmt.Println(stack.Peek())
+	stack.Push("bar")
 
-	fmt.Println(l.Pop())
-	fmt.Println(l.Search("foo"))
-	fmt.Println(l.Peek())
+	fmt.Println(stack.Pop())
+	fmt.Println(stack.Search("foo"))
+	fmt.Println(stack.Peek())
 
 	// Output:
 	// 1
@@ -69,4 +69,23 @@ func Example() {
 	// bar
 	// true
 	// foo
+}
+
+func TestStack_Race(t *testing.T) {
+	const count = 1000
+	stack := New[int]()
+	for i := 0; i < 64; i++ {
+		go func() {
+			for i := 0; i < count; i++ {
+				stack.Push(i)
+				stack.Peek()
+				stack.Size()
+				stack.Search(10)
+			}
+		}()
+	}
+	for i := 0; i < count; i++ {
+		stack.Push(0)
+		stack.Pop()
+	}
 }

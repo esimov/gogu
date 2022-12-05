@@ -38,8 +38,7 @@ func (q *Queue[T]) Dequeue() (item T, err error) {
 	q.mu.Lock()
 	defer q.mu.Unlock()
 
-	len := q.size()
-	if len == 0 {
+	if q.size() == 0 {
 		return item, fmt.Errorf("queue is empty")
 	}
 
@@ -54,8 +53,7 @@ func (q *Queue[T]) Peek() (item T) {
 	q.mu.RLock()
 	defer q.mu.RUnlock()
 
-	len := q.size()
-	if len == 0 {
+	if q.size() == 0 {
 		return
 	}
 
@@ -64,16 +62,14 @@ func (q *Queue[T]) Peek() (item T) {
 
 // Search searches for an element in the queue.
 func (q *Queue[T]) Search(item T) bool {
-	len := q.Size()
-
 	q.mu.RLock()
-	for i := 0; i < len; i++ {
+	defer q.mu.RUnlock()
+
+	for i := 0; i < q.size(); i++ {
 		if q.items[i] == item {
-			q.mu.RUnlock()
 			return true
 		}
 	}
-	q.mu.RUnlock()
 
 	return false
 }
@@ -94,7 +90,6 @@ func (q *Queue[T]) size() int {
 // Clear erase all the items from the queue.
 func (q *Queue[T]) Clear() {
 	q.mu.Lock()
-	defer q.mu.Unlock()
-
 	q.items = nil
+	q.mu.Unlock()
 }

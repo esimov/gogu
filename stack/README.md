@@ -17,16 +17,16 @@ Package stack Package queue implements a concurrent safe LIFO \(Last\-In\-First\
 
 ```go
 {
-	l := New[string]()
+	stack := New[string]()
 
-	l.Push("foo")
-	fmt.Println(l.Size())
-	fmt.Println(l.Peek())
-	l.Push("bar")
+	stack.Push("foo")
+	fmt.Println(stack.Size())
+	fmt.Println(stack.Peek())
+	stack.Push("bar")
 
-	fmt.Println(l.Pop())
-	fmt.Println(l.Search("foo"))
-	fmt.Println(l.Peek())
+	fmt.Println(stack.Pop())
+	fmt.Println(stack.Search("foo"))
+	fmt.Println(stack.Peek())
 
 }
 ```
@@ -195,7 +195,7 @@ func (s *Stack[T]) Push(item T)
 
 Push inserts a new element at the end of the stack.
 
-### func \(\*Stack\[T\]\) [Search](<https://github.com/esimov/gogu/blob/master/stack/stack.go#L55>)
+### func \(\*Stack\[T\]\) [Search](<https://github.com/esimov/gogu/blob/master/stack/stack.go#L54>)
 
 ```go
 func (s *Stack[T]) Search(item T) bool
@@ -203,7 +203,7 @@ func (s *Stack[T]) Search(item T) bool
 
 Search searches for an element in the stack.
 
-### func \(\*Stack\[T\]\) [Size](<https://github.com/esimov/gogu/blob/master/stack/stack.go#L71>)
+### func \(\*Stack\[T\]\) [Size](<https://github.com/esimov/gogu/blob/master/stack/stack.go#L68>)
 
 ```go
 func (s *Stack[T]) Size() int

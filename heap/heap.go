@@ -73,6 +73,7 @@ func (h *Heap[T]) Peek() T {
 	return h.peek()
 }
 
+// peek has a local scope only to avoid blocking the thread when trying to acquire the lock.
 func (h *Heap[T]) peek() T {
 	if h.size() == 0 {
 		var t T
