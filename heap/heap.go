@@ -1,6 +1,7 @@
 // Package heap provides a thread-safe implementation of the binary heap data structure.
 // A common implementation of the heap is the binary tree, where each node of the subtree
 // satisfies the heap property:
+//
 // each node of the subtree is greater or equal then the parent node in case of min heap,
 // and less or equal than the parent node in case of max heap.
 // The conditional operator used on the heap initialization defines the heap type.
@@ -54,7 +55,7 @@ func (h *Heap[T]) IsEmpty() bool {
 
 // Clear removes all the elements from the heap.
 func (h *Heap[T]) Clear() {
-	if h.size() == 0 {
+	if h.Size() == 0 {
 		return
 	}
 
@@ -69,6 +70,10 @@ func (h *Heap[T]) Peek() T {
 	h.mu.RLock()
 	defer h.mu.RUnlock()
 
+	return h.peek()
+}
+
+func (h *Heap[T]) peek() T {
 	if h.size() == 0 {
 		var t T
 		return t
@@ -91,26 +96,26 @@ func (h *Heap[T]) Push(val ...T) {
 	for _, v := range val {
 		h.mu.Lock()
 		h.data = append(h.data, v)
-		h.mu.Unlock()
 
-		h.moveUp(h.Size() - 1)
+		h.moveUp(h.size() - 1)
+		h.mu.Unlock()
 	}
 }
 
 // Pop removes the first element from the heap and reorder the existing elements.
 // The removed element is the minimum or maximum depending on the heap type.
 func (h *Heap[T]) Pop() T {
+	h.mu.Lock()
+	defer h.mu.Unlock()
+
 	var val T
 	if h.size() == 0 {
 		return val
 	}
-	val = h.Peek()
+	val = h.peek()
 
-	h.mu.Lock()
 	h.data[0] = h.data[h.size()-1]
 	h.data = h.data[:h.size()-1]
-	h.mu.Unlock()
-
 	h.moveDown(h.size(), 0)
 
 	return val
@@ -119,7 +124,7 @@ func (h *Heap[T]) Pop() T {
 // Delete removes an element from the heap. It returns false in case the element does not exists.
 // After removal, it reorders the heap structure based on the heap-specific rules.
 func (h *Heap[T]) Delete(val T) (bool, error) {
-	len := h.size()
+	len := h.Size()
 	if len == 0 {
 		return false, fmt.Errorf("heap empty")
 	}
@@ -132,9 +137,9 @@ func (h *Heap[T]) Delete(val T) (bool, error) {
 	h.mu.Lock()
 	swap(h.data, idx, len-1)
 	h.data = h.data[:len-1]
-	h.mu.Unlock()
 
 	h.moveDown(len, 0)
+	h.mu.Unlock()
 
 	return true, nil
 }
@@ -142,12 +147,12 @@ func (h *Heap[T]) Delete(val T) (bool, error) {
 // Convert converts a min heap to max heap and vice versa.
 func (h *Heap[T]) Convert(comp gogu.CompFn[T]) {
 	h.mu.Lock()
+	defer h.mu.Unlock()
 	h.comp = comp
-	h.mu.Unlock()
 
 	// Start from bottom-rightmost internal mode and reorder all internal nodes.
 	for i := (h.size() - 2) / 2; i >= 0; i-- {
-		h.moveDown(h.Size(), i)
+		h.moveDown(h.size(), i)
 	}
 }
 
@@ -224,7 +229,6 @@ func (h *Heap[T]) moveDown(n, i int) {
 	left := h.leftChild(i)
 	right := h.rightChild(i)
 
-	h.mu.Lock()
 	current := i
 
 	if left < n && h.comp(h.data[left], h.data[current]) {
@@ -237,24 +241,18 @@ func (h *Heap[T]) moveDown(n, i int) {
 
 	if current != i {
 		swap(h.data, i, current)
-		h.mu.Unlock()
-
 		h.moveDown(n, current)
 		return
 	}
-	h.mu.Unlock()
 }
 
 // moveUp moves the element from index i up to its
 // correct position in the heap following the heap rules.
 func (h *Heap[T]) moveUp(i int) {
 	for {
-		h.mu.RLock()
 		if !h.comp(h.data[i], h.data[h.parent(i)]) {
-			h.mu.RUnlock()
 			break
 		}
-		h.mu.RUnlock()
 
 		swap(h.data, i, h.parent(i))
 		i = h.parent(i)
@@ -263,25 +261,16 @@ func (h *Heap[T]) moveUp(i int) {
 
 // leftChild returns the index of the left child of node at index i.
 func (h *Heap[T]) leftChild(i int) int {
-	h.mu.RLock()
-	defer h.mu.RUnlock()
-
 	return 2*i + 1
 }
 
 // rightChild returns the index of the right child of node at index i.
 func (h *Heap[T]) rightChild(i int) int {
-	h.mu.RLock()
-	defer h.mu.RUnlock()
-
 	return 2*i + 2
 }
 
 // parent returns the index of the child node parent at index i.
 func (h *Heap[T]) parent(i int) int {
-	h.mu.RLock()
-	defer h.mu.RUnlock()
-
 	return (i - 1) / 2
 }
 
@@ -292,13 +281,13 @@ func swap[T any](data []T, i, j int) {
 
 func (h *Heap[T]) getIndex(slice []T, val T) (int, bool) {
 	h.mu.RLock()
-	defer h.mu.RUnlock()
-
 	for i := 0; i < len(slice); i++ {
 		if slice[i] == val {
+			h.mu.RUnlock()
 			return i, true
 		}
 	}
+	h.mu.RUnlock()
 
 	return -1, false
 }

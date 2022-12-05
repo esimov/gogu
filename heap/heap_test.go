@@ -106,12 +106,13 @@ func TestHeap_MaxHeap(t *testing.T) {
 	heap.Clear()
 	assert.Len(heap.GetValues(), 0)
 
-	input := []int{20, 18, 10, 9, 9, 8, 6, 5, 3}
+	input := []int{18, 20, 9, 6, 5, 10, 9, 8, 3}
+	expected := []int{20, 18, 10, 9, 9, 8, 6, 5, 3}
 	heap.Push(input...)
 
 	for idx := range heap.GetValues() {
 		val := heap.Pop()
-		assert.Equal(val, input[idx])
+		assert.Equal(val, expected[idx])
 	}
 }
 
@@ -349,12 +350,18 @@ func TestHeap_Race(t *testing.T) {
 	for i := 0; i < 64; i++ {
 		go func() {
 			for i := 0; i < count; i++ {
+				heap.Push(0)
 				heap.Peek()
+				heap.Clear()
+				heap.IsEmpty()
+				heap.Convert(func(a, b int) bool { return a < b })
 			}
 		}()
 	}
 	for i := 0; i < count; i++ {
 		heap.Push(0)
 		heap.Pop()
+		heap.Clear()
+		heap.IsEmpty()
 	}
 }
