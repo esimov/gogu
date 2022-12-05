@@ -49,7 +49,7 @@ func (s *LStack[T]) Pop() (item T) {
 		s.n--
 	}
 
-	return s.list.Data(node)
+	return s.list.Val(node)
 }
 
 // Peek returns the last element of the stack without removing it.

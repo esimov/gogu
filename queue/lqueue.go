@@ -39,7 +39,7 @@ func (l *LQueue[T]) Dequeue() (item T) {
 
 	node := l.list.Shift()
 	l.n--
-	return l.list.Data(node)
+	return l.list.Val(node)
 }
 
 // Peek returns the first element of the queue. It does not remove it.

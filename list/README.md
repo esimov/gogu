@@ -6,7 +6,7 @@
 import "github.com/esimov/gogu/list"
 ```
 
-Package list provides an implementation of the linked list data structure. It comes with two version: singly and doubly linked list. The singly linked list version has a data element storing the node value and a pointer to the next element of the list. The doubly linked list version has an additional pointer to previous node.
+Package list provides an implementation of the linked list value structure. It comes with two version: singly and doubly linked list. The singly linked list version has a value element storing the node value and a pointer to the next element of the list. The doubly linked list version has an additional pointer to previous node.
 
 <details><summary>Example (Doubly Linked List)</summary>
 <p>
@@ -48,18 +48,18 @@ Package list provides an implementation of the linked list data structure. It co
 
 	list.Replace(7, 8)
 	item, _ = list.Find(8)
-	fmt.Println(item.data)
+	fmt.Println(item.Value)
 
 	list.Replace(8, 7)
 	item, _ = list.Find(8)
 
 	list.Unshift(1)
 	n, _ := list.Find(1)
-	fmt.Println(n.data)
+	fmt.Println(n.Value)
 
 	list.Append(8)
 	item, _ = list.Find(8)
-	fmt.Println(item.data)
+	fmt.Println(item.Value)
 
 	last, _ := list.Find(8)
 	list.InsertAfter(last, 9)
@@ -144,10 +144,10 @@ requested node does not exists
 
 	list.Replace(7, 8)
 	item, _ = list.Find(8)
-	fmt.Println(item.data)
+	fmt.Println(item.Value)
 
 	item, _ = list.Find(8)
-	fmt.Println(item.data)
+	fmt.Println(item.Value)
 
 }
 ```
@@ -170,32 +170,34 @@ requested node does not exists
 ## Index
 
 - [type DList](<#type-dlist>)
-  - [func InitDList[T comparable](data T) *DList[T]](<#func-initdlist>)
-  - [func (l *DList[T]) Append(data T)](<#func-dlistt-append>)
+  - [func InitDList[T comparable](value T) *DList[T]](<#func-initdlist>)
+  - [func (l *DList[T]) Append(value T)](<#func-dlistt-append>)
   - [func (l *DList[T]) Clear()](<#func-dlistt-clear>)
-  - [func (l *DList[T]) Data(node *doubleNode[T]) T](<#func-dlistt-data>)
-  - [func (l *DList[T]) Delete(node *doubleNode[T]) error](<#func-dlistt-delete>)
-  - [func (l *DList[T]) Each(fn func(data T))](<#func-dlistt-each>)
-  - [func (l *DList[T]) Find(val T) (*doubleNode[T], bool)](<#func-dlistt-find>)
+  - [func (l *DList[T]) Delete(node *DoubleNode[T]) error](<#func-dlistt-delete>)
+  - [func (l *DList[T]) Each(fn func(value T))](<#func-dlistt-each>)
+  - [func (l *DList[T]) Find(val T) (*DoubleNode[T], bool)](<#func-dlistt-find>)
   - [func (l *DList[T]) First() T](<#func-dlistt-first>)
-  - [func (l *DList[T]) InsertAfter(node *doubleNode[T], data T) error](<#func-dlistt-insertafter>)
-  - [func (l *DList[T]) InsertBefore(node *doubleNode[T], data T) error](<#func-dlistt-insertbefore>)
+  - [func (l *DList[T]) InsertAfter(node *DoubleNode[T], value T) error](<#func-dlistt-insertafter>)
+  - [func (l *DList[T]) InsertBefore(node *DoubleNode[T], value T) error](<#func-dlistt-insertbefore>)
   - [func (l *DList[T]) Last() T](<#func-dlistt-last>)
-  - [func (l *DList[T]) Pop() *doubleNode[T]](<#func-dlistt-pop>)
+  - [func (l *DList[T]) Pop() *DoubleNode[T]](<#func-dlistt-pop>)
   - [func (l *DList[T]) Replace(oldVal, newVal T) error](<#func-dlistt-replace>)
-  - [func (l *DList[T]) Shift() *doubleNode[T]](<#func-dlistt-shift>)
-  - [func (l *DList[T]) Unshift(data T)](<#func-dlistt-unshift>)
+  - [func (l *DList[T]) Shift() *DoubleNode[T]](<#func-dlistt-shift>)
+  - [func (l *DList[T]) Unshift(value T)](<#func-dlistt-unshift>)
+  - [func (l *DList[T]) Val(node *DoubleNode[T]) T](<#func-dlistt-val>)
+- [type DoubleNode](<#type-doublenode>)
 - [type SList](<#type-slist>)
-  - [func Init[T comparable](data T) *SList[T]](<#func-init>)
-  - [func (l *SList[T]) Append(data T)](<#func-slistt-append>)
-  - [func (l *SList[T]) Delete(node *singleNode[T]) error](<#func-slistt-delete>)
-  - [func (l *SList[T]) Each(fn func(data T))](<#func-slistt-each>)
-  - [func (l *SList[T]) Find(val T) (*singleNode[T], bool)](<#func-slistt-find>)
-  - [func (l *SList[T]) InsertAfter(prev *singleNode[T], data T) error](<#func-slistt-insertafter>)
+  - [func Init[T comparable](value T) *SList[T]](<#func-init>)
+  - [func (l *SList[T]) Append(value T)](<#func-slistt-append>)
+  - [func (l *SList[T]) Delete(node *SingleNode[T]) error](<#func-slistt-delete>)
+  - [func (l *SList[T]) Each(fn func(value T))](<#func-slistt-each>)
+  - [func (l *SList[T]) Find(val T) (*SingleNode[T], bool)](<#func-slistt-find>)
+  - [func (l *SList[T]) InsertAfter(prev *SingleNode[T], value T) error](<#func-slistt-insertafter>)
   - [func (l *SList[T]) Pop()](<#func-slistt-pop>)
   - [func (l *SList[T]) Replace(oldVal, newVal T) error](<#func-slistt-replace>)
   - [func (l *SList[T]) Shift()](<#func-slistt-shift>)
-  - [func (l *SList[T]) Unshift(data T)](<#func-slistt-unshift>)
+  - [func (l *SList[T]) Unshift(value T)](<#func-slistt-unshift>)
+- [type SingleNode](<#type-singlenode>)
 
 
 ## type [DList](<https://github.com/esimov/gogu/blob/master/list/dlist.go#L20-L22>)
@@ -211,7 +213,7 @@ type DList[T comparable] struct {
 ### func [InitDList](<https://github.com/esimov/gogu/blob/master/list/dlist.go#L35>)
 
 ```go
-func InitDList[T comparable](data T) *DList[T]
+func InitDList[T comparable](value T) *DList[T]
 ```
 
 InitDList initializes a doubly linked list with one node. Because this is the only node in the list, its next and prev pointers are nil.
@@ -219,7 +221,7 @@ InitDList initializes a doubly linked list with one node. Because this is the on
 ### func \(\*DList\[T\]\) [Append](<https://github.com/esimov/gogu/blob/master/list/dlist.go#L54>)
 
 ```go
-func (l *DList[T]) Append(data T)
+func (l *DList[T]) Append(value T)
 ```
 
 Append inserts a new node at the end of the doubly linked list.
@@ -232,18 +234,10 @@ func (l *DList[T]) Clear()
 
 Clear deletes all the nodes from the list.
 
-### func \(\*DList\[T\]\) [Data](<https://github.com/esimov/gogu/blob/master/list/dlist.go#L276>)
-
-```go
-func (l *DList[T]) Data(node *doubleNode[T]) T
-```
-
-Data retrieves the node value.
-
 ### func \(\*DList\[T\]\) [Delete](<https://github.com/esimov/gogu/blob/master/list/dlist.go#L147>)
 
 ```go
-func (l *DList[T]) Delete(node *doubleNode[T]) error
+func (l *DList[T]) Delete(node *DoubleNode[T]) error
 ```
 
 Delete removes the specified node from the list.
@@ -251,15 +245,15 @@ Delete removes the specified node from the list.
 ### func \(\*DList\[T\]\) [Each](<https://github.com/esimov/gogu/blob/master/list/dlist.go#L261>)
 
 ```go
-func (l *DList[T]) Each(fn func(data T))
+func (l *DList[T]) Each(fn func(value T))
 ```
 
-Each iterates over the elements of the linked list and invokes the callback function having as parameter the nodes' data.
+Each iterates over the elements of the linked list and invokes the callback function having as parameter the nodes' value.
 
 ### func \(\*DList\[T\]\) [Find](<https://github.com/esimov/gogu/blob/master/list/dlist.go#L220>)
 
 ```go
-func (l *DList[T]) Find(val T) (*doubleNode[T], bool)
+func (l *DList[T]) Find(val T) (*DoubleNode[T], bool)
 ```
 
 Find searches for a node element in the linked list. It returns the node in case the element is found otherwise nil.
@@ -275,7 +269,7 @@ First retrieves the first element of the doubly linked list.
 ### func \(\*DList\[T\]\) [InsertAfter](<https://github.com/esimov/gogu/blob/master/list/dlist.go#L101>)
 
 ```go
-func (l *DList[T]) InsertAfter(node *doubleNode[T], data T) error
+func (l *DList[T]) InsertAfter(node *DoubleNode[T], value T) error
 ```
 
 InsertAfter inserts a new node after the existing node. It returns an error in case the requested node does not exists.
@@ -283,7 +277,7 @@ InsertAfter inserts a new node after the existing node. It returns an error in c
 ### func \(\*DList\[T\]\) [InsertBefore](<https://github.com/esimov/gogu/blob/master/list/dlist.go#L73>)
 
 ```go
-func (l *DList[T]) InsertBefore(node *doubleNode[T], data T) error
+func (l *DList[T]) InsertBefore(node *DoubleNode[T], value T) error
 ```
 
 InsertBefore inserts a new node before the current node. It returns an error in case the requested node does not exists.
@@ -299,7 +293,7 @@ Last retrieves the last element of the doubly linked list.
 ### func \(\*DList\[T\]\) [Pop](<https://github.com/esimov/gogu/blob/master/list/dlist.go#L200>)
 
 ```go
-func (l *DList[T]) Pop() *doubleNode[T]
+func (l *DList[T]) Pop() *DoubleNode[T]
 ```
 
 Pop removes the last node from the list.
@@ -315,18 +309,37 @@ Replace replaces a node's value with the new one. It returns an error in case th
 ### func \(\*DList\[T\]\) [Shift](<https://github.com/esimov/gogu/blob/master/list/dlist.go#L180>)
 
 ```go
-func (l *DList[T]) Shift() *doubleNode[T]
+func (l *DList[T]) Shift() *DoubleNode[T]
 ```
 
-Shift removes the first node from the list.
+Shift retrieves and removes the first node from the list.
 
 ### func \(\*DList\[T\]\) [Unshift](<https://github.com/esimov/gogu/blob/master/list/dlist.go#L42>)
 
 ```go
-func (l *DList[T]) Unshift(data T)
+func (l *DList[T]) Unshift(value T)
 ```
 
 Unshift inserts a new node at the beginning of the doubly linked list.
+
+### func \(\*DList\[T\]\) [Val](<https://github.com/esimov/gogu/blob/master/list/dlist.go#L276>)
+
+```go
+func (l *DList[T]) Val(node *DoubleNode[T]) T
+```
+
+Val retrieves the node value.
+
+## type [DoubleNode](<https://github.com/esimov/gogu/blob/master/list/dlist.go#L13-L17>)
+
+DoubleNode holds an additional prev pointer to the node before.
+
+```go
+type DoubleNode[T comparable] struct {
+    Value T
+    // contains filtered or unexported fields
+}
+```
 
 ## type [SList](<https://github.com/esimov/gogu/blob/master/list/slist.go#L14-L16>)
 
@@ -341,7 +354,7 @@ type SList[T comparable] struct {
 ### func [Init](<https://github.com/esimov/gogu/blob/master/list/slist.go#L29>)
 
 ```go
-func Init[T comparable](data T) *SList[T]
+func Init[T comparable](value T) *SList[T]
 ```
 
 Init initializes a new singly linked list with one node. Because this is the only node in the list its next pointer will be nil.
@@ -349,7 +362,7 @@ Init initializes a new singly linked list with one node. Because this is the onl
 ### func \(\*SList\[T\]\) [Append](<https://github.com/esimov/gogu/blob/master/list/slist.go#L45>)
 
 ```go
-func (l *SList[T]) Append(data T)
+func (l *SList[T]) Append(value T)
 ```
 
 Append inserts a new node at the end of the list.
@@ -357,7 +370,7 @@ Append inserts a new node at the end of the list.
 ### func \(\*SList\[T\]\) [Delete](<https://github.com/esimov/gogu/blob/master/list/slist.go#L104>)
 
 ```go
-func (l *SList[T]) Delete(node *singleNode[T]) error
+func (l *SList[T]) Delete(node *SingleNode[T]) error
 ```
 
 Delete removes the specified node from the list.
@@ -365,15 +378,15 @@ Delete removes the specified node from the list.
 ### func \(\*SList\[T\]\) [Each](<https://github.com/esimov/gogu/blob/master/list/slist.go#L182>)
 
 ```go
-func (l *SList[T]) Each(fn func(data T))
+func (l *SList[T]) Each(fn func(value T))
 ```
 
-Each iterates over the elements of the linked list and invokes the callback function, having as parameter the nodes' data.
+Each iterates over the elements of the linked list and invokes the callback function, having as parameter the nodes' value.
 
 ### func \(\*SList\[T\]\) [Find](<https://github.com/esimov/gogu/blob/master/list/slist.go#L164>)
 
 ```go
-func (l *SList[T]) Find(val T) (*singleNode[T], bool)
+func (l *SList[T]) Find(val T) (*SingleNode[T], bool)
 ```
 
 Find search for a node element in the linked list. It returns the node in case the element is found otherwise nil.
@@ -381,7 +394,7 @@ Find search for a node element in the linked list. It returns the node in case t
 ### func \(\*SList\[T\]\) [InsertAfter](<https://github.com/esimov/gogu/blob/master/list/slist.go#L63>)
 
 ```go
-func (l *SList[T]) InsertAfter(prev *singleNode[T], data T) error
+func (l *SList[T]) InsertAfter(prev *SingleNode[T], value T) error
 ```
 
 InsertAfter inserts a new node after the current node. It returns an error in case the requested node does not exists.
@@ -408,15 +421,26 @@ Replace replaces a node's value with a new one. It returns an error in case the 
 func (l *SList[T]) Shift()
 ```
 
-Shift removes the first node from the list.
+Shift retrieves and removes the first node from the list.
 
 ### func \(\*SList\[T\]\) [Unshift](<https://github.com/esimov/gogu/blob/master/list/slist.go#L36>)
 
 ```go
-func (l *SList[T]) Unshift(data T)
+func (l *SList[T]) Unshift(value T)
 ```
 
 Unshift inserts a new node at the beginning of the list.
+
+## type [SingleNode](<https://github.com/esimov/gogu/blob/master/list/slist.go#L8-L11>)
+
+SingleNode has two components: the value and a pointer to the next node of the list.
+
+```go
+type SingleNode[T comparable] struct {
+    Value T
+    // contains filtered or unexported fields
+}
+```
 
 
 

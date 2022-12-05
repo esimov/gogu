@@ -11,19 +11,19 @@ func TestSinglyLinkedList(t *testing.T) {
 	assert := assert.New(t)
 
 	list := Init(1)
-	assert.Equal(1, list.data)
+	assert.Equal(1, list.Value)
 	// cannot delete the first node if there is only one item in the list.
 	list.Pop()
-	err := list.Delete(&list.singleNode)
+	err := list.Delete(&list.SingleNode)
 	assert.Error(err)
 
 	list.Append(2)
-	err = list.Delete(&list.singleNode) // delete first node
+	err = list.Delete(&list.SingleNode) // delete first node
 	assert.NoError(err)
-	assert.Equal(2, list.singleNode.data)
+	assert.Equal(2, list.SingleNode.Value)
 
 	list.Unshift(1)
-	assert.Equal(1, list.singleNode.data)
+	assert.Equal(1, list.SingleNode.Value)
 
 	list.Append(3)
 	last, _ := list.Find(3)
@@ -74,7 +74,7 @@ func TestSinglyLinkedList(t *testing.T) {
 	err = list.Replace(7, 8)
 	assert.NoError(err)
 	item, _ = list.Find(8)
-	assert.Equal(8, item.data)
+	assert.Equal(8, item.Value)
 
 	list.Unshift(1)
 	list.Replace(8, 7)
@@ -87,7 +87,7 @@ func TestSinglyLinkedList(t *testing.T) {
 	})
 
 	item, found := list.Find(7)
-	assert.Equal(7, item.data)
+	assert.Equal(7, item.Value)
 	assert.True(found)
 
 	item, found = list.Find(22)
@@ -131,10 +131,10 @@ func Example_singlyLinkedList() {
 
 	list.Replace(7, 8)
 	item, _ = list.Find(8)
-	fmt.Println(item.data)
+	fmt.Println(item.Value)
 
 	item, _ = list.Find(8)
-	fmt.Println(item.data)
+	fmt.Println(item.Value)
 
 	// Output:
 	// [1 2 3 4 5 6 7 8]

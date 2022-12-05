@@ -11,10 +11,10 @@ func TestDoublyLinkedList(t *testing.T) {
 	assert := assert.New(t)
 
 	list := InitDList(1)
-	assert.Equal(1, list.data)
+	assert.Equal(1, list.Value)
 
 	// Removal of the first node is not permitted.
-	err := list.Delete(&list.doubleNode)
+	err := list.Delete(&list.DoubleNode)
 	assert.Error(err)
 
 	list.Pop()
@@ -30,7 +30,7 @@ func TestDoublyLinkedList(t *testing.T) {
 
 	list.Append(4)
 	node, _ = list.Find(4)
-	assert.Equal(4, node.data)
+	assert.Equal(4, node.Value)
 
 	n = 0
 	expected := []int{3, 2, 1, 4}
@@ -40,7 +40,7 @@ func TestDoublyLinkedList(t *testing.T) {
 	})
 
 	n1, found := list.Find(4)
-	assert.Equal(4, n1.data)
+	assert.Equal(4, n1.Value)
 	assert.True(found)
 
 	n2, found := list.Find(10)
@@ -59,7 +59,7 @@ func TestDoublyLinkedList(t *testing.T) {
 
 	list.Unshift(7)
 	n3, _ := list.Find(7)
-	assert.Equal(7, n3.data)
+	assert.Equal(7, n3.Value)
 
 	n = 0
 	expected = []int{7, 3, 2, 1, 4, 6}
@@ -157,18 +157,18 @@ func Example_doublyLinkedList() {
 
 	list.Replace(7, 8)
 	item, _ = list.Find(8)
-	fmt.Println(item.data)
+	fmt.Println(item.Value)
 
 	list.Replace(8, 7)
 	item, _ = list.Find(8)
 
 	list.Unshift(1)
 	n, _ := list.Find(1)
-	fmt.Println(n.data)
+	fmt.Println(n.Value)
 
 	list.Append(8)
 	item, _ = list.Find(8)
-	fmt.Println(item.data)
+	fmt.Println(item.Value)
 
 	last, _ := list.Find(8)
 	list.InsertAfter(last, 9)
