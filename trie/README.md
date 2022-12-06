@@ -120,7 +120,7 @@ func (t *Trie[K, V]) Contains(key K) bool
 
 Contains checks if a key exists in the symbol table.
 
-### func \(\*Trie\[K, V\]\) [Get](<https://github.com/esimov/gogu/blob/master/trie/trie.go#L123>)
+### func \(\*Trie\[K, V\]\) [Get](<https://github.com/esimov/gogu/blob/master/trie/trie.go#L120>)
 
 ```go
 func (t *Trie[K, V]) Get(key K) (v V, ok bool)
@@ -128,7 +128,7 @@ func (t *Trie[K, V]) Get(key K) (v V, ok bool)
 
 Get retrieves a node's value based on the key. If the key does not exist it returns false.
 
-### func \(\*Trie\[K, V\]\) [Keys](<https://github.com/esimov/gogu/blob/master/trie/trie.go#L211>)
+### func \(\*Trie\[K, V\]\) [Keys](<https://github.com/esimov/gogu/blob/master/trie/trie.go#L208>)
 
 ```go
 func (t *Trie[K, V]) Keys() (Queuer[K], error)
@@ -136,7 +136,7 @@ func (t *Trie[K, V]) Keys() (Queuer[K], error)
 
 Keys collects all the existing keys in the set.
 
-### func \(\*Trie\[K, V\]\) [LongestPrefix](<https://github.com/esimov/gogu/blob/master/trie/trie.go#L158>)
+### func \(\*Trie\[K, V\]\) [LongestPrefix](<https://github.com/esimov/gogu/blob/master/trie/trie.go#L155>)
 
 ```go
 func (t *Trie[K, V]) LongestPrefix(query K) (K, error)
@@ -144,7 +144,7 @@ func (t *Trie[K, V]) LongestPrefix(query K) (K, error)
 
 LongestPrefix returns the longest prefix of query in the symbol table or empty if such string does not exist.
 
-### func \(\*Trie\[K, V\]\) [Put](<https://github.com/esimov/gogu/blob/master/trie/trie.go#L90>)
+### func \(\*Trie\[K, V\]\) [Put](<https://github.com/esimov/gogu/blob/master/trie/trie.go#L87>)
 
 ```go
 func (t *Trie[K, V]) Put(key K, val V)
@@ -160,7 +160,7 @@ func (t *Trie[K, V]) Size() int
 
 Size returns the trie size.
 
-### func \(\*Trie\[K, V\]\) [StartsWith](<https://github.com/esimov/gogu/blob/master/trie/trie.go#L188>)
+### func \(\*Trie\[K, V\]\) [StartsWith](<https://github.com/esimov/gogu/blob/master/trie/trie.go#L185>)
 
 ```go
 func (t *Trie[K, V]) StartsWith(prefix K) (Queuer[K], error)

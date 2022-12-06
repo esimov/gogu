@@ -75,9 +75,6 @@ func (t *Trie[K, V]) Size() int {
 
 // Contains checks if a key exists in the symbol table.
 func (t *Trie[K, V]) Contains(key K) bool {
-	t.mu.RLock()
-	defer t.mu.RUnlock()
-
 	if len(key) == 0 {
 		return false
 	}

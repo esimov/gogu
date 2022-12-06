@@ -87,6 +87,7 @@ func TestTrie_Concurrency(t *testing.T) {
 		for i := 0; i < n; i++ {
 			str := strconv.Itoa(i)
 			trie.Put(str, i)
+			trie.Get(str)
 			wg.Done()
 		}
 	}()
@@ -104,6 +105,31 @@ func TestTrie_Concurrency(t *testing.T) {
 	qs2, err := trie.StartsWith("2")
 	assert.NoError(err)
 	assert.Equal(11, qs2.Size())
+}
+
+func TestTrie_Race(t *testing.T) {
+	const count = 10
+	q := queue.New[string]()
+	trie := New[string, int](q)
+	for i := 0; i < 64; i++ {
+		go func() {
+			for i := 0; i < count; i++ {
+				str := strconv.Itoa(i)
+				trie.Put(str, i)
+				trie.Size()
+				trie.Get(str)
+				trie.Contains("1")
+				trie.StartsWith("0")
+				trie.LongestPrefix("0")
+			}
+		}()
+	}
+	for i := 0; i < count; i++ {
+		trie.Get("0")
+		trie.Keys()
+		trie.Contains("1")
+		trie.LongestPrefix("0")
+	}
 }
 
 func Example() {
