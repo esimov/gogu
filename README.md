@@ -1,5 +1,5 @@
 # gogu (Go Generics Utility)
-![Coverage](https://img.shields.io/badge/Coverage-93.9%25-brightgreen)
+![Coverage](https://img.shields.io/badge/Coverage-93.8%25-brightgreen)
 [![CI](https://github.com/esimov/gogu/actions/workflows/ci.yml/badge.svg)](https://github.com/esimov/gogu/actions/workflows/ci.yml)
 [![Go Reference](https://img.shields.io/badge/pkg.go.dev-reference-007d9c?logo=go)](https://pkg.go.dev/github.com/esimov/gogu)
 [![release](https://img.shields.io/badge/Release-v1.0.1-blue.svg)](https://github.com/esimov/gogu/releases/tag/v1.0.1)
