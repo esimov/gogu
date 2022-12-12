@@ -10,14 +10,14 @@ func TestLRUCache_Add(t *testing.T) {
 	assert := assert.New(t)
 
 	lruCache, _ := NewLRU[string, string](4)
-	_, _, oldest := lruCache.Add("key1", "value1")
-	assert.False(oldest)
-	_, _, oldest = lruCache.Add("key2", "value2")
-	assert.False(oldest)
-	_, _, oldest = lruCache.Add("key3", "value3")
-	assert.False(oldest)
-	_, _, oldest = lruCache.Add("key4", "value4")
-	assert.False(oldest)
+	_, _, removed := lruCache.Add("key1", "value1")
+	assert.False(removed)
+	_, _, removed = lruCache.Add("key2", "value2")
+	assert.False(removed)
+	_, _, removed = lruCache.Add("key3", "value3")
+	assert.False(removed)
+	_, _, removed = lruCache.Add("key4", "value4")
+	assert.False(removed)
 
 	assert.Equal(4, lruCache.Count())
 
