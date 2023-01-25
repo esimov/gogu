@@ -45,6 +45,7 @@ func main() {
   - [`list`](https://github.com/esimov/gogu/tree/master/list): implements a singly and doubly linked list data structure
   - [`queue`](https://github.com/esimov/gogu/tree/master/queue): package queue implements a FIFO (First-In-First-Out) data structure in two forms: using as storage system a resizing array and a doubly linked list
   - [`stack`](https://github.com/esimov/gogu/tree/master/stack): package stack implements a LIFO (Last-In-First-Out) data structure where the last element added to the stack is processed first
+  - [`trie`](https://github.com/esimov/gogu/tree/master/trie): package trie provides a thread safe implementation of the ternary search tree data structure. Tries are used for locating specific keys from within a set or for quick lookup searches within a text like auto-completion or spell checking.
 
 - **General utility functions**
   - [Abs](<#func-abs>)
