@@ -3,7 +3,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/esimov/gogu)](https://goreportcard.com/report/github.com/esimov/gogu)
 [![CI](https://github.com/esimov/gogu/actions/workflows/ci.yml/badge.svg)](https://github.com/esimov/gogu/actions/workflows/ci.yml)
 [![Go Reference](https://img.shields.io/badge/pkg.go.dev-reference-007d9c?logo=go)](https://pkg.go.dev/github.com/esimov/gogu)
-[![release](https://img.shields.io/badge/Release-v1.0.1-blue.svg)](https://github.com/esimov/gogu/releases/tag/v1.0.1)
+[![release](https://img.shields.io/badge/Release-v1.0.3-blue.svg)](https://github.com/esimov/gogu/releases/tag/v1.0.3)
 [![license](https://img.shields.io/github/license/esimov/pigo)](./LICENSE)
 
 **Gogu** is a versatile, comprehensive, reusable and efficient concurrent-safe utility functions and data structures library taking advantage of the Go generics. It was inspired by other well known and established frameworks like [lodash](https://lodash.com/) or [Apache Commons](https://commons.apache.org/) and some concepts being more closer to the functional programming paradigms.
