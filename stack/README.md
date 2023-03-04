@@ -6,7 +6,7 @@
 import "github.com/esimov/gogu/stack"
 ```
 
-Package stack Package queue implements a concurrent safe LIFO \(Last\-In\-First\-Out\) data structure where the last element added to the stack is processed first. It's implemented in two versions:
+Package stack implements a concurrent safe LIFO \(Last\-In\-First\-Out\) data structure where the last element added to the stack is processed first. It's implemented in two versions:
 
 1.\) where the storage system is a resizing array,
 
