@@ -5,12 +5,11 @@
 package cache
 
 import (
+	"errors"
 	"fmt"
 	"runtime"
 	"sync"
 	"time"
-
-	"go.uber.org/multierr"
 )
 
 const (
@@ -188,19 +187,17 @@ func (c *cache[K, V]) DeleteExpired() error {
 	now := time.Now().UnixNano()
 
 	c.mu.Lock()
-	// TODO replace multierr package when proposal https://github.com/golang/go/issues/53435
-	// will be accepted and integrated into the standard library.
 	for k, item := range c.items {
 		if now > item.expiration && item.expiration != int64(NoExpiration) {
 			if e := c.delete(k); e != nil {
-				err = multierr.Append(err, e)
+				err = errors.Join(err, e)
 			}
 		}
 
 	}
 	c.mu.Unlock()
 
-	return multierr.Combine(err)
+	return errors.Unwrap(err)
 }
 
 // Flush removes all the existing items in the cache.
@@ -233,10 +230,10 @@ func (c *Cache[K, V]) MapToCache(m map[K]V, d time.Duration) error {
 
 	for k, v := range m {
 		e := c.Set(k, v, d)
-		err = multierr.Append(err, e)
+		err = errors.Join(err, e)
 	}
 
-	return multierr.Combine(err)
+	return errors.Unwrap(err)
 }
 
 // IsExpired checks if a cache item is expired.
